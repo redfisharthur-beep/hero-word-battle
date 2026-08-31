@@ -94,6 +94,65 @@
   font-size: 11px;
 }
 
+/* Uploaded homepage artwork */
+.hero-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background-image: linear-gradient(rgba(3,7,18,.38), rgba(3,7,18,.62)), url('/images/home/front%20page.png');
+  background-size: cover;
+  background-position: center;
+}
+.hero-card > * { position: relative; z-index: 1; }
+
+/* Uploaded room artwork */
+.room-card {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background-size: cover !important;
+  background-position: center !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,.9);
+}
+.room-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(2,6,23,.18), rgba(2,6,23,.78));
+}
+.room-card:nth-child(1) { background-image: url('/images/rooms/Holy%20Sword.png') !important; }
+.room-card:nth-child(2) { background-image: url('/images/rooms/Shadow%20Blade.png') !important; }
+.room-card:nth-child(3) { background-image: url('/images/rooms/Azure%20Bow.png') !important; }
+.room-card:nth-child(4) { background-image: url('/images/rooms/Oracle.png') !important; }
+
+/* Uploaded action artwork */
+.action-card {
+  min-height: 155px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  justify-content: flex-end;
+  background-size: cover !important;
+  background-position: center !important;
+  text-shadow: 0 2px 8px rgba(0,0,0,.9);
+}
+.action-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(2,6,23,.08), rgba(2,6,23,.82));
+}
+.action-card:nth-child(1) { background-image: url('/images/actions/upgrade.png') !important; }
+.action-card:nth-child(2) { background-image: url('/images/actions/attack.png') !important; }
+.action-card:nth-child(3) { background-image: url('/images/actions/treat.png') !important; }
+.action-card:nth-child(4) { background-image: url('/images/actions/Tailcut.png') !important; }
+.action-card:nth-child(5) { background-image: url('/images/actions/reduction.png') !important; }
+.action-card .action-icon { background: rgba(2,6,23,.46); backdrop-filter: blur(3px); }
+.action-card strong,
+.action-card small { position: relative; z-index: 1; }
+
 @media (max-width: 760px) {
   .job-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .job-art-card { min-height: 0; }
@@ -104,4 +163,6 @@
   .character-status-card { gap: 11px; }
   .rank-with-head { grid-template-columns: 34px 46px 1fr auto; gap: 8px; padding: 12px 10px; }
   .rank-with-head .character-head { width: 44px; height: 44px; }
+  .room-card { min-height: 175px; }
+  .action-card { min-height: 145px; }
 }
