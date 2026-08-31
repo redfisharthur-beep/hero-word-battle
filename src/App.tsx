@@ -26,6 +26,7 @@ const jobs: Job[] = [
   { id: 'fighter', name: '武道家', feature: '升級時，防禦增幅最多', badge: 'DEF' },
   { id: 'archer', name: '弓箭手', feature: '選擇攻擊時，輸出最高', badge: 'DMG' },
   { id: 'priest', name: '牧師', feature: '選擇治療時，恢復最多', badge: 'HEAL' },
+  { id: 'mage', name: '法師', feature: '選擇攻擊時，對全體敵人造成少量範圍傷害', badge: 'AOE' },
 ]
 
 const actions: { id: RemoteAction; name: string; icon: string; desc: string }[] = [
@@ -38,8 +39,8 @@ const actions: { id: RemoteAction; name: string; icon: string; desc: string }[] 
 
 const fallbackQuestion = { id: 0, word: 'brave', choices: ['安靜的', '勇敢的', '飢餓的'] }
 const jobName = (jobId?: string) => jobs.find((job) => job.id === jobId)?.name ?? '尚未選擇'
-const jobImage = (jobId?: string) => jobId ? `/images/jobs/${jobId}.png` : ''
-const jobHeadImage = (jobId?: string) => jobId ? `/images/jobs/${jobId}head.png` : ''
+const jobImage = (jobId?: string) => jobId ? `/images/jobs/${jobId === 'mage' ? 'Mage' : jobId}.png` : ''
+const jobHeadImage = (jobId?: string) => jobId ? `/images/jobs/${jobId === 'mage' ? 'Magehead' : `${jobId}head`}.png` : ''
 const phasePage = (state: RemoteRoomState): Page => state.phase === 'battle' ? 'battle' : state.phase === 'result' ? 'result' : state.phase === 'jobs' ? 'jobs' : 'lobby'
 
 const createDemoState = (name: string, roomId: string): RemoteRoomState => ({
