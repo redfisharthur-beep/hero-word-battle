@@ -101,7 +101,7 @@ button, input { max-width: 100%; }
 .hero-card .primary-button {
   position: absolute !important;
   left: 50%;
-  bottom: 4.8%;
+  bottom: 1% !important;
   transform: translateX(-50%);
   z-index: 3;
   width: min(64%, 320px);
@@ -179,7 +179,7 @@ button, input { max-width: 100%; }
   .hero-card { width: min(96vw, 520px) !important; }
   .hero-card .login-panel { width: 82%; }
   .hero-card .name-input, .hero-card .line-button { width: 76%; }
-  .hero-card .primary-button { width: 68%; bottom: 5%; }
+  .hero-card .primary-button { width: 68%; bottom: 1% !important; }
 }
 
 @media (max-width: 480px) {
@@ -187,7 +187,7 @@ button, input { max-width: 100%; }
   .hero-card { width: 100% !important; border-radius: 20px; padding: 14px !important; }
   .hero-card .login-panel { width: 88%; }
   .hero-card .name-input, .hero-card .line-button { width: 80%; }
-  .hero-card .primary-button { width: 72%; min-height: 44px; bottom: 5.2%; }
+  .hero-card .primary-button { width: 72%; min-height: 44px; bottom: 0.8% !important; }
   .action-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .enemy-strip { grid-template-columns: 1fr; }
   .answer-grid { grid-template-columns: 1fr; }
@@ -197,6 +197,6 @@ button, input { max-width: 100%; }
 @media (max-width: 360px) {
   .hero-card .login-panel { width: 94%; }
   .hero-card .name-input, .hero-card .line-button { width: 84%; }
-  .hero-card .primary-button { width: 76%; }
+  .hero-card .primary-button { width: 76%; bottom: 0.6% !important; }
   .job-grid, .action-grid { grid-template-columns: 1fr !important; }
 }
