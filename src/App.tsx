@@ -1,31 +1,19 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import {
+  connectRoom,
+  hasMultiplayerApi,
+  multiplayerApi,
+  type RemoteAction,
+  type RemoteRoomState,
+} from './lib/multiplayer'
 
 type Page = 'home' | 'rooms' | 'lobby' | 'jobs' | 'battle' | 'result'
-type BattlePhase = 'action' | 'quiz' | 'resolve'
-type ActionName = '升級' | '攻擊' | '治療' | '尾刀' | '減傷'
 
 type Job = {
   id: string
   name: string
   feature: string
   badge: string
-}
-
-type Fighter = {
-  id: string
-  name: string
-  job: string
-  hp: number
-  maxHp: number
-  atk: number
-  def: number
-  guard: boolean
-}
-
-type WordQuestion = {
-  word: string
-  answer: string
-  choices: string[]
 }
 
 const rooms = [
@@ -43,48 +31,108 @@ const jobs: Job[] = [
   { id: 'priest', name: '牧師', feature: '選擇治療時，恢復最多', badge: 'HEAL' },
 ]
 
-const actions: { name: ActionName; desc: string }[] = [
-  { name: '升級', desc: '增加生命、攻擊、防禦' },
-  { name: '攻擊', desc: '攻擊生命最多的玩家' },
-  { name: '治療', desc: '恢復生命，滿血則增加上限' },
-  { name: '尾刀', desc: '攻擊生命最少的玩家' },
-  { name: '減傷', desc: '下一次被攻擊時降低傷害' },
+const actions: { id: RemoteAction; name: string; desc: string }[] = [
+  { id: 'upgrade', name: '升級', desc: '增加生命、攻擊、防禦' },
+  { id: 'attack', name: '攻擊', desc: '攻擊生命最多的玩家' },
+  { id: 'heal', name: '治療', desc: '恢復生命，滿血則增加上限' },
+  { id: 'finish', name: '尾刀', desc: '攻擊生命最少的玩家' },
+  { id: 'guard', name: '減傷', desc: '下一次被攻擊時降低傷害' },
 ]
 
-const questions: WordQuestion[] = [
-  { word: 'brave', answer: '勇敢的', choices: ['安靜的', '勇敢的', '飢餓的'] },
-  { word: 'shield', answer: '盾牌', choices: ['盾牌', '箭矢', '城堡'] },
-  { word: 'heal', answer: '治療', choices: ['逃跑', '攻擊', '治療'] },
-  { word: 'victory', answer: '勝利', choices: ['失敗', '勝利', '危險'] },
-  { word: 'enemy', answer: '敵人', choices: ['敵人', '朋友', '老師'] },
-  { word: 'protect', answer: '保護', choices: ['保護', '破壞', '尋找'] },
-  { word: 'strong', answer: '強壯的', choices: ['快速的', '疲累的', '強壯的'] },
-  { word: 'attack', answer: '攻擊', choices: ['防守', '攻擊', '等待'] },
-  { word: 'magic', answer: '魔法', choices: ['魔法', '盔甲', '道路'] },
-  { word: 'survive', answer: '生存', choices: ['投降', '生存', '睡覺'] },
-]
+const fallbackQuestion = {
+  id: 0,
+  word: 'brave',
+  choices: ['安靜的', '勇敢的', '飢餓的'],
+}
 
-const botNames = ['英文字典王', '單字獵人']
+const jobName = (jobId?: string) => jobs.find((job) => job.id === jobId)?.name ?? '尚未選擇'
+
+const createDemoState = (name: string, roomId: string): RemoteRoomState => ({
+  roomId,
+  phase: 'lobby',
+  battlePhase: 'action',
+  round: 0,
+  questionIndex: 0,
+  players: [
+    { id: 'demo-me', name, host: true, hp: 100, maxHp: 100, atk: 10, def: 5, alive: true, guard: false },
+    { id: 'demo-bot', name: '英文字典王', host: false, jobId: 'warrior', hp: 100, maxHp: 100, atk: 10, def: 5, alive: true, guard: false },
+  ],
+  log: [],
+})
 
 export default function App() {
+  const online = hasMultiplayerApi()
   const [page, setPage] = useState<Page>('home')
   const [name, setName] = useState(() => localStorage.getItem('hero-player-name') ?? '')
   const [roomId, setRoomId] = useState('')
+  const [playerId, setPlayerId] = useState(() => localStorage.getItem('hero-player-id') ?? '')
+  const [roomState, setRoomState] = useState<RemoteRoomState | null>(null)
   const [jobId, setJobId] = useState('')
-  const [fighters, setFighters] = useState<Fighter[]>([])
-  const [round, setRound] = useState(1)
-  const [phase, setPhase] = useState<BattlePhase>('action')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
   const [actionSeconds, setActionSeconds] = useState(5)
   const [quizSeconds, setQuizSeconds] = useState(8)
-  const [selectedAction, setSelectedAction] = useState<ActionName | null>(null)
-  const [questionIndex, setQuestionIndex] = useState(0)
-  const [answerLocked, setAnswerLocked] = useState(false)
-  const [battleMessage, setBattleMessage] = useState('選擇本回合動作')
 
   const selectedRoom = useMemo(() => rooms.find((room) => room.id === roomId), [roomId])
-  const selectedJob = useMemo(() => jobs.find((job) => job.id === jobId), [jobId])
-  const me = fighters.find((fighter) => fighter.id === 'me')
-  const activeQuestion = questions[questionIndex % questions.length]
+  const me = roomState?.players.find((player) => player.id === playerId)
+  const question = roomState?.question ?? fallbackQuestion
+  const livingPlayers = roomState?.players.filter((player) => player.alive) ?? []
+  const sortedResults = [...(roomState?.players ?? [])].sort((a, b) => b.hp - a.hp || b.maxHp - a.maxHp || b.atk - a.atk || b.def - a.def)
+
+  useEffect(() => {
+    if (!online || !roomId || !playerId) return
+    return connectRoom(roomId, (nextState) => setRoomState(nextState))
+  }, [online, roomId, playerId])
+
+  useEffect(() => {
+    if (!roomState) return
+    if (roomState.phase === 'battle') setPage('battle')
+    if (roomState.phase === 'result') setPage('result')
+  }, [roomState?.phase])
+
+  useEffect(() => {
+    if (page !== 'battle' || roomState?.battlePhase !== 'action' || !me?.alive || me.action) return
+    setActionSeconds(5)
+    const timer = window.setInterval(() => {
+      setActionSeconds((value) => {
+        if (value <= 1) {
+          window.clearInterval(timer)
+          void submitAction('upgrade')
+          return 0
+        }
+        return value - 1
+      })
+    }, 1000)
+    return () => window.clearInterval(timer)
+  }, [page, roomState?.round, roomState?.battlePhase, me?.action, me?.alive])
+
+  useEffect(() => {
+    if (page !== 'battle' || roomState?.battlePhase !== 'quiz' || !me?.alive || me.answered) return
+    setQuizSeconds(8)
+    const timer = window.setInterval(() => {
+      setQuizSeconds((value) => {
+        if (value <= 1) {
+          window.clearInterval(timer)
+          void submitAnswer('__timeout__', 0)
+          return 0
+        }
+        return value - 1
+      })
+    }, 1000)
+    return () => window.clearInterval(timer)
+  }, [page, roomState?.round, roomState?.battlePhase, me?.answered, me?.alive])
+
+  const run = async (task: () => Promise<void>) => {
+    setBusy(true)
+    setError('')
+    try {
+      await task()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '連線發生錯誤')
+    } finally {
+      setBusy(false)
+    }
+  }
 
   const enterGame = () => {
     const trimmedName = name.trim()
@@ -94,160 +142,113 @@ export default function App() {
     setPage('rooms')
   }
 
-  const startBattle = () => {
-    setFighters([
-      { id: 'me', name, job: selectedJob?.name ?? '勇者', hp: 100, maxHp: 100, atk: 10, def: 5, guard: false },
-      { id: 'bot-1', name: botNames[0], job: '戰士', hp: 100, maxHp: 100, atk: 10, def: 5, guard: false },
-      { id: 'bot-2', name: botNames[1], job: '弓箭手', hp: 100, maxHp: 100, atk: 10, def: 5, guard: false },
-    ])
-    setRound(1)
-    setPhase('action')
-    setActionSeconds(5)
-    setQuizSeconds(8)
-    setSelectedAction(null)
-    setQuestionIndex(0)
-    setAnswerLocked(false)
-    setBattleMessage('選擇本回合動作')
-    setPage('battle')
-  }
-
-  const chooseAction = (action: ActionName) => {
-    if (phase !== 'action') return
-    setSelectedAction(action)
-    setPhase('quiz')
-    setQuizSeconds(8)
-    setAnswerLocked(false)
-    setBattleMessage(`已選擇「${action}」，答對英文題目才能發動！`)
-  }
-
-  const answerQuestion = (choice: string) => {
-    if (phase !== 'quiz' || answerLocked) return
-    setAnswerLocked(true)
-    if (choice !== activeQuestion.answer) {
-      resolveTurn(0, '答錯了，本回合沒有動作。')
+  const enterRoom = async () => {
+    if (!roomId) return
+    if (!online) {
+      const demo = createDemoState(name, roomId)
+      setPlayerId('demo-me')
+      setRoomState(demo)
+      setPage('lobby')
       return
     }
 
-    const coefficient = quizSeconds >= 7 ? 4 : quizSeconds >= 5 ? 3 : quizSeconds >= 3 ? 2 : 1
-    resolveTurn(coefficient, `答對！速度係數 ×${coefficient}`)
-  }
-
-  const resolveTurn = (coefficient: number, prefix: string) => {
-    const action = selectedAction ?? '升級'
-    let detail = ''
-
-    setFighters((current) => {
-      const next = current.map((fighter) => ({ ...fighter }))
-      const self = next.find((fighter) => fighter.id === 'me')!
-      const enemies = next.filter((fighter) => fighter.id !== 'me' && fighter.hp > 0)
-
-      if (coefficient > 0) {
-        const multiplier = getJobMultiplier(jobId, action)
-        const effect = coefficient * multiplier
-
-        if (action === '升級') {
-          const hpGain = Math.round(4 * effect * (jobId === 'warrior' ? 1.5 : 1))
-          const atkGain = Math.max(1, Math.round(effect * (jobId === 'assassin' ? 1.6 : 1)))
-          const defGain = Math.max(1, Math.round(effect * (jobId === 'fighter' ? 1.6 : 1)))
-          self.maxHp += hpGain
-          self.hp += hpGain
-          self.atk += atkGain
-          self.def += defGain
-          detail = `生命上限 +${hpGain}、攻擊 +${atkGain}、防禦 +${defGain}`
-        }
-
-        if ((action === '攻擊' || action === '尾刀') && enemies.length) {
-          const target = [...enemies].sort((a, b) => action === '攻擊' ? b.hp - a.hp : a.hp - b.hp)[0]
-          const baseDamage = self.atk * (action === '尾刀' ? 1.15 : 1)
-          const rawDamage = Math.max(1, Math.round(baseDamage * effect - target.def))
-          const damage = target.guard ? Math.max(1, Math.round(rawDamage * 0.5)) : rawDamage
-          target.guard = false
-          target.hp = Math.max(0, target.hp - damage)
-          detail = `${action}命中 ${target.name}，造成 ${damage} 傷害`
-        }
-
-        if (action === '治療') {
-          const heal = Math.round((12 + self.atk * 0.5) * effect)
-          if (self.hp >= self.maxHp) {
-            const maxGain = Math.max(1, Math.round(heal * 0.5))
-            self.maxHp += maxGain
-            self.hp += maxGain
-            detail = `生命已滿，生命上限 +${maxGain}`
-          } else {
-            const before = self.hp
-            self.hp = Math.min(self.maxHp, self.hp + heal)
-            detail = `恢復 ${self.hp - before} 生命`
-          }
-        }
-
-        if (action === '減傷') {
-          self.guard = true
-          detail = '獲得護盾：下一次攻擊傷害減半'
-        }
-      }
-
-      // Prototype bots: each round they make one simple attack so HP/ranking can be tested.
-      const livingBots = next.filter((fighter) => fighter.id !== 'me' && fighter.hp > 0)
-      livingBots.forEach((bot) => {
-        if (self.hp <= 0) return
-        const raw = Math.max(1, bot.atk - Math.round(self.def * 0.55))
-        const damage = self.guard ? Math.max(1, Math.round(raw * 0.5)) : raw
-        self.guard = false
-        self.hp = Math.max(0, self.hp - damage)
-      })
-
-      return next
+    await run(async () => {
+      const joined = await multiplayerApi.join(roomId, name, playerId || undefined)
+      setPlayerId(joined.playerId)
+      localStorage.setItem('hero-player-id', joined.playerId)
+      setRoomState(joined.state)
+      setPage(joined.state.phase === 'jobs' ? 'jobs' : 'lobby')
     })
-
-    setPhase('resolve')
-    setBattleMessage(`${prefix}${detail ? ` ${detail}` : ''}`)
   }
 
-  const nextRound = () => {
-    const living = fighters.filter((fighter) => fighter.hp > 0)
-    if (round >= 10 || living.length <= 1 || (me?.hp ?? 0) <= 0) {
-      setPage('result')
+  const chooseJob = async (nextJobId: string) => {
+    setJobId(nextJobId)
+    if (!roomState) return
+
+    if (!online) {
+      setRoomState({
+        ...roomState,
+        phase: 'jobs',
+        players: roomState.players.map((player) => player.id === playerId ? { ...player, jobId: nextJobId } : player),
+      })
       return
     }
 
-    setRound((value) => value + 1)
-    setQuestionIndex((value) => value + 1)
-    setSelectedAction(null)
-    setPhase('action')
-    setActionSeconds(5)
-    setQuizSeconds(8)
-    setAnswerLocked(false)
-    setBattleMessage('選擇本回合動作')
+    await run(async () => {
+      setRoomState(await multiplayerApi.chooseJob(roomId, playerId, nextJobId))
+    })
   }
 
-  useEffect(() => {
-    if (page !== 'battle' || phase !== 'action') return
-    if (actionSeconds <= 0) {
-      chooseAction('升級')
+  const startBattle = async () => {
+    if (!roomState) return
+    if (!online) {
+      setRoomState({ ...roomState, phase: 'battle', battlePhase: 'action', round: 1, log: ['本機示範模式：多人同步需部署 Cloudflare。'] })
+      setPage('battle')
       return
     }
-    const timer = window.setTimeout(() => setActionSeconds((value) => value - 1), 1000)
-    return () => window.clearTimeout(timer)
-  }, [page, phase, actionSeconds])
 
-  useEffect(() => {
-    if (page !== 'battle' || phase !== 'quiz' || answerLocked) return
-    if (quizSeconds <= 0) {
-      setAnswerLocked(true)
-      resolveTurn(0, '時間到，本回合沒有動作。')
+    await run(async () => {
+      setRoomState(await multiplayerApi.start(roomId, playerId))
+    })
+  }
+
+  const submitAction = async (action: RemoteAction) => {
+    if (!roomState || me?.action) return
+    if (!online) {
+      setRoomState({ ...roomState, battlePhase: 'quiz', question: fallbackQuestion, players: roomState.players.map((p) => p.id === playerId ? { ...p, action } : p) })
       return
     }
-    const timer = window.setTimeout(() => setQuizSeconds((value) => value - 1), 1000)
-    return () => window.clearTimeout(timer)
-  }, [page, phase, quizSeconds, answerLocked])
+    try {
+      setRoomState(await multiplayerApi.action(roomId, playerId, action))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '動作送出失敗')
+    }
+  }
+
+  const submitAnswer = async (choice: string, coefficient: number) => {
+    if (!roomState || me?.answered) return
+    if (!online) {
+      const correct = choice === '勇敢的'
+      const damage = correct ? 8 * coefficient : 0
+      const nextPlayers = roomState.players.map((p) => p.id === 'demo-bot' ? { ...p, hp: Math.max(0, p.hp - damage), alive: p.hp - damage > 0 } : p)
+      const done = roomState.round >= 10 || nextPlayers.filter((p) => p.alive).length <= 1
+      setRoomState({
+        ...roomState,
+        phase: done ? 'result' : 'battle',
+        battlePhase: 'action',
+        round: done ? roomState.round : roomState.round + 1,
+        players: nextPlayers.map((p) => ({ ...p, action: undefined, answered: false, coefficient: undefined })),
+        question: undefined,
+        log: [...roomState.log, correct ? `答對！造成 ${damage} 傷害` : '答錯，本回合沒有動作。'],
+      })
+      if (done) setPage('result')
+      return
+    }
+
+    try {
+      setRoomState(await multiplayerApi.answer(roomId, playerId, choice, coefficient))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '答案送出失敗')
+    }
+  }
 
   const speakWord = () => {
     if (!('speechSynthesis' in window)) return
     window.speechSynthesis.cancel()
-    const utterance = new SpeechSynthesisUtterance(activeQuestion.word)
+    const utterance = new SpeechSynthesisUtterance(question.word)
     utterance.lang = 'en-US'
     utterance.rate = 0.82
     window.speechSynthesis.speak(utterance)
+  }
+
+  const leaveRoom = async () => {
+    if (online && roomId && playerId) {
+      try { await multiplayerApi.leave(roomId, playerId) } catch { /* best effort */ }
+    }
+    setRoomState(null)
+    setRoomId('')
+    setJobId('')
+    setPage('rooms')
   }
 
   if (page === 'rooms') {
@@ -259,112 +260,129 @@ export default function App() {
               <span className="room-number">0{index + 1}</span>
               <strong>{room.name}</strong>
               <small>{room.subtitle}</small>
-              <span className="room-status">等待中 · 1/4</span>
+              <span className="room-status">{online ? '即時多人房間' : '本機測試模式'}</span>
             </button>
           ))}
         </div>
-        <button className="primary-button" disabled={!roomId} onClick={() => setPage('lobby')} type="button">進入房間</button>
+        <ErrorBox text={error} />
+        <button className="primary-button" disabled={!roomId || busy} onClick={() => void enterRoom()} type="button">{busy ? '連線中…' : '進入房間'}</button>
       </Screen>
     )
   }
 
   if (page === 'lobby') {
+    const players = roomState?.players ?? []
     return (
-      <Screen title={selectedRoom?.name ?? '玩家大廳'} subtitle="2 人以上，房主即可開戰" onBack={() => setPage('rooms')}>
+      <Screen title={selectedRoom?.name ?? '玩家大廳'} subtitle="2 人以上，選完職業後由房主開戰" onBack={() => void leaveRoom()}>
         <div className="player-list">
-          <PlayerRow name={name} label="房主" />
-          <PlayerRow name="英文字典王" label="測試玩家" />
-          <PlayerRow name="等待玩家加入…" muted />
-          <PlayerRow name="等待玩家加入…" muted />
+          {players.map((player) => <PlayerRow key={player.id} name={player.name} label={player.host ? '房主' : undefined} />)}
+          {Array.from({ length: Math.max(0, 4 - players.length) }).map((_, index) => <PlayerRow key={index} name="等待玩家加入…" muted />)}
         </div>
-        <div className="notice-box">目前先用測試玩家完成完整戰鬥流程。Cloudflare 即時多人房間會在這版確認後接上。</div>
-        <button className="primary-button" onClick={() => setPage('jobs')} type="button">開戰</button>
+        <div className="notice-box">目前 {players.length}/4 人。{players.length < 2 ? '至少需要 2 位玩家。' : '人數已足夠，可以前往選擇職業。'}</div>
+        <ErrorBox text={error} />
+        <button className="primary-button" disabled={players.length < 2} onClick={() => setPage('jobs')} type="button">選擇職業</button>
       </Screen>
     )
   }
 
   if (page === 'jobs') {
+    const everyoneReady = (roomState?.players.length ?? 0) >= 2 && roomState?.players.every((player) => player.jobId)
     return (
-      <Screen title="選擇職業" subtitle="每個職業都有不同的戰鬥加成" onBack={() => setPage('lobby')}>
+      <Screen title="選擇職業" subtitle="所有玩家選完職業後，由房主開戰" onBack={() => setPage('lobby')}>
         <div className="job-grid">
           {jobs.map((job) => (
-            <button key={job.id} className={`job-card ${jobId === job.id ? 'selected' : ''}`} onClick={() => setJobId(job.id)} type="button">
+            <button key={job.id} className={`job-card ${(me?.jobId ?? jobId) === job.id ? 'selected' : ''}`} onClick={() => void chooseJob(job.id)} type="button" disabled={busy}>
               <span className="job-avatar">{job.badge}</span>
               <strong>{job.name}</strong>
               <small>{job.feature}</small>
             </button>
           ))}
         </div>
-        <button className="primary-button" disabled={!jobId} onClick={startBattle} type="button">確認職業</button>
+        <div className="player-list">
+          {(roomState?.players ?? []).map((player) => <PlayerRow key={player.id} name={player.name} label={player.jobId ? jobName(player.jobId) : '選擇中'} />)}
+        </div>
+        <ErrorBox text={error} />
+        {me?.host ? (
+          <button className="primary-button" disabled={!everyoneReady || busy} onClick={() => void startBattle()} type="button">{everyoneReady ? '開戰' : '等待所有玩家選完職業'}</button>
+        ) : (
+          <div className="notice-box">職業已選好後，等待房主開戰。</div>
+        )}
       </Screen>
     )
   }
 
-  if (page === 'battle') {
+  if (page === 'battle' && roomState) {
     return (
       <main className="battle-shell">
-        {me && <SelfStatus fighter={me} />}
+        <section className="status-card self-card">
+          <div><span className="mini-label">YOU · {jobName(me?.jobId)}</span><h2>{me?.name ?? name}</h2></div>
+          <div className="stats"><span>HP {me?.hp ?? 0}/{me?.maxHp ?? 100}</span><span>ATK {me?.atk ?? 10}</span><span>DEF {me?.def ?? 5}</span>{me?.guard && <span>🛡️ 減傷</span>}</div>
+          <div className="hp-track"><span style={{ width: `${Math.max(0, Math.min(100, ((me?.hp ?? 0) / Math.max(1, me?.maxHp ?? 100)) * 100))}%` }} /></div>
+        </section>
 
         <section className="enemy-strip">
-          {fighters.filter((fighter) => fighter.id !== 'me').map((fighter) => <PlayerBattle key={fighter.id} fighter={fighter} />)}
+          {roomState.players.filter((player) => player.id !== playerId).map((player) => (
+            <PlayerBattle key={player.id} name={`${player.name} · ${jobName(player.jobId)}`} hp={`${player.hp}/${player.maxHp}`} muted={!player.alive} />
+          ))}
         </section>
 
         <section className="battle-panel">
           <div className="battle-heading">
-            <div><span className="mini-label">ROUND {round} / 10</span><h1>{phase === 'action' ? '選擇動作' : phase === 'quiz' ? '英文挑戰' : '行動結果'}</h1></div>
-            <div className={`timer ${phase === 'quiz' ? 'quiz-timer' : ''}`}>{phase === 'action' ? actionSeconds : phase === 'quiz' ? quizSeconds : '✓'}</div>
+            <div><span className="mini-label">ROUND {roomState.round} / 10 · {livingPlayers.length} 人存活</span><h1>{roomState.battlePhase === 'quiz' ? '英文挑戰' : '選擇動作'}</h1></div>
+            <div className="timer">{roomState.battlePhase === 'quiz' ? quizSeconds : actionSeconds}</div>
           </div>
 
-          {phase === 'action' && (
-            <div className="action-grid">
-              {actions.map((action) => (
-                <button key={action.name} className="action-card" onClick={() => chooseAction(action.name)} type="button">
-                  <strong>{action.name}</strong><small>{action.desc}</small>
-                </button>
-              ))}
-            </div>
+          {roomState.battlePhase === 'action' && me?.alive && (
+            <>
+              <div className="action-grid">
+                {actions.map((action) => (
+                  <button key={action.id} className={`action-card ${me.action === action.id ? 'selected' : ''}`} disabled={Boolean(me.action)} onClick={() => void submitAction(action.id)} type="button">
+                    <strong>{action.name}</strong><small>{action.desc}</small>
+                  </button>
+                ))}
+              </div>
+              {me.action && <div className="notice-box">動作已鎖定，等待其他玩家。</div>}
+            </>
           )}
 
-          {phase === 'quiz' && (
+          {roomState.battlePhase === 'quiz' && me?.alive && (
             <div className="quiz-card">
-              <div className="word-line">
-                <div><span className="mini-label">選擇：{selectedAction}</span><strong className="word">{activeQuestion.word}</strong></div>
-                <button className="speak-button" type="button" onClick={speakWord}>🔊 發音</button>
+              <button className="sound-button" type="button" onClick={speakWord}>🔊 發音</button>
+              <div className="word-display">{question.word}</div>
+              <div className="coefficient-hint">剩 7–8 秒 ×4　5–6 秒 ×3　3–4 秒 ×2　1–2 秒 ×1</div>
+              <div className="choice-grid">
+                {question.choices.map((choice) => (
+                  <button key={choice} type="button" disabled={Boolean(me.answered)} onClick={() => {
+                    const coefficient = quizSeconds >= 7 ? 4 : quizSeconds >= 5 ? 3 : quizSeconds >= 3 ? 2 : 1
+                    void submitAnswer(choice, coefficient)
+                  }}>{choice}</button>
+                ))}
               </div>
-              <p className="quiz-help">選出正確中文意思。越快答對，行動係數越高。</p>
-              <div className="answer-grid">
-                {activeQuestion.choices.map((choice) => <button key={choice} type="button" disabled={answerLocked} onClick={() => answerQuestion(choice)}>{choice}</button>)}
-              </div>
-              <div className="score-guide"><span>7–8 秒 ×4</span><span>5–6 秒 ×3</span><span>3–4 秒 ×2</span><span>1–2 秒 ×1</span></div>
+              {me.answered && <div className="notice-box">答案已送出，等待其他玩家。</div>}
             </div>
           )}
 
-          {phase === 'resolve' && (
-            <div className="resolve-card">
-              <strong>{battleMessage}</strong>
-              <p>目前測試版的兩位電腦玩家也會在每輪攻擊你，用來確認生命值、護盾與 10 輪結算。</p>
-              <button className="primary-button" type="button" onClick={nextRound}>{round >= 10 || (me?.hp ?? 0) <= 0 ? '查看排行榜' : '下一回合'}</button>
-            </div>
-          )}
-
-          {phase !== 'resolve' && <p className="battle-message">{battleMessage}</p>}
+          {!me?.alive && <div className="notice-box">你已被擊倒，可以觀看剩餘玩家完成對戰。</div>}
+          <ErrorBox text={error} />
+          {roomState.log.length > 0 && <div className="battle-log">{roomState.log.slice(-5).map((line, index) => <p key={`${line}-${index}`}>{line}</p>)}</div>}
         </section>
       </main>
     )
   }
 
   if (page === 'result') {
-    const ranking = [...fighters].sort((a, b) => b.hp - a.hp)
     return (
-      <Screen title="對戰結果" subtitle="10 輪結束或生命歸零後，依剩餘生命值排名" onBack={() => setPage('battle')}>
+      <Screen title="對戰結果" subtitle="排行榜依剩餘生命值決定" onBack={() => setPage('rooms')}>
         <div className="ranking-list">
-          {ranking.map((fighter, index) => (
-            <div key={fighter.id} className={`rank-row ${index === 0 ? 'champion' : ''}`}>
-              <b>{index + 1}</b><span>{fighter.name} · {fighter.job}</span><strong>HP {fighter.hp}</strong>
-            </div>
+          {sortedResults.map((player, index) => (
+            <div key={player.id} className={`rank-row ${index === 0 ? 'champion' : ''}`}><b>{index + 1}</b><span>{player.name} · {jobName(player.jobId)}</span><strong>HP {player.hp}</strong></div>
           ))}
         </div>
-        <button className="primary-button" onClick={() => { setPage('rooms'); setSelectedAction(null) }} type="button">再戰一場</button>
+        {me?.host && online ? (
+          <button className="primary-button" type="button" onClick={() => void run(async () => { setRoomState(await multiplayerApi.reset(roomId, playerId)); setPage('jobs') })}>再戰一場</button>
+        ) : (
+          <button className="primary-button" type="button" onClick={() => setPage('rooms')}>返回房間選擇</button>
+        )}
       </Screen>
     )
   }
@@ -380,34 +398,17 @@ export default function App() {
           <input id="player-name" className="name-input" type="text" maxLength={12} placeholder="輸入你的名字" value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => event.key === 'Enter' && enterGame()} />
           <button className="primary-button" type="button" disabled={!name.trim()} onClick={enterGame}>開始冒險</button>
           <div className="divider"><span>或</span></div>
-          <button className="line-button" type="button" onClick={() => alert('LINE Login 會在 Cloudflare 多人後端完成後串接。')}><span className="line-mark">LINE</span>使用 LINE 登入</button>
+          <button className="line-button" type="button" onClick={() => alert('LINE Login 會在多人版穩定後串接。')}><span className="line-mark">LINE</span>使用 LINE 登入</button>
         </div>
-        <p className="hint">先以名字進入遊戲；LINE 登入將在多人連線完成後開放。</p>
+        <p className="hint">{online ? 'Cloudflare 即時多人模式已啟用。' : '目前為本機示範模式；部署 Cloudflare 後會自動切換即時多人。'}</p>
       </section>
     </main>
   )
 }
 
-function getJobMultiplier(jobId: string, action: ActionName) {
-  if (jobId === 'archer' && action === '攻擊') return 1.6
-  if (jobId === 'priest' && action === '治療') return 1.8
-  if (jobId === 'assassin' && action === '升級') return 1.35
-  if (jobId === 'warrior' && action === '升級') return 1.35
-  if (jobId === 'fighter' && action === '升級') return 1.35
-  return 1
-}
-
 function Screen({ title, subtitle, onBack, children }: { title: string; subtitle: string; onBack: () => void; children: ReactNode }) {
   return (
-    <main className="page-shell">
-      <section className="page-card">
-        <button className="back-button" onClick={onBack} type="button">← 返回</button>
-        <p className="eyebrow">HERO WORD BATTLE</p>
-        <h1 className="page-title">{title}</h1>
-        <p className="page-subtitle">{subtitle}</p>
-        {children}
-      </section>
-    </main>
+    <main className="page-shell"><section className="page-card"><button className="back-button" onClick={onBack} type="button">← 返回</button><p className="eyebrow">HERO WORD BATTLE</p><h1 className="page-title">{title}</h1><p className="page-subtitle">{subtitle}</p>{children}</section></main>
   )
 }
 
@@ -415,24 +416,10 @@ function PlayerRow({ name, label, muted = false }: { name: string; label?: strin
   return <div className={`player-row ${muted ? 'muted' : ''}`}><span className="player-dot" /><strong>{name}</strong>{label && <em>{label}</em>}</div>
 }
 
-function SelfStatus({ fighter }: { fighter: Fighter }) {
-  const percent = fighter.maxHp ? Math.max(0, Math.min(100, (fighter.hp / fighter.maxHp) * 100)) : 0
-  return (
-    <section className="status-card self-card">
-      <div><span className="mini-label">YOU · {fighter.job}</span><h2>{fighter.name}</h2></div>
-      <div className="stats"><span>HP {fighter.hp}/{fighter.maxHp}</span><span>ATK {fighter.atk}</span><span>DEF {fighter.def}</span>{fighter.guard && <span>🛡️ 減傷待命</span>}</div>
-      <div className="hp-track"><span style={{ width: `${percent}%` }} /></div>
-    </section>
-  )
+function PlayerBattle({ name, hp, muted = false }: { name: string; hp: string; muted?: boolean }) {
+  return <div className={`enemy-card ${muted ? 'muted' : ''}`}><strong>{name}</strong><span>HP {hp}</span></div>
 }
 
-function PlayerBattle({ fighter }: { fighter: Fighter }) {
-  const percent = fighter.maxHp ? Math.max(0, Math.min(100, (fighter.hp / fighter.maxHp) * 100)) : 0
-  return (
-    <div className={`enemy-card ${fighter.hp <= 0 ? 'muted' : ''}`}>
-      <div><strong>{fighter.name}</strong><small>{fighter.job}</small></div>
-      <span>HP {fighter.hp}/{fighter.maxHp}</span>
-      <div className="mini-hp"><i style={{ width: `${percent}%` }} /></div>
-    </div>
-  )
+function ErrorBox({ text }: { text: string }) {
+  return text ? <div className="notice-box">⚠️ {text}</div> : null
 }
