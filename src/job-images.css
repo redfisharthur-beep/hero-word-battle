@@ -20,81 +20,26 @@ img { max-width:100%; height:auto; }
 button,input { max-width:100%; }
 .page-card,.battle-panel,.self-card,.enemy-strip { min-width:0; }
 .page-title,.battle-heading h1,.subtitle,.page-subtitle,.notice-box,button,input { overflow-wrap:anywhere; }
-
-/* Japanese-style rounded, light typography across the playable UI. */
-:root,body,button,input,.app-shell,.page-shell,.battle-shell {
-  font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic","YuGothic","Noto Sans TC","Microsoft JhengHei",sans-serif!important;
-  font-weight:300;
-}
+:root,body,button,input,.app-shell,.page-shell,.battle-shell { font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic","YuGothic","Noto Sans TC","Microsoft JhengHei",sans-serif!important; font-weight:300; }
 .page-shell,.battle-shell { font-size:18px; line-height:1.55; }
 .page-shell strong,.battle-shell strong,.page-shell b,.battle-shell b,.page-shell h1,.page-shell h2,.battle-shell h1,.battle-shell h2,.page-shell button,.battle-shell button { font-weight:400!important; }
 .back-button { font-size:18px!important; font-weight:300!important; letter-spacing:.04em; }
-.player-row { font-size:19px; }
-.player-row em { font-size:15px!important; font-weight:300!important; }
-.notice-box { font-size:16px!important; font-weight:300!important; }
-.connection-bar { font-size:14px!important; font-weight:300!important; }
-.mini-label,.field-label { font-size:14px!important; font-weight:300!important; }
-.self-card h2 { font-size:27px; font-weight:400!important; }
-.stats { font-size:16px!important; }
-.alive-badge { font-size:14px!important; font-weight:300!important; }
-.enemy-card strong { font-size:18px; }
-.enemy-card small,.enemy-card>span { font-size:15px!important; }
-.battle-heading h1 { font-size:38px!important; font-weight:400!important; }
-.timer { font-size:29px!important; font-weight:400!important; }
-.word { font-weight:400!important; }
-.quiz-help { font-size:17px; }
-.answer-grid button { font-size:21px!important; font-weight:300!important; }
-.score-guide span { font-size:15px!important; }
-.action-banner { font-size:17px; font-weight:300!important; }
-.battle-log p { font-size:15px!important; }
-.rank-row { font-size:18px; }
-
+.player-row { font-size:19px; }.player-row em { font-size:15px!important; font-weight:300!important; }.notice-box { font-size:16px!important; font-weight:300!important; }.connection-bar { font-size:14px!important; font-weight:300!important; }.mini-label,.field-label { font-size:14px!important; font-weight:300!important; }.self-card h2 { font-size:27px; font-weight:400!important; }.stats { font-size:16px!important; }.alive-badge { font-size:14px!important; font-weight:300!important; }.enemy-card strong { font-size:18px; }.enemy-card small,.enemy-card>span { font-size:15px!important; }.battle-heading h1 { font-size:38px!important; font-weight:400!important; }.timer { font-size:29px!important; font-weight:400!important; }.word { font-weight:400!important; }.quiz-help { font-size:17px; }.answer-grid button { font-size:21px!important; font-weight:300!important; }.score-guide span { font-size:15px!important; }.action-banner { font-size:17px; font-weight:300!important; }.battle-log p { font-size:15px!important; }.rank-row { font-size:18px; }
 .hero-card { position:relative; overflow:hidden; isolation:isolate; width:min(94vw,560px)!important; min-height:0!important; aspect-ratio:4/5.35; padding:clamp(18px,4vw,32px)!important; background-color:#0f172a!important; background-image:url("/images/home/front page.png")!important; background-repeat:no-repeat!important; background-size:contain!important; background-position:center!important; }
-.hero-card::before { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:transparent; }
-.hero-card>* { position:relative; z-index:1; }
-.hero-card h1,.hero-card .subtitle,.hero-card .divider,.hero-card .hint,.hero-card .eyebrow,.hero-card .field-label { display:none!important; }
-.hero-card .login-panel { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(74%,330px); margin:0; display:flex; flex-direction:column; align-items:center; gap:10px; z-index:6; }
-.hero-card .name-input { position:static; transform:none; width:min(72%,250px); min-height:44px; margin:0; padding:10px 12px; text-align:center; font-size:clamp(16px,3vw,18px); font-weight:300!important; z-index:5; }
-.hero-card .name-input::placeholder { color:transparent!important; opacity:0!important; }
-.hero-card .line-button { position:static; transform:none; width:min(72%,250px); min-height:44px; margin:0; padding:10px 14px; font-size:clamp(13px,2.7vw,16px); z-index:5; }
-.hero-card .primary-button { position:absolute!important; left:50%; bottom:0!important; transform:translateX(-50%); z-index:10; width:92%; height:14%; min-height:72px; margin:0!important; padding:0!important; border:0!important; border-radius:0!important; background:transparent!important; box-shadow:none!important; backdrop-filter:none!important; color:transparent!important; font-size:0!important; text-shadow:none!important; opacity:1!important; pointer-events:auto!important; touch-action:manipulation; }
-.hero-card .primary-button:hover:not(:disabled),.hero-card .primary-button:active { transform:translateX(-50%)!important; background:transparent!important; box-shadow:none!important; }
-
-.rooms-page { min-height:100dvh; align-items:flex-start; }
-.rooms-card { width:100%; max-width:520px; background:transparent!important; border:0!important; box-shadow:none!important; padding-top:18px!important; }
-.rooms-card .back-button { margin-bottom:24px; }
-.room-grid { display:flex!important; flex-direction:column; align-items:center; gap:18px; width:100%; margin:0 auto; }
-.room-card { position:relative; overflow:visible; isolation:isolate; width:250px!important; min-width:250px!important; max-width:250px!important; height:150px!important; min-height:150px!important; padding:0!important; border:0!important; border-radius:0!important; box-shadow:none!important; background-color:transparent!important; background-size:contain!important; background-repeat:no-repeat!important; background-position:center!important; font-size:0; transform:scale(1); transition:transform .16s ease,filter .16s ease; touch-action:manipulation; }
-.room-card::before,.room-card>* { display:none!important; }
-.room-card:nth-child(1) { background-image:url('/images/rooms/Holy%20Sword.png')!important; }
-.room-card:nth-child(2) { background-image:url('/images/rooms/Shadow%20Blade.png')!important; }
-.room-card:nth-child(3) { background-image:url('/images/rooms/Azure%20Bow.png')!important; }
-.room-card:nth-child(4) { background-image:url('/images/rooms/Oracle.png')!important; }
-.room-card:hover:not(:disabled),.room-card:focus-visible { transform:scale(1.10); }
-.room-card:active:not(:disabled) { transform:scale(1.18); }
-.room-card:disabled { filter:grayscale(.65); opacity:.55; }
-
-.action-card { min-height:165px; padding:0; position:relative; overflow:hidden; isolation:isolate; background-size:cover!important; background-position:center!important; font-size:0; }
-.action-card::before,.action-card>* { display:none!important; }
-.action-card:nth-child(1) { background-image:url('/images/actions/upgrade.png')!important; }
-.action-card:nth-child(2) { background-image:url('/images/actions/attack.png')!important; }
-.action-card:nth-child(3) { background-image:url('/images/actions/treat.png')!important; }
-.action-card:nth-child(4) { background-image:url('/images/actions/Tailcut.png')!important; }
-.action-card:nth-child(5) { background-image:url('/images/actions/reduction.png')!important; }
-.action-card:disabled { filter:grayscale(.45); }
-
+.hero-card::before { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:transparent; }.hero-card>* { position:relative; z-index:1; }.hero-card h1,.hero-card .subtitle,.hero-card .divider,.hero-card .hint,.hero-card .eyebrow,.hero-card .field-label { display:none!important; }.hero-card .login-panel { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(74%,330px); margin:0; display:flex; flex-direction:column; align-items:center; gap:10px; z-index:6; }.hero-card .name-input { position:static; transform:none; width:min(72%,250px); min-height:44px; margin:0; padding:10px 12px; text-align:center; font-size:clamp(16px,3vw,18px); font-weight:300!important; z-index:5; }.hero-card .name-input::placeholder { color:transparent!important; opacity:0!important; }.hero-card .line-button { position:static; transform:none; width:min(72%,250px); min-height:44px; margin:0; padding:10px 14px; font-size:clamp(13px,2.7vw,16px); z-index:5; }.hero-card .primary-button { position:absolute!important; left:50%; bottom:0!important; transform:translateX(-50%); z-index:10; width:92%; height:14%; min-height:72px; margin:0!important; padding:0!important; border:0!important; border-radius:0!important; background:transparent!important; box-shadow:none!important; backdrop-filter:none!important; color:transparent!important; font-size:0!important; text-shadow:none!important; opacity:1!important; pointer-events:auto!important; touch-action:manipulation; }.hero-card .primary-button:hover:not(:disabled),.hero-card .primary-button:active { transform:translateX(-50%)!important; background:transparent!important; box-shadow:none!important; }
+.rooms-page { min-height:100dvh; align-items:flex-start; }.rooms-card { width:100%; max-width:520px; background:transparent!important; border:0!important; box-shadow:none!important; padding-top:18px!important; }.rooms-card .back-button { margin-bottom:24px; }.room-grid { display:flex!important; flex-direction:column; align-items:center; gap:18px; width:100%; margin:0 auto; }.room-card { position:relative; overflow:visible; isolation:isolate; width:250px!important; min-width:250px!important; max-width:250px!important; height:150px!important; min-height:150px!important; padding:0!important; border:0!important; border-radius:0!important; box-shadow:none!important; background-color:transparent!important; background-size:contain!important; background-repeat:no-repeat!important; background-position:center!important; font-size:0; transform:scale(1); transition:transform .16s ease,filter .16s ease; touch-action:manipulation; }.room-card::before,.room-card>* { display:none!important; }.room-card:nth-child(1) { background-image:url('/images/rooms/Holy%20Sword.png')!important; }.room-card:nth-child(2) { background-image:url('/images/rooms/Shadow%20Blade.png')!important; }.room-card:nth-child(3) { background-image:url('/images/rooms/Azure%20Bow.png')!important; }.room-card:nth-child(4) { background-image:url('/images/rooms/Oracle.png')!important; }.room-card:hover:not(:disabled),.room-card:focus-visible { transform:scale(1.10); }.room-card:active:not(:disabled) { transform:scale(1.18); }.room-card:disabled { filter:grayscale(.65); opacity:.55; }
+.action-card { min-height:165px; padding:0; position:relative; overflow:hidden; isolation:isolate; background-size:cover!important; background-position:center!important; font-size:0; }.action-card::before,.action-card>* { display:none!important; }.action-card:nth-child(1) { background-image:url('/images/actions/upgrade.png')!important; }.action-card:nth-child(2) { background-image:url('/images/actions/attack.png')!important; }.action-card:nth-child(3) { background-image:url('/images/actions/treat.png')!important; }.action-card:nth-child(4) { background-image:url('/images/actions/Tailcut.png')!important; }.action-card:nth-child(5) { background-image:url('/images/actions/reduction.png')!important; }.action-card:disabled { filter:grayscale(.45); }
+/* Profession selection: artwork only, no capsule/card frame. */
+.jobs-page { min-height:100dvh; align-items:flex-start; }
+.jobs-card { width:100%; max-width:560px; background:transparent!important; border:0!important; box-shadow:none!important; padding-top:16px!important; }
+.jobs-card .back-button { margin-bottom:16px; }
+.jobs-card .job-grid { gap:12px!important; }
+.jobs-card .job-art-card { background:transparent!important; border:0!important; border-radius:0!important; box-shadow:none!important; padding:0!important; min-height:0!important; overflow:visible!important; }
+.jobs-card .job-art-card::before { display:none!important; }
+.jobs-card .job-full-art { padding:0!important; }
+.jobs-card .job-art-card.taken,.jobs-card .job-art-card:disabled.taken { opacity:.34!important; filter:grayscale(1)!important; cursor:not-allowed; }
+.jobs-card .job-art-card.selected { opacity:1!important; filter:none!important; }
 @media(max-width:900px){.page-shell,.battle-shell{padding-left:clamp(10px,3vw,18px);padding-right:clamp(10px,3vw,18px)}.page-card,.battle-panel{padding:clamp(16px,4vw,24px)}.action-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:760px){
-  .page-shell,.battle-shell{font-size:18px}.player-row{font-size:19px}.back-button{font-size:18px!important}.notice-box{font-size:16px!important}.battle-heading h1{font-size:34px!important}.answer-grid button{font-size:20px!important}
-  .job-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.job-art-card{min-height:0}.job-full-art{aspect-ratio:1/1}.job-art-card:last-child{grid-column:auto}.character-head.large,.character-head-placeholder.large{width:74px;height:74px;border-radius:20px}.character-status-card{gap:11px}.rank-with-head{grid-template-columns:34px 46px 1fr auto;gap:8px;padding:12px 10px}.rank-with-head .character-head{width:44px;height:44px}.action-card{min-height:clamp(110px,31vw,150px)}
-  .app-shell{padding:0!important;min-height:100dvh!important;width:100%!important;}
-  .hero-card{width:100vw!important;height:100dvh!important;min-height:100dvh!important;max-width:none!important;aspect-ratio:auto!important;border-radius:0!important;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))!important;background-size:cover!important;background-position:center!important;}
-  .hero-card .login-panel{top:50%;width:180px!important;gap:0}
-  .hero-card .name-input{box-sizing:border-box!important;width:150px!important;min-width:150px!important;max-width:150px!important;padding:8px 8px!important;font-size:19px!important;line-height:1.15!important;text-align:center!important;}
-  .hero-card .line-button{box-sizing:border-box!important;width:80px!important;min-width:80px!important;max-width:80px!important;height:80px!important;min-height:80px!important;max-height:80px!important;margin-top:30px!important;padding:0!important;font-size:0!important;line-height:1!important;white-space:nowrap!important;display:flex!important;align-items:center!important;justify-content:center!important;}
-  .hero-card .line-button .line-mark{font-size:13px!important;font-weight:300!important;}
-  .hero-card .primary-button{width:96%;height:15%;bottom:0!important;min-height:84px}
-  .rooms-page{padding:0 10px 24px!important}.rooms-card{padding:14px 0 24px!important}.rooms-card .back-button{margin-left:8px}.room-grid{gap:14px}.room-card{width:250px!important;min-width:250px!important;max-width:250px!important;height:150px!important;min-height:150px!important;border-radius:0!important;box-shadow:none!important;background-color:transparent!important}
-}
+@media(max-width:760px){.page-shell,.battle-shell{font-size:18px}.player-row{font-size:19px}.back-button{font-size:18px!important}.notice-box{font-size:16px!important}.battle-heading h1{font-size:34px!important}.answer-grid button{font-size:20px!important}.job-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.job-art-card{min-height:0}.job-full-art{aspect-ratio:1/1}.job-art-card:last-child{grid-column:auto}.character-head.large,.character-head-placeholder.large{width:74px;height:74px;border-radius:20px}.character-status-card{gap:11px}.rank-with-head{grid-template-columns:34px 46px 1fr auto;gap:8px;padding:12px 10px}.rank-with-head .character-head{width:44px;height:44px}.action-card{min-height:clamp(110px,31vw,150px)}.app-shell{padding:0!important;min-height:100dvh!important;width:100%!important}.hero-card{width:100vw!important;height:100dvh!important;min-height:100dvh!important;max-width:none!important;aspect-ratio:auto!important;border-radius:0!important;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))!important;background-size:cover!important;background-position:center!important}.hero-card .login-panel{top:50%;width:180px!important;gap:0}.hero-card .name-input{box-sizing:border-box!important;width:150px!important;min-width:150px!important;max-width:150px!important;padding:8px!important;font-size:19px!important;line-height:1.15!important;text-align:center!important}.hero-card .line-button{box-sizing:border-box!important;width:80px!important;min-width:80px!important;max-width:80px!important;height:80px!important;min-height:80px!important;max-height:80px!important;margin-top:30px!important;padding:0!important;font-size:0!important;line-height:1!important;white-space:nowrap!important;display:flex!important;align-items:center!important;justify-content:center!important}.hero-card .line-button .line-mark{font-size:13px!important;font-weight:300!important}.hero-card .primary-button{width:96%;height:15%;bottom:0!important;min-height:84px}.rooms-page{padding:0 10px 24px!important}.rooms-card{padding:14px 0 24px!important}.rooms-card .back-button{margin-left:8px}.room-grid{gap:14px}.room-card{width:250px!important;min-width:250px!important;max-width:250px!important;height:150px!important;min-height:150px!important;border-radius:0!important;box-shadow:none!important;background-color:transparent!important}}
 @media(max-width:480px){.hero-card .login-panel{top:50%;width:180px!important;gap:0}.hero-card .name-input{width:150px!important;min-width:150px!important;max-width:150px!important;font-size:19px!important}.hero-card .line-button{width:80px!important;min-width:80px!important;max-width:80px!important;height:80px!important;min-height:80px!important;max-height:80px!important;margin-top:30px!important;font-size:0!important}.hero-card .line-button .line-mark{font-size:13px!important}.hero-card .primary-button{width:100%;height:16%;min-height:90px;bottom:0!important}.action-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.enemy-strip{grid-template-columns:1fr}.answer-grid{grid-template-columns:1fr}.score-guide{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:360px){.hero-card .login-panel{top:50%;width:180px!important}.hero-card .name-input{width:150px!important;min-width:150px!important;max-width:150px!important;font-size:18px!important}.hero-card .line-button{width:80px!important;min-width:80px!important;max-width:80px!important;height:80px!important;min-height:80px!important;max-height:80px!important;margin-top:30px!important;font-size:0!important}.hero-card .line-button .line-mark{font-size:12px!important}.hero-card .primary-button{width:100%;height:17%;min-height:92px;bottom:0!important}.job-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.action-grid{grid-template-columns:1fr!important}}
