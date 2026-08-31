@@ -34,13 +34,12 @@ export type RemoteRoomState = {
 }
 
 const getBaseUrl = () => (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
+const requestUrl = (path: string) => `${getBaseUrl()}${path}`
 
-export const hasMultiplayerApi = () => Boolean(getBaseUrl())
+export const hasMultiplayerApi = () => true
 
 async function apiRequest<T>(path: string, body?: unknown): Promise<T> {
-  const baseUrl = getBaseUrl()
-  if (!baseUrl) throw new Error('VITE_API_BASE_URL 尚未設定')
-  const response = await fetch(baseUrl + path, {
+  const response = await fetch(requestUrl(path), {
     method: body ? 'POST' : 'GET',
     headers: { 'content-type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined,
@@ -52,9 +51,9 @@ async function apiRequest<T>(path: string, body?: unknown): Promise<T> {
 
 export function connectRoom(roomId: string, onState: (state: RemoteRoomState) => void) {
   const baseUrl = getBaseUrl()
-  if (!baseUrl) return () => undefined
-
-  const wsBase = baseUrl.replace(/^http/, 'ws')
+  const wsBase = baseUrl
+    ? baseUrl.replace(/^http/, 'ws')
+    : `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}`
   let socket: WebSocket | null = new WebSocket(`${wsBase}/api/rooms/${encodeURIComponent(roomId)}/ws`)
   let pingTimer: number | undefined
 
