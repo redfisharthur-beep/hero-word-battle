@@ -36,14 +36,14 @@ button,input { max-width:100%; }
 .rooms-card { width:100%; max-width:520px; background:transparent!important; border:0!important; box-shadow:none!important; padding-top:18px!important; }
 .rooms-card .back-button { margin-bottom:24px; }
 .room-grid { display:flex!important; flex-direction:column; align-items:center; gap:18px; width:100%; margin:0 auto; }
-.room-card { position:relative; overflow:hidden; isolation:isolate; width:200px!important; min-width:200px!important; max-width:200px!important; height:120px!important; min-height:120px!important; padding:0!important; border:0!important; border-radius:14px; background-size:contain!important; background-repeat:no-repeat!important; background-position:center!important; font-size:0; transform:scale(1); transition:transform .16s ease,filter .16s ease; touch-action:manipulation; }
+.room-card { position:relative; overflow:visible; isolation:isolate; width:250px!important; min-width:250px!important; max-width:250px!important; height:150px!important; min-height:150px!important; padding:0!important; border:0!important; border-radius:0!important; box-shadow:none!important; background-color:transparent!important; background-size:contain!important; background-repeat:no-repeat!important; background-position:center!important; font-size:0; transform:scale(1); transition:transform .16s ease,filter .16s ease; touch-action:manipulation; }
 .room-card::before,.room-card>* { display:none!important; }
 .room-card:nth-child(1) { background-image:url('/images/rooms/Holy%20Sword.png')!important; }
 .room-card:nth-child(2) { background-image:url('/images/rooms/Shadow%20Blade.png')!important; }
 .room-card:nth-child(3) { background-image:url('/images/rooms/Azure%20Bow.png')!important; }
 .room-card:nth-child(4) { background-image:url('/images/rooms/Oracle.png')!important; }
 .room-card:hover:not(:disabled),.room-card:focus-visible { transform:scale(1.10); }
-.room-card:active:not(:disabled) { transform:scale(1.16); }
+.room-card:active:not(:disabled) { transform:scale(1.18); }
 .room-card:disabled { filter:grayscale(.65); opacity:.55; }
 
 .action-card { min-height:165px; padding:0; position:relative; overflow:hidden; isolation:isolate; background-size:cover!important; background-position:center!important; font-size:0; }
@@ -65,7 +65,7 @@ button,input { max-width:100%; }
   .hero-card .line-button{box-sizing:border-box!important;width:80px!important;min-width:80px!important;max-width:80px!important;margin-top:30px!important;padding:8px 4px!important;font-size:0!important;line-height:1!important;white-space:nowrap!important;}
   .hero-card .line-button .line-mark{font-size:12px!important;}
   .hero-card .primary-button{width:96%;height:15%;bottom:0!important;min-height:84px}
-  .rooms-page{padding:0 10px 24px!important}.rooms-card{padding:14px 0 24px!important}.rooms-card .back-button{margin-left:8px}.room-grid{gap:14px}.room-card{width:200px!important;min-width:200px!important;max-width:200px!important;height:120px!important;min-height:120px!important}
+  .rooms-page{padding:0 10px 24px!important}.rooms-card{padding:14px 0 24px!important}.rooms-card .back-button{margin-left:8px}.room-grid{gap:14px}.room-card{width:250px!important;min-width:250px!important;max-width:250px!important;height:150px!important;min-height:150px!important;border-radius:0!important;box-shadow:none!important;background-color:transparent!important}
 }
 @media(max-width:480px){.hero-card .login-panel{top:50%;width:180px!important;gap:0}.hero-card .name-input{width:150px!important;min-width:150px!important;max-width:150px!important;font-size:18px!important}.hero-card .line-button{width:80px!important;min-width:80px!important;max-width:80px!important;margin-top:30px!important;font-size:0!important}.hero-card .line-button .line-mark{font-size:12px!important}.hero-card .primary-button{width:100%;height:16%;min-height:90px;bottom:0!important}.action-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.enemy-strip{grid-template-columns:1fr}.answer-grid{grid-template-columns:1fr}.score-guide{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:360px){.hero-card .login-panel{top:50%;width:180px!important}.hero-card .name-input{width:150px!important;min-width:150px!important;max-width:150px!important;font-size:17px!important}.hero-card .line-button{width:80px!important;min-width:80px!important;max-width:80px!important;margin-top:30px!important;font-size:0!important}.hero-card .line-button .line-mark{font-size:11px!important}.hero-card .primary-button{width:100%;height:17%;min-height:92px;bottom:0!important}.job-grid,.action-grid{grid-template-columns:1fr!important}}
