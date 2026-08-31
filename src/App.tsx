@@ -41,6 +41,7 @@ const fallbackQuestion = { id: 0, word: 'brave', choices: ['安靜的', '勇敢�
 const jobName = (jobId?: string) => jobs.find((job) => job.id === jobId)?.name ?? '尚未選擇'
 const jobImage = (jobId?: string) => jobId ? `/images/jobs/${jobId === 'mage' ? 'Mage' : jobId}.png` : ''
 const jobHeadImage = (jobId?: string) => jobId ? `/images/jobs/${jobId === 'mage' ? 'Magehead' : `${jobId}head`}.png` : ''
+const roomImage = (id?: string) => id === 'sword' ? '/images/rooms/Holy%20Sword.png' : id === 'shadow' ? '/images/rooms/Shadow%20Blade.png' : id === 'bow' ? '/images/rooms/Azure%20Bow.png' : id === 'oracle' ? '/images/rooms/Oracle.png' : ''
 const phasePage = (state: RemoteRoomState): Page => state.phase === 'battle' ? 'battle' : state.phase === 'result' ? 'result' : state.phase === 'jobs' ? 'jobs' : 'lobby'
 
 const createDemoState = (name: string, roomId: string): RemoteRoomState => ({
@@ -67,6 +68,7 @@ export default function App() {
   const [effects, setEffects] = useState<Record<string, EffectKind>>({})
   const restoredRef = useRef(false)
   const tickRef = useRef('')
+  const autoStartRef = useRef('')
   const previousHpRef = useRef<Record<string, { hp: number; alive: boolean }>>({})
 
   const selectedRoom = useMemo(() => rooms.find((room) => room.id === roomId), [roomId])
@@ -135,6 +137,16 @@ export default function App() {
   }, [online, page, roomState?.round, roomState?.battlePhase, deadline, remainingSeconds, roomId])
 
   useEffect(() => {
+    if (!online || page !== 'jobs' || roomState?.phase !== 'jobs' || !me?.host || busy) return
+    const ready = roomState.players.length >= 2 && roomState.players.every((p) => p.jobId)
+    if (!ready) return
+    const key = `${roomId}:${roomState.players.map((p) => `${p.id}:${p.jobId}`).join('|')}`
+    if (autoStartRef.current === key) return
+    autoStartRef.current = key
+    void multiplayerApi.start(roomId, playerId).then(setRoomState).catch((err) => setError(err instanceof Error ? err.message : '開戰失敗'))
+  }, [online, page, roomState, me?.host, busy, roomId, playerId])
+
+  useEffect(() => {
     if (!roomState) return
     const previous = previousHpRef.current
     const nextPrevious: Record<string, { hp: number; alive: boolean }> = {}
@@ -188,17 +200,10 @@ export default function App() {
     setJobId(nextJobId)
     if (!roomState) return
     if (!online) {
-      setRoomState({ ...roomState, phase: 'jobs', players: roomState.players.map((p) => p.id === playerId ? { ...p, jobId: nextJobId } : p) }); return
+      const nextState = { ...roomState, phase: 'battle' as const, battlePhase: 'action' as const, round: 1, actionEndsAt: Date.now() + 5000, players: roomState.players.map((p) => p.id === playerId ? { ...p, jobId: nextJobId } : p), log: ['本機示範模式'] }
+      setRoomState(nextState); setPage('battle'); return
     }
     await run(async () => setRoomState(await multiplayerApi.chooseJob(roomId, playerId, nextJobId)))
-  }
-
-  const startBattle = async () => {
-    if (!roomState) return
-    if (!online) {
-      setRoomState({ ...roomState, phase: 'battle', battlePhase: 'action', round: 1, actionEndsAt: Date.now() + 5000, log: ['本機示範模式'] }); setPage('battle'); return
-    }
-    await run(async () => setRoomState(await multiplayerApi.start(roomId, playerId)))
   }
 
   const submitAction = async (action: RemoteAction) => {
@@ -246,21 +251,19 @@ export default function App() {
 
   if (page === 'lobby') {
     const players = roomState?.players ?? []
-    return <Screen title={selectedRoom?.name ?? '玩家大廳'} subtitle="2 人以上，選完職業後由房主開戰" onBack={() => void leaveRoom()}>
-      <ConnectionBar connected={connected} />
-      <div className="player-list">{players.map((p) => <PlayerRow key={p.id} player={p} label={p.host ? '房主' : undefined} />)}{Array.from({ length: Math.max(0, 4 - players.length) }).map((_, i) => <PlayerRow key={i} name="等待玩家加入…" muted />)}</div>
-      <div className="notice-box">目前 {players.length}/4 人。{players.length < 2 ? '至少需要 2 位玩家。' : '人數已足夠，可以選擇職業。'}</div>
-      <ErrorBox text={error} /><button className="primary-button" disabled={players.length < 2} onClick={() => setPage('jobs')} type="button">選擇職業</button>
-    </Screen>
+    return <main className="page-shell lobby-page"><section className="page-card lobby-card">
+      <button className="back-button" onClick={() => void leaveRoom()} type="button">← 返回</button>
+      <img className="lobby-room-image" src={roomImage(roomId)} alt={selectedRoom?.name ?? '房間'} />
+      <div className="player-list lobby-player-list">{players.map((p) => <PlayerRow key={p.id} player={p} label={p.host ? '房主' : undefined} />)}{Array.from({ length: Math.max(0, 4 - players.length) }).map((_, i) => <PlayerRow key={i} name="等待玩家加入…" muted />)}</div>
+      <ErrorBox text={error} />
+      <button className="primary-button lobby-start-button" disabled={players.length < 2} onClick={() => setPage('jobs')} type="button">開戰</button>
+    </section></main>
   }
 
   if (page === 'jobs') {
-    const everyoneReady = (roomState?.players.length ?? 0) >= 2 && roomState?.players.every((p) => p.jobId)
-    return <Screen title="選擇職業" subtitle="所有玩家選完職業後，由房主開戰" onBack={() => setPage('lobby')}>
-      <ConnectionBar connected={connected} />
+    return <Screen title="選擇職業" subtitle="選好職業後將自動開始對戰" onBack={() => setPage('lobby')}>
       <div className="job-grid">{jobs.map((job) => <button key={job.id} className={`job-card job-art-card ${(me?.jobId ?? jobId) === job.id ? 'selected' : ''}`} onClick={() => void chooseJob(job.id)} type="button" disabled={busy}><img className="job-full-art" src={jobImage(job.id)} alt={job.name} /><div className="job-card-copy"><span className="job-power-badge">{job.badge}</span><strong>{job.name}</strong><small>{job.feature}</small></div></button>)}</div>
-      <div className="player-list">{(roomState?.players ?? []).map((p) => <PlayerRow key={p.id} player={p} label={p.jobId ? jobName(p.jobId) : '選擇中'} />)}</div>
-      <ErrorBox text={error} />{me?.host ? <button className="primary-button" disabled={!everyoneReady || busy} onClick={() => void startBattle()} type="button">{everyoneReady ? '開戰' : '等待所有玩家選完職業'}</button> : <div className="notice-box">職業已選好後，等待房主開戰。</div>}
+      <ErrorBox text={error} />
     </Screen>
   }
 
@@ -274,9 +277,7 @@ export default function App() {
         <div className="stats"><span>HP {me?.hp ?? 0}/{me?.maxHp ?? 100}</span><span>ATK {me?.atk ?? 10}</span><span>DEF {me?.def ?? 5}</span>{me?.guard && <span>🛡 減傷</span>}</div>
         <div className="hp-track"><span style={{ width: `${Math.max(0, Math.min(100, ((me?.hp ?? 0) / Math.max(1, me?.maxHp ?? 100)) * 100))}%` }} /></div></div>
       </section>
-
       <section className="enemy-strip">{roomState.players.filter((p) => p.id !== playerId).map((p) => <PlayerBattle key={p.id} player={p} effect={effects[p.id]} />)}</section>
-
       <section className="battle-panel">
         <div className="battle-heading"><div><span className="mini-label">ROUND {roomState.round} / 10 · {livingPlayers.length} 人存活</span><h1>{roomState.battlePhase === 'quiz' ? '英文挑戰' : '選擇動作'}</h1></div><div className={`timer ${remainingSeconds <= 2 ? 'danger' : ''}`}>{remainingSeconds}</div></div>
         {roomState.battlePhase === 'action' && me?.alive && <><div className="action-grid">{actions.map((action) => <button key={action.id} className={`action-card ${me.action === action.id ? 'selected' : ''}`} disabled={Boolean(me.action)} onClick={() => void submitAction(action.id)} type="button"><span className="action-icon">{action.icon}</span><strong>{action.name}</strong><small>{action.desc}</small></button>)}</div>{me.action && <div className="notice-box">動作已鎖定，等待其他玩家。</div>}</>}
