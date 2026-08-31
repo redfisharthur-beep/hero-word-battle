@@ -68,7 +68,7 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === 'OPTIONS') return json({ ok: true })
     const url = new URL(request.url)
-    if (url.pathname === '/api/health') return json({ ok: true, service: 'hero-word-battle-api', version: '0.4.0' })
+    if (url.pathname === '/api/health') return json({ ok: true, service: 'hero-word-battle-api', version: '0.5.0' })
 
     const match = url.pathname.match(/^\/api\/rooms\/([^/]+)(\/.*)?$/)
     if (match) {
@@ -100,6 +100,13 @@ export class GameRoom extends DurableObject<Env> {
     state.log = state.log.slice(-12)
     this.stateData = state
     await this.ctx.storage.put('state', state)
+
+    const nextAlarm = state.phase === 'battle'
+      ? state.battlePhase === 'action' ? state.actionEndsAt : state.battlePhase === 'quiz' ? state.quizEndsAt : undefined
+      : undefined
+    if (nextAlarm) await this.ctx.storage.setAlarm(nextAlarm)
+    else await this.ctx.storage.deleteAlarm()
+
     const payload = JSON.stringify({ type: 'state', state })
     for (const ws of this.ctx.getWebSockets()) {
       try { ws.send(payload) } catch { /* disconnected */ }
@@ -127,6 +134,12 @@ export class GameRoom extends DurableObject<Env> {
       p.answered = !p.alive
       p.coefficient = p.alive ? undefined : 0
     }
+  }
+
+  private coefficientFromDeadline(state: RoomState) {
+    if (!state.quizEndsAt) return 0
+    const remainingSeconds = Math.max(0, Math.ceil((state.quizEndsAt - Date.now()) / 1000))
+    return remainingSeconds >= 7 ? 4 : remainingSeconds >= 5 ? 3 : remainingSeconds >= 3 ? 2 : remainingSeconds >= 1 ? 1 : 0
   }
 
   private applyAction(actor: Player, state: RoomState) {
@@ -260,11 +273,12 @@ export class GameRoom extends DurableObject<Env> {
     if (url.pathname === '/answer' && request.method === 'POST') {
       if (this.advanceTimeouts(state)) { await this.save(state); return json(state) }
       if (state.phase !== 'battle' || state.battlePhase !== 'quiz') return json({ error: 'Not accepting answers' }, 409)
-      const body = await request.json() as { playerId?: string; choice?: string; coefficient?: number }; const player = state.players.find((p) => p.id === body.playerId)
+      const body = await request.json() as { playerId?: string; choice?: string }; const player = state.players.find((p) => p.id === body.playerId)
       if (!player?.alive) return json({ error: 'Player not available' }, 404)
       if (player.answered) return json({ error: 'Already answered' }, 409)
       const q = questions[state.questionIndex % questions.length]
-      player.answered = true; player.coefficient = body.choice === q.answer ? clampCoefficient(Number(body.coefficient || 0)) : 0
+      player.answered = true
+      player.coefficient = body.choice === q.answer ? this.coefficientFromDeadline(state) : 0
       if (state.players.filter((p) => p.alive).every((p) => p.answered)) this.resolveRound(state)
       await this.save(state); return json(state)
     }
@@ -287,6 +301,11 @@ export class GameRoom extends DurableObject<Env> {
     }
 
     return json({ error: 'Not found' }, 404)
+  }
+
+  async alarm() {
+    const state = await this.getState()
+    if (this.advanceTimeouts(state)) await this.save(state)
   }
 
   webSocketMessage(ws: WebSocket, message: string | ArrayBuffer) { if (typeof message === 'string' && message === 'ping') ws.send('pong') }
