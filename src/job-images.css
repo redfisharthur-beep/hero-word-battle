@@ -1,0 +1,123 @@
+.job-art-card {
+  padding: 0;
+  overflow: hidden;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(2,6,23,.78);
+}
+
+.job-full-art {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  display: block;
+  padding: 6px 6px 0;
+  filter: drop-shadow(0 12px 20px rgba(0,0,0,.26));
+  transition: transform .22s ease, filter .22s ease;
+}
+
+.job-art-card:hover:not(:disabled) .job-full-art,
+.job-art-card.selected .job-full-art {
+  transform: scale(1.035);
+  filter: drop-shadow(0 14px 26px rgba(56,189,248,.22));
+}
+
+.job-card-copy {
+  width: 100%;
+  display: grid;
+  gap: 5px;
+  padding: 10px 12px 14px;
+  text-align: center;
+}
+
+.job-card-copy strong { font-size: 17px; }
+.job-card-copy small { font-size: 11px; }
+.job-power-badge {
+  justify-self: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 9px;
+  letter-spacing: .12em;
+  color: #bfdbfe;
+  background: rgba(37,99,235,.2);
+}
+
+.character-head,
+.character-head-placeholder {
+  flex: 0 0 auto;
+  width: 50px;
+  height: 50px;
+  border-radius: 15px;
+}
+
+.character-head {
+  object-fit: contain;
+  padding: 2px;
+  background: radial-gradient(circle at 50% 38%, rgba(255,255,255,.12), rgba(15,23,42,.42));
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.28));
+}
+
+.character-head.large,
+.character-head-placeholder.large {
+  width: 92px;
+  height: 92px;
+  border-radius: 24px;
+}
+
+.character-head-placeholder {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(56,189,248,.15), rgba(99,102,241,.12));
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.player-row-with-head { min-height: 68px; }
+
+.character-status-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.character-status-body { min-width: 0; }
+
+.enemy-card-with-head {
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+}
+
+.enemy-card-with-head .mini-hp { grid-column: 1 / -1; }
+
+.rank-with-head {
+  grid-template-columns: 42px 54px 1fr auto;
+}
+
+.rank-player-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rank-player-copy > strong {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rank-player-copy small {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+@media (max-width: 760px) {
+  .job-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .job-art-card { min-height: 225px; }
+  .job-full-art { aspect-ratio: 1 / .92; }
+  .job-art-card:last-child { grid-column: auto; }
+  .character-head.large,
+  .character-head-placeholder.large { width: 74px; height: 74px; border-radius: 20px; }
+  .character-status-card { gap: 11px; }
+  .rank-with-head { grid-template-columns: 34px 46px 1fr auto; gap: 8px; padding: 12px 10px; }
+  .rank-with-head .character-head { width: 44px; height: 44px; }
+}
