@@ -58,7 +58,7 @@ const questions: Question[] = [
   { id: 12, word: 'danger', answer: '危險', choices: ['安全', '危險', '和平'] },
 ]
 
-const jobs = new Set(['assassin', 'warrior', 'fighter', 'archer', 'priest'])
+const jobs = new Set(['assassin', 'warrior', 'fighter', 'archer', 'priest', 'mage'])
 const actions = new Set<ActionName>(['upgrade', 'attack', 'heal', 'finish', 'guard'])
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*', 'access-control-allow-headers': 'content-type', 'access-control-allow-methods': 'GET,POST,OPTIONS' } })
 const publicQuestion = (q: Question): PublicQuestion => ({ id: q.id, word: q.word, choices: q.choices })
@@ -68,7 +68,7 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === 'OPTIONS') return json({ ok: true })
     const url = new URL(request.url)
-    if (url.pathname === '/api/health') return json({ ok: true, service: 'hero-word-battle-api', version: '0.5.0' })
+    if (url.pathname === '/api/health') return json({ ok: true, service: 'hero-word-battle-api', version: '0.6.0' })
 
     const match = url.pathname.match(/^\/api\/rooms\/([^/]+)(\/.*)?$/)
     if (match) {
@@ -170,6 +170,21 @@ export class GameRoom extends DurableObject<Env> {
 
     if (action === 'guard') { actor.guard = true; return `${actor.name} 進入減傷狀態。` }
     if (!targets.length) return `${actor.name} 找不到攻擊目標。`
+
+    if (action === 'attack' && actor.jobId === 'mage') {
+      let totalDamage = 0
+      let knockedOut = 0
+      for (const target of targets) {
+        const raw = Math.max(1, Math.round(actor.atk * coefficient * .45 - target.def * .5))
+        const damage = target.guard ? Math.max(1, Math.round(raw * .5)) : raw
+        target.guard = false
+        target.hp = Math.max(0, target.hp - damage)
+        target.alive = target.hp > 0
+        totalDamage += damage
+        if (!target.alive) knockedOut += 1
+      }
+      return `${actor.name} 施放範圍魔法，攻擊全體 ${targets.length} 人，共造成 ${totalDamage} 傷害${knockedOut ? `（擊倒 ${knockedOut} 人）` : ''}`
+    }
 
     const target = [...targets].sort((a, b) => action === 'attack' ? b.hp - a.hp : a.hp - b.hp)[0]
     const raw = Math.max(1, Math.round(actor.atk * coefficient * (action === 'finish' ? 1.15 : 1) * jobMultiplier - target.def))
