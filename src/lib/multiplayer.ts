@@ -16,11 +16,7 @@ export type RemotePlayer = {
   coefficient?: number
 }
 
-export type RemoteQuestion = {
-  id: number
-  word: string
-  choices: string[]
-}
+export type RemoteQuestion = { id: number; word: string; choices: string[] }
 
 export type RemoteRoomState = {
   roomId: string
@@ -36,7 +32,13 @@ export type RemoteRoomState = {
 }
 
 const configuredBaseUrl = () => (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
-const getBaseUrl = () => configuredBaseUrl() || (typeof window !== 'undefined' ? window.location.origin : '')
+const getBaseUrl = () => {
+  const configured = configuredBaseUrl()
+  if (configured) return configured
+  if (typeof window === 'undefined') return ''
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return ''
+  return window.location.origin
+}
 
 export const hasMultiplayerApi = () => Boolean(getBaseUrl())
 
@@ -56,7 +58,6 @@ async function apiRequest<T>(path: string, body?: unknown): Promise<T> {
 export function connectRoom(roomId: string, onState: (state: RemoteRoomState) => void, onConnection?: (connected: boolean) => void) {
   const baseUrl = getBaseUrl()
   if (!baseUrl) return () => undefined
-
   const wsBase = baseUrl.replace(/^http/, 'ws')
   let stopped = false
   let socket: WebSocket | null = null
@@ -77,9 +78,7 @@ export function connectRoom(roomId: string, onState: (state: RemoteRoomState) =>
       try {
         const payload = JSON.parse(event.data)
         if (payload?.type === 'state' && payload.state) onState(payload.state)
-      } catch {
-        // Ignore malformed realtime packets.
-      }
+      } catch { /* ignore malformed packets */ }
     }
     socket.onclose = () => {
       onConnection?.(false)
@@ -90,7 +89,6 @@ export function connectRoom(roomId: string, onState: (state: RemoteRoomState) =>
   }
 
   connect()
-
   return () => {
     stopped = true
     if (pingTimer) window.clearInterval(pingTimer)
@@ -103,20 +101,12 @@ export function connectRoom(roomId: string, onState: (state: RemoteRoomState) =>
 export const multiplayerApi = {
   health: () => apiRequest<{ ok: boolean }>('/api/health'),
   state: (roomId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/state`),
-  join: (roomId: string, name: string, playerId?: string) =>
-    apiRequest<{ playerId: string; state: RemoteRoomState }>(`/api/rooms/${encodeURIComponent(roomId)}/join`, { name, playerId }),
-  chooseJob: (roomId: string, playerId: string, jobId: string) =>
-    apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/choose-job`, { playerId, jobId }),
-  start: (roomId: string, playerId: string) =>
-    apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/start`, { playerId }),
-  action: (roomId: string, playerId: string, action: RemoteAction) =>
-    apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/action`, { playerId, action }),
-  answer: (roomId: string, playerId: string, choice: string, coefficient: number) =>
-    apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/answer`, { playerId, choice, coefficient }),
-  tick: (roomId: string) =>
-    apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/tick`, {}),
-  leave: (roomId: string, playerId: string) =>
-    apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/leave`, { playerId }),
-  reset: (roomId: string, playerId: string) =>
-    apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/reset`, { playerId }),
+  join: (roomId: string, name: string, playerId?: string) => apiRequest<{ playerId: string; state: RemoteRoomState }>(`/api/rooms/${encodeURIComponent(roomId)}/join`, { name, playerId }),
+  chooseJob: (roomId: string, playerId: string, jobId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/choose-job`, { playerId, jobId }),
+  start: (roomId: string, playerId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/start`, { playerId }),
+  action: (roomId: string, playerId: string, action: RemoteAction) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/action`, { playerId, action }),
+  answer: (roomId: string, playerId: string, choice: string, coefficient: number) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/answer`, { playerId, choice, coefficient }),
+  tick: (roomId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/tick`, {}),
+  leave: (roomId: string, playerId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/leave`, { playerId }),
+  reset: (roomId: string, playerId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/reset`, { playerId }),
 }
