@@ -51,6 +51,7 @@ type ActionResult = {
   text: string
   changes: StatChange[]
 }
+type Snapshot = Map<string, { hp: number; maxHp: number; atk: number; def: number; guard: boolean; alive: boolean }>
 
 type RoomState = {
   roomId: string
@@ -102,7 +103,7 @@ export default {
     if (request.method === 'OPTIONS') return json({ ok: true })
     const url = new URL(request.url)
     if (url.pathname === '/api/health') {
-      return json({ ok: true, service: 'hero-word-battle-api', version: '0.9.0', vocabularyCounts })
+      return json({ ok: true, service: 'hero-word-battle-api', version: '0.9.1', vocabularyCounts })
     }
     const m = url.pathname.match(/^\/api\/rooms\/([^/]+)(\/.*)?$/)
     if (m) {
@@ -276,7 +277,7 @@ export class GameRoom extends DurableObject<Env> {
     for (const p of s.players) {
       p.answered = !p.alive
       p.coefficient = p.alive ? undefined : 0
-      p.answeredAt = p.alive ? undefined : Date.now()
+      p.answeredAt = undefined
       p.answerCorrect = p.alive ? undefined : false
     }
   }
@@ -287,7 +288,7 @@ export class GameRoom extends DurableObject<Env> {
     return n >= 7 ? 4 : n >= 5 ? 3 : n >= 3 ? 2 : n >= 1 ? 1 : 0
   }
 
-  private snapshot(s: RoomState) {
+  private snapshot(s: RoomState): Snapshot {
     return new Map(
       s.players.map((p) => [
         p.id,
@@ -296,7 +297,7 @@ export class GameRoom extends DurableObject<Env> {
     )
   }
 
-  private changesFrom(before: ReturnType<GameRoom['snapshot']>, s: RoomState): StatChange[] {
+  private changesFrom(before: Snapshot, s: RoomState): StatChange[] {
     const changes: StatChange[] = []
     for (const p of s.players) {
       const old = before.get(p.id)
@@ -417,7 +418,7 @@ export class GameRoom extends DurableObject<Env> {
     s.battlePhase = 'resolve'
     s.quizEndsAt = undefined
     s.question = undefined
-    const aliveThisTurn = s.players.filter((p) => p.answeredAt !== undefined)
+    const aliveThisTurn = s.players.filter((p) => p.alive && p.answeredAt !== undefined)
     aliveThisTurn.sort((a, b) => (a.answeredAt ?? Number.MAX_SAFE_INTEGER) - (b.answeredAt ?? Number.MAX_SAFE_INTEGER))
     s.resolveQueue = aliveThisTurn.map((p) => p.id)
     s.resolveIndex = 0
