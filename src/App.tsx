@@ -170,16 +170,17 @@ export default function App() {
     setName(trimmed); setPage('rooms')
   }
 
-  const enterRoom = async () => {
-    if (!roomId) return
+  const enterRoom = async (nextRoomId = roomId) => {
+    if (!nextRoomId || busy) return
+    setRoomId(nextRoomId)
     if (!online) {
-      const demo = createDemoState(name, roomId); setPlayerId('demo-me'); setRoomState(demo); setPage('lobby'); return
+      const demo = createDemoState(name, nextRoomId); setPlayerId('demo-me'); setRoomState(demo); setPage('lobby'); return
     }
     await run(async () => {
-      const joined = await multiplayerApi.join(roomId, name, playerId || undefined)
+      const joined = await multiplayerApi.join(nextRoomId, name, playerId || undefined)
       setPlayerId(joined.playerId); setRoomState(joined.state); setPage(phasePage(joined.state))
       localStorage.setItem('hero-player-id', joined.playerId)
-      localStorage.setItem('hero-room-id', roomId)
+      localStorage.setItem('hero-room-id', nextRoomId)
     })
   }
 
@@ -237,18 +238,10 @@ export default function App() {
   }
 
   if (page === 'rooms') {
-    return <Screen title="選擇決鬥房間" subtitle={`勇者 ${name}，選一座競技場加入`} onBack={() => setPage('home')}>
-      <div className="room-grid">
-        {rooms.map((room, index) => {
-          const count = roomCounts[room.id] ?? 0
-          return <button key={room.id} className={`room-card ${roomId === room.id ? 'selected' : ''}`} onClick={() => setRoomId(room.id)} type="button" disabled={online && count >= 4}>
-            <span className="room-number">0{index + 1}</span><strong>{room.name}</strong><small>{room.subtitle}</small>
-            <span className="room-status">{online ? `${count}/4 人 · ${count >= 4 ? '已滿' : '可加入'}` : '本機測試模式'}</span>
-          </button>
-        })}
-      </div>
-      <ErrorBox text={error} /><button className="primary-button" disabled={!roomId || busy} onClick={() => void enterRoom()} type="button">{busy ? '連線中…' : '進入房間'}</button>
-    </Screen>
+    return <main className="page-shell rooms-page"><section className="page-card rooms-card"><button className="back-button" onClick={() => setPage('home')} type="button">← 返回</button><div className="room-grid">{rooms.map((room) => {
+      const count = roomCounts[room.id] ?? 0
+      return <button key={room.id} className="room-card" onClick={() => void enterRoom(room.id)} type="button" disabled={busy || (online && count >= 4)} aria-label={room.name} />
+    })}</div><ErrorBox text={error} /></section></main>
   }
 
   if (page === 'lobby') {
