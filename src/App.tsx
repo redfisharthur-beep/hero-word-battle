@@ -6,11 +6,12 @@ import {
   type RemoteAction,
   type RemoteRoomState,
 } from './lib/multiplayer'
+import './job-images.css'
 
 type Page = 'home' | 'rooms' | 'lobby' | 'jobs' | 'battle' | 'result'
 type Job = { id: string; name: string; feature: string; badge: string }
-
 type EffectKind = 'hit' | 'heal' | 'ko' | 'buff'
+type RemotePlayer = RemoteRoomState['players'][number]
 
 const rooms = [
   { id: 'sword', name: '聖劍試煉場', subtitle: '勇者們以榮耀決勝' },
@@ -37,6 +38,8 @@ const actions: { id: RemoteAction; name: string; icon: string; desc: string }[] 
 
 const fallbackQuestion = { id: 0, word: 'brave', choices: ['安靜的', '勇敢的', '飢餓的'] }
 const jobName = (jobId?: string) => jobs.find((job) => job.id === jobId)?.name ?? '尚未選擇'
+const jobImage = (jobId?: string) => jobId ? `/images/jobs/${jobId}.png` : ''
+const jobHeadImage = (jobId?: string) => jobId ? `/images/jobs/${jobId}head.png` : ''
 const phasePage = (state: RemoteRoomState): Page => state.phase === 'battle' ? 'battle' : state.phase === 'result' ? 'result' : state.phase === 'jobs' ? 'jobs' : 'lobby'
 
 const createDemoState = (name: string, roomId: string): RemoteRoomState => ({
@@ -80,8 +83,7 @@ export default function App() {
   }, [online, roomId, playerId])
 
   useEffect(() => {
-    if (!roomState) return
-    setPage(phasePage(roomState))
+    if (roomState) setPage(phasePage(roomState))
   }, [roomState?.phase])
 
   useEffect(() => {
@@ -94,9 +96,7 @@ export default function App() {
     setBusy(true)
     multiplayerApi.join(savedRoom, savedName, savedPlayer)
       .then(({ playerId: restoredPlayer, state }) => {
-        setRoomId(savedRoom)
-        setPlayerId(restoredPlayer)
-        setRoomState(state)
+        setRoomId(savedRoom); setPlayerId(restoredPlayer); setRoomState(state)
         setJobId(state.players.find((p) => p.id === restoredPlayer)?.jobId ?? '')
         setPage(phasePage(state))
       })
@@ -254,7 +254,7 @@ export default function App() {
     const players = roomState?.players ?? []
     return <Screen title={selectedRoom?.name ?? '玩家大廳'} subtitle="2 人以上，選完職業後由房主開戰" onBack={() => void leaveRoom()}>
       <ConnectionBar connected={connected} />
-      <div className="player-list">{players.map((p) => <PlayerRow key={p.id} name={p.name} label={p.host ? '房主' : undefined} />)}{Array.from({ length: Math.max(0, 4 - players.length) }).map((_, i) => <PlayerRow key={i} name="等待玩家加入…" muted />)}</div>
+      <div className="player-list">{players.map((p) => <PlayerRow key={p.id} player={p} label={p.host ? '房主' : undefined} />)}{Array.from({ length: Math.max(0, 4 - players.length) }).map((_, i) => <PlayerRow key={i} name="等待玩家加入…" muted />)}</div>
       <div className="notice-box">目前 {players.length}/4 人。{players.length < 2 ? '至少需要 2 位玩家。' : '人數已足夠，可以選擇職業。'}</div>
       <ErrorBox text={error} /><button className="primary-button" disabled={players.length < 2} onClick={() => setPage('jobs')} type="button">選擇職業</button>
     </Screen>
@@ -264,8 +264,8 @@ export default function App() {
     const everyoneReady = (roomState?.players.length ?? 0) >= 2 && roomState?.players.every((p) => p.jobId)
     return <Screen title="選擇職業" subtitle="所有玩家選完職業後，由房主開戰" onBack={() => setPage('lobby')}>
       <ConnectionBar connected={connected} />
-      <div className="job-grid">{jobs.map((job) => <button key={job.id} className={`job-card ${(me?.jobId ?? jobId) === job.id ? 'selected' : ''}`} onClick={() => void chooseJob(job.id)} type="button" disabled={busy}><span className="job-avatar">{job.badge}</span><strong>{job.name}</strong><small>{job.feature}</small></button>)}</div>
-      <div className="player-list">{(roomState?.players ?? []).map((p) => <PlayerRow key={p.id} name={p.name} label={p.jobId ? jobName(p.jobId) : '選擇中'} />)}</div>
+      <div className="job-grid">{jobs.map((job) => <button key={job.id} className={`job-card job-art-card ${(me?.jobId ?? jobId) === job.id ? 'selected' : ''}`} onClick={() => void chooseJob(job.id)} type="button" disabled={busy}><img className="job-full-art" src={jobImage(job.id)} alt={job.name} /><div className="job-card-copy"><span className="job-power-badge">{job.badge}</span><strong>{job.name}</strong><small>{job.feature}</small></div></button>)}</div>
+      <div className="player-list">{(roomState?.players ?? []).map((p) => <PlayerRow key={p.id} player={p} label={p.jobId ? jobName(p.jobId) : '選擇中'} />)}</div>
       <ErrorBox text={error} />{me?.host ? <button className="primary-button" disabled={!everyoneReady || busy} onClick={() => void startBattle()} type="button">{everyoneReady ? '開戰' : '等待所有玩家選完職業'}</button> : <div className="notice-box">職業已選好後，等待房主開戰。</div>}
     </Screen>
   }
@@ -274,21 +274,19 @@ export default function App() {
     const myEffect = me ? effects[me.id] : undefined
     return <main className="battle-shell">
       <ConnectionBar connected={connected} />
-      <section className={`status-card self-card ${myEffect ? `fx-${myEffect}` : ''}`}>
-        <div className="self-top"><div><span className="mini-label">YOU · {jobName(me?.jobId)}</span><h2>{me?.name ?? name}</h2></div><span className={`alive-badge ${me?.alive ? '' : 'down'}`}>{me?.alive ? '戰鬥中' : '已擊倒'}</span></div>
+      <section className={`status-card self-card character-status-card ${myEffect ? `fx-${myEffect}` : ''}`}>
+        <CharacterHead player={me} size="large" />
+        <div className="character-status-body"><div className="self-top"><div><span className="mini-label">YOU · {jobName(me?.jobId)}</span><h2>{me?.name ?? name}</h2></div><span className={`alive-badge ${me?.alive ? '' : 'down'}`}>{me?.alive ? '戰鬥中' : '已擊倒'}</span></div>
         <div className="stats"><span>HP {me?.hp ?? 0}/{me?.maxHp ?? 100}</span><span>ATK {me?.atk ?? 10}</span><span>DEF {me?.def ?? 5}</span>{me?.guard && <span>🛡 減傷</span>}</div>
-        <div className="hp-track"><span style={{ width: `${Math.max(0, Math.min(100, ((me?.hp ?? 0) / Math.max(1, me?.maxHp ?? 100)) * 100))}%` }} /></div>
+        <div className="hp-track"><span style={{ width: `${Math.max(0, Math.min(100, ((me?.hp ?? 0) / Math.max(1, me?.maxHp ?? 100)) * 100))}%` }} /></div></div>
       </section>
 
       <section className="enemy-strip">{roomState.players.filter((p) => p.id !== playerId).map((p) => <PlayerBattle key={p.id} player={p} effect={effects[p.id]} />)}</section>
 
       <section className="battle-panel">
         <div className="battle-heading"><div><span className="mini-label">ROUND {roomState.round} / 10 · {livingPlayers.length} 人存活</span><h1>{roomState.battlePhase === 'quiz' ? '英文挑戰' : '選擇動作'}</h1></div><div className={`timer ${remainingSeconds <= 2 ? 'danger' : ''}`}>{remainingSeconds}</div></div>
-
         {roomState.battlePhase === 'action' && me?.alive && <><div className="action-grid">{actions.map((action) => <button key={action.id} className={`action-card ${me.action === action.id ? 'selected' : ''}`} disabled={Boolean(me.action)} onClick={() => void submitAction(action.id)} type="button"><span className="action-icon">{action.icon}</span><strong>{action.name}</strong><small>{action.desc}</small></button>)}</div>{me.action && <div className="notice-box">動作已鎖定，等待其他玩家。</div>}</>}
-
         {roomState.battlePhase === 'quiz' && me?.alive && <div className="quiz-card"><div className="word-line"><div><span className="mini-label">LISTEN & CHOOSE</span><strong className="word">{question.word}</strong></div><button className="speak-button" type="button" onClick={speakWord}>🔊 發音</button></div><p className="quiz-help">越快答對，技能效果越強。</p><div className="score-guide"><span>7–8 秒 ×4</span><span>5–6 秒 ×3</span><span>3–4 秒 ×2</span><span>1–2 秒 ×1</span></div><div className="answer-grid">{question.choices.map((choice) => <button key={choice} type="button" disabled={Boolean(me.answered) || remainingSeconds <= 0} onClick={() => void submitAnswer(choice)}>{choice}</button>)}</div>{me.answered && <div className="notice-box">答案已送出，等待其他玩家。</div>}</div>}
-
         {!me?.alive && <div className="notice-box">你已被擊倒，可以觀看剩餘玩家完成對戰。</div>}
         {latestLog && <div className={`action-banner ${latestLog.includes('擊倒') ? 'ko-banner' : ''}`}>{latestLog}</div>}
         <ErrorBox text={error} />
@@ -299,7 +297,7 @@ export default function App() {
 
   if (page === 'result') {
     return <Screen title="對戰結果" subtitle="排行榜依剩餘生命值決定" onBack={() => void leaveRoom()}>
-      <div className="ranking-list">{sortedResults.map((p, index) => <div key={p.id} className={`rank-row ${index === 0 ? 'champion' : ''}`}><b>{index + 1}</b><span>{p.name} · {jobName(p.jobId)}</span><strong>HP {p.hp}</strong></div>)}</div>
+      <div className="ranking-list">{sortedResults.map((p, index) => <div key={p.id} className={`rank-row rank-with-head ${index === 0 ? 'champion' : ''}`}><b>{index + 1}</b><CharacterHead player={p} /><span className="rank-player-copy"><strong>{p.name}</strong><small>{jobName(p.jobId)}</small></span><strong>HP {p.hp}</strong></div>)}</div>
       {me?.host && online ? <button className="primary-button" type="button" onClick={() => void run(async () => { const state = await multiplayerApi.reset(roomId, playerId); setRoomState(state); setPage('jobs') })}>再戰一場</button> : <button className="primary-button" type="button" onClick={() => void leaveRoom()}>返回房間選擇</button>}
     </Screen>
   }
@@ -315,13 +313,18 @@ function ConnectionBar({ connected }: { connected: boolean }) {
   return <div className={`connection-bar ${connected ? 'online' : 'offline'}`}><span />{connected ? '即時連線中' : '連線中斷，正在自動重連…'}</div>
 }
 
-function PlayerRow({ name, label, muted = false }: { name: string; label?: string; muted?: boolean }) {
-  return <div className={`player-row ${muted ? 'muted' : ''}`}><span className="player-dot" /><strong>{name}</strong>{label && <em>{label}</em>}</div>
+function CharacterHead({ player, size = 'small' }: { player?: RemotePlayer; size?: 'small' | 'large' }) {
+  if (!player?.jobId) return <span className={`character-head-placeholder ${size}`} />
+  return <img className={`character-head ${size}`} src={jobHeadImage(player.jobId)} alt={jobName(player.jobId)} />
 }
 
-function PlayerBattle({ player, effect }: { player: RemoteRoomState['players'][number]; effect?: EffectKind }) {
+function PlayerRow({ player, name, label, muted = false }: { player?: RemotePlayer; name?: string; label?: string; muted?: boolean }) {
+  return <div className={`player-row player-row-with-head ${muted ? 'muted' : ''}`}>{player ? <CharacterHead player={player} /> : <span className="player-dot" />}<strong>{player?.name ?? name}</strong>{label && <em>{label}</em>}</div>
+}
+
+function PlayerBattle({ player, effect }: { player: RemotePlayer; effect?: EffectKind }) {
   const hpPercent = Math.max(0, Math.min(100, player.hp / Math.max(1, player.maxHp) * 100))
-  return <div className={`enemy-card ${!player.alive ? 'muted' : ''} ${effect ? `fx-${effect}` : ''}`}><div><strong>{player.name}</strong><small>{jobName(player.jobId)}</small></div><span>{player.alive ? `HP ${player.hp}/${player.maxHp}` : 'K.O.'}</span><div className="mini-hp"><i style={{ width: `${hpPercent}%` }} /></div></div>
+  return <div className={`enemy-card enemy-card-with-head ${!player.alive ? 'muted' : ''} ${effect ? `fx-${effect}` : ''}`}><CharacterHead player={player} /><div><strong>{player.name}</strong><small>{jobName(player.jobId)}</small></div><span>{player.alive ? `HP ${player.hp}/${player.maxHp}` : 'K.O.'}</span><div className="mini-hp"><i style={{ width: `${hpPercent}%` }} /></div></div>
 }
 
 function ErrorBox({ text }: { text: string }) { return text ? <div className="notice-box">⚠️ {text}</div> : null }
