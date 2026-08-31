@@ -32,14 +32,20 @@ button,input { max-width:100%; }
 .hero-card .primary-button { position:absolute!important; left:50%; bottom:0!important; transform:translateX(-50%); z-index:10; width:92%; height:14%; min-height:72px; margin:0!important; padding:0!important; border:0!important; border-radius:0!important; background:transparent!important; box-shadow:none!important; backdrop-filter:none!important; color:transparent!important; font-size:0!important; text-shadow:none!important; opacity:1!important; pointer-events:auto!important; touch-action:manipulation; }
 .hero-card .primary-button:hover:not(:disabled),.hero-card .primary-button:active { transform:translateX(-50%)!important; background:transparent!important; box-shadow:none!important; }
 
-.room-grid { grid-template-columns:1fr!important; width:min(620px,100%); margin-left:auto; margin-right:auto; }
-.room-card { position:relative; overflow:hidden; isolation:isolate; min-height:210px; padding:0; background-size:cover!important; background-position:center!important; font-size:0; }
+.rooms-page { min-height:100dvh; align-items:flex-start; }
+.rooms-card { width:100%; max-width:520px; background:transparent!important; border:0!important; box-shadow:none!important; padding-top:18px!important; }
+.rooms-card .back-button { margin-bottom:24px; }
+.room-grid { display:flex!important; flex-direction:column; align-items:center; gap:18px; width:100%; margin:0 auto; }
+.room-card { position:relative; overflow:hidden; isolation:isolate; width:200px!important; min-width:200px!important; max-width:200px!important; height:120px!important; min-height:120px!important; padding:0!important; border:0!important; border-radius:14px; background-size:contain!important; background-repeat:no-repeat!important; background-position:center!important; font-size:0; transform:scale(1); transition:transform .16s ease,filter .16s ease; touch-action:manipulation; }
 .room-card::before,.room-card>* { display:none!important; }
 .room-card:nth-child(1) { background-image:url('/images/rooms/Holy%20Sword.png')!important; }
 .room-card:nth-child(2) { background-image:url('/images/rooms/Shadow%20Blade.png')!important; }
 .room-card:nth-child(3) { background-image:url('/images/rooms/Azure%20Bow.png')!important; }
 .room-card:nth-child(4) { background-image:url('/images/rooms/Oracle.png')!important; }
-.room-card.selected { box-shadow:0 0 0 3px #38bdf8 inset,0 0 22px rgba(56,189,248,.28); }
+.room-card:hover:not(:disabled),.room-card:focus-visible { transform:scale(1.10); }
+.room-card:active:not(:disabled) { transform:scale(1.16); }
+.room-card:disabled { filter:grayscale(.65); opacity:.55; }
+
 .action-card { min-height:165px; padding:0; position:relative; overflow:hidden; isolation:isolate; background-size:cover!important; background-position:center!important; font-size:0; }
 .action-card::before,.action-card>* { display:none!important; }
 .action-card:nth-child(1) { background-image:url('/images/actions/upgrade.png')!important; }
@@ -51,7 +57,7 @@ button,input { max-width:100%; }
 
 @media(max-width:900px){.page-shell,.battle-shell{padding-left:clamp(10px,3vw,18px);padding-right:clamp(10px,3vw,18px)}.page-card,.battle-panel{padding:clamp(16px,4vw,24px)}.action-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){
-  .job-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.job-art-card{min-height:0}.job-full-art{aspect-ratio:1/1}.job-art-card:last-child{grid-column:auto}.character-head.large,.character-head-placeholder.large{width:74px;height:74px;border-radius:20px}.character-status-card{gap:11px}.rank-with-head{grid-template-columns:34px 46px 1fr auto;gap:8px;padding:12px 10px}.rank-with-head .character-head{width:44px;height:44px}.room-card{min-height:clamp(150px,38vw,180px)}.action-card{min-height:clamp(110px,31vw,150px)}
+  .job-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.job-art-card{min-height:0}.job-full-art{aspect-ratio:1/1}.job-art-card:last-child{grid-column:auto}.character-head.large,.character-head-placeholder.large{width:74px;height:74px;border-radius:20px}.character-status-card{gap:11px}.rank-with-head{grid-template-columns:34px 46px 1fr auto;gap:8px;padding:12px 10px}.rank-with-head .character-head{width:44px;height:44px}.action-card{min-height:clamp(110px,31vw,150px)}
   .app-shell{padding:0!important;min-height:100dvh!important;width:100%!important;}
   .hero-card{width:100vw!important;height:100dvh!important;min-height:100dvh!important;max-width:none!important;aspect-ratio:auto!important;border-radius:0!important;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))!important;background-size:cover!important;background-position:center!important;}
   .hero-card .login-panel{top:50%;width:140px!important;gap:10px}
@@ -59,6 +65,7 @@ button,input { max-width:100%; }
   .hero-card .name-input{padding:8px 6px!important;font-size:18px!important;line-height:1.15!important;text-align:center!important;}
   .hero-card .line-button{padding:8px 6px!important;font-size:12px!important;line-height:1.1!important;white-space:normal!important;}
   .hero-card .primary-button{width:96%;height:15%;bottom:0!important;min-height:84px}
+  .rooms-page{padding:0 10px 24px!important}.rooms-card{padding:14px 0 24px!important}.rooms-card .back-button{margin-left:8px}.room-grid{gap:14px}.room-card{width:200px!important;min-width:200px!important;max-width:200px!important;height:120px!important;min-height:120px!important}
 }
 @media(max-width:480px){.hero-card .login-panel{top:50%;width:140px!important;gap:9px}.hero-card .name-input,.hero-card .line-button{width:100px!important;min-width:100px!important;max-width:100px!important}.hero-card .name-input{font-size:18px!important}.hero-card .line-button{font-size:12px!important}.hero-card .primary-button{width:100%;height:16%;min-height:90px;bottom:0!important}.action-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.enemy-strip{grid-template-columns:1fr}.answer-grid{grid-template-columns:1fr}.score-guide{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:360px){.hero-card .login-panel{top:50%;width:140px!important}.hero-card .name-input,.hero-card .line-button{width:100px!important;min-width:100px!important;max-width:100px!important}.hero-card .name-input{font-size:17px!important}.hero-card .line-button{font-size:11px!important}.hero-card .primary-button{width:100%;height:17%;min-height:92px;bottom:0!important}.job-grid,.action-grid{grid-template-columns:1fr!important}}
