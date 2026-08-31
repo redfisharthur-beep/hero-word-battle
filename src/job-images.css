@@ -24,10 +24,8 @@ button,input { max-width:100%; }
 .hero-card { position:relative; overflow:hidden; isolation:isolate; width:min(94vw,560px)!important; min-height:0!important; aspect-ratio:4/5.35; padding:clamp(18px,4vw,32px)!important; background-color:#0f172a!important; background-image:url("/images/home/front page.png")!important; background-repeat:no-repeat!important; background-size:contain!important; background-position:center!important; }
 .hero-card::before { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:transparent; }
 .hero-card>* { position:relative; z-index:1; }
-.hero-card h1,.hero-card .subtitle,.hero-card .divider,.hero-card .hint { display:none!important; }
-.hero-card .eyebrow { margin-top:1%; font-size:clamp(9px,2vw,12px); }
+.hero-card h1,.hero-card .subtitle,.hero-card .divider,.hero-card .hint,.hero-card .eyebrow,.hero-card .field-label { display:none!important; }
 .hero-card .login-panel { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(74%,330px); margin:0; display:flex; flex-direction:column; align-items:center; gap:10px; z-index:6; }
-.hero-card .field-label { position:static; transform:none; width:100%; text-align:center; font-size:clamp(10px,2.2vw,12px); }
 .hero-card .name-input { position:static; transform:none; width:min(72%,250px); min-height:44px; margin:0; padding:10px 12px; text-align:center; font-size:clamp(14px,3vw,16px); z-index:5; }
 .hero-card .name-input::placeholder { color:transparent!important; opacity:0!important; }
 .hero-card .line-button { position:static; transform:none; width:min(72%,250px); min-height:44px; margin:0; padding:10px 14px; font-size:clamp(12px,2.7vw,15px); z-index:5; }
