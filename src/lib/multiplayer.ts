@@ -55,6 +55,13 @@ async function apiRequest<T>(path: string, body?: unknown): Promise<T> {
   return data as T
 }
 
+function sendLeaveBeacon(roomId: string, playerId: string) {
+  const baseUrl = getBaseUrl()
+  if (!baseUrl || !roomId || !playerId) return false
+  const body = new Blob([JSON.stringify({ playerId })], { type: 'application/json' })
+  return navigator.sendBeacon(`${baseUrl}/api/rooms/${encodeURIComponent(roomId)}/leave`, body)
+}
+
 export function connectRoom(roomId: string, onState: (state: RemoteRoomState) => void, onConnection?: (connected: boolean) => void) {
   const baseUrl = getBaseUrl()
   if (!baseUrl) return () => undefined
@@ -63,6 +70,31 @@ export function connectRoom(roomId: string, onState: (state: RemoteRoomState) =>
   let socket: WebSocket | null = null
   let pingTimer: number | undefined
   let reconnectTimer: number | undefined
+  let exitSent = false
+
+  const leaveBecauseHidden = () => {
+    if (exitSent) return
+    const playerId = localStorage.getItem('hero-player-id') || ''
+    if (!playerId) return
+    exitSent = true
+    stopped = true
+    sendLeaveBeacon(roomId, playerId)
+    localStorage.removeItem('hero-room-id')
+    localStorage.removeItem('hero-player-id')
+    socket?.close()
+  }
+
+  const onVisibilityChange = () => {
+    if (document.visibilityState !== 'hidden') return
+    leaveBecauseHidden()
+    // A minimized/backgrounded game is intentionally abandoned. When the
+    // document becomes visible again, always restart from the home screen.
+    window.location.replace('/')
+  }
+  const onPageHide = () => leaveBecauseHidden()
+
+  document.addEventListener('visibilitychange', onVisibilityChange)
+  window.addEventListener('pagehide', onPageHide)
 
   const connect = () => {
     if (stopped) return
@@ -91,6 +123,8 @@ export function connectRoom(roomId: string, onState: (state: RemoteRoomState) =>
   connect()
   return () => {
     stopped = true
+    document.removeEventListener('visibilitychange', onVisibilityChange)
+    window.removeEventListener('pagehide', onPageHide)
     if (pingTimer) window.clearInterval(pingTimer)
     if (reconnectTimer) window.clearTimeout(reconnectTimer)
     socket?.close()
@@ -108,11 +142,6 @@ export const multiplayerApi = {
   answer: (roomId: string, playerId: string, choice: string, coefficient: number) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/answer`, { playerId, choice, coefficient }),
   tick: (roomId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/tick`, {}),
   leave: (roomId: string, playerId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/leave`, { playerId }),
-  leaveBeacon: (roomId: string, playerId: string) => {
-    const baseUrl = getBaseUrl()
-    if (!baseUrl || !roomId || !playerId) return false
-    const body = new Blob([JSON.stringify({ playerId })], { type: 'application/json' })
-    return navigator.sendBeacon(`${baseUrl}/api/rooms/${encodeURIComponent(roomId)}/leave`, body)
-  },
+  leaveBeacon: sendLeaveBeacon,
   reset: (roomId: string, playerId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/reset`, { playerId }),
 }
