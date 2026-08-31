@@ -1,3 +1,5 @@
+export type RemoteAction = 'upgrade' | 'attack' | 'heal' | 'finish' | 'guard'
+
 export type RemotePlayer = {
   id: string
   name: string
@@ -8,16 +10,32 @@ export type RemotePlayer = {
   atk: number
   def: number
   alive: boolean
+  guard: boolean
+  action?: RemoteAction
+  answered?: boolean
+  coefficient?: number
+}
+
+export type RemoteQuestion = {
+  id: number
+  word: string
+  choices: string[]
 }
 
 export type RemoteRoomState = {
   roomId: string
   phase: 'lobby' | 'jobs' | 'battle' | 'result'
+  battlePhase: 'action' | 'quiz' | 'resolve'
   round: number
+  questionIndex: number
+  question?: RemoteQuestion
   players: RemotePlayer[]
+  log: string[]
 }
 
 const getBaseUrl = () => (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
+
+export const hasMultiplayerApi = () => Boolean(getBaseUrl())
 
 async function apiRequest<T>(path: string, body?: unknown): Promise<T> {
   const baseUrl = getBaseUrl()
@@ -72,6 +90,14 @@ export const multiplayerApi = {
     apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/choose-job`, { playerId, jobId }),
   start: (roomId: string, playerId: string) =>
     apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/start`, { playerId }),
+  action: (roomId: string, playerId: string, action: RemoteAction) =>
+    apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/action`, { playerId, action }),
+  forceQuiz: (roomId: string, playerId: string) =>
+    apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/force-quiz`, { playerId }),
+  answer: (roomId: string, playerId: string, choice: string, coefficient: number) =>
+    apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/answer`, { playerId, choice, coefficient }),
   leave: (roomId: string, playerId: string) =>
     apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/leave`, { playerId }),
+  reset: (roomId: string, playerId: string) =>
+    apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/reset`, { playerId }),
 }
