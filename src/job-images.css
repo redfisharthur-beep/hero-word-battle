@@ -23,78 +23,24 @@
   filter: drop-shadow(0 14px 26px rgba(56,189,248,.22));
 }
 
-.job-card-copy {
-  display: none;
-}
+.job-card-copy { display: none; }
 
 .character-head,
-.character-head-placeholder {
-  flex: 0 0 auto;
-  width: 50px;
-  height: 50px;
-  border-radius: 15px;
-}
-
-.character-head {
-  object-fit: contain;
-  padding: 2px;
-  background: radial-gradient(circle at 50% 38%, rgba(255,255,255,.12), rgba(15,23,42,.42));
-  filter: drop-shadow(0 6px 10px rgba(0,0,0,.28));
-}
-
+.character-head-placeholder { flex: 0 0 auto; width: 50px; height: 50px; border-radius: 15px; }
+.character-head { object-fit: contain; padding: 2px; background: radial-gradient(circle at 50% 38%, rgba(255,255,255,.12), rgba(15,23,42,.42)); filter: drop-shadow(0 6px 10px rgba(0,0,0,.28)); }
 .character-head.large,
-.character-head-placeholder.large {
-  width: 92px;
-  height: 92px;
-  border-radius: 24px;
-}
-
-.character-head-placeholder {
-  display: inline-block;
-  background: linear-gradient(135deg, rgba(56,189,248,.15), rgba(99,102,241,.12));
-  border: 1px solid rgba(255,255,255,.08);
-}
-
+.character-head-placeholder.large { width: 92px; height: 92px; border-radius: 24px; }
+.character-head-placeholder { display: inline-block; background: linear-gradient(135deg, rgba(56,189,248,.15), rgba(99,102,241,.12)); border: 1px solid rgba(255,255,255,.08); }
 .player-row-with-head { min-height: 68px; }
-
-.character-status-card {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 16px;
-  align-items: center;
-}
-
+.character-status-card { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; }
 .character-status-body { min-width: 0; }
-
-.enemy-card-with-head {
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-}
-
+.enemy-card-with-head { grid-template-columns: auto 1fr auto; align-items: center; }
 .enemy-card-with-head .mini-hp { grid-column: 1 / -1; }
+.rank-with-head { grid-template-columns: 42px 54px 1fr auto; }
+.rank-player-copy { display: grid; gap: 2px; min-width: 0; }
+.rank-player-copy > strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rank-player-copy small { color: #94a3b8; font-size: 11px; }
 
-.rank-with-head {
-  grid-template-columns: 42px 54px 1fr auto;
-}
-
-.rank-player-copy {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-}
-
-.rank-player-copy > strong {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.rank-player-copy small {
-  color: #94a3b8;
-  font-size: 11px;
-}
-
-/* Uploaded homepage artwork */
 .hero-card {
   position: relative;
   overflow: hidden;
@@ -105,53 +51,44 @@
 }
 .hero-card > * { position: relative; z-index: 1; }
 
-/* Uploaded room artwork */
+/* Room cards: uploaded artwork only */
 .room-card {
   position: relative;
   overflow: hidden;
   isolation: isolate;
+  min-height: 210px;
+  padding: 0;
   background-size: cover !important;
   background-position: center !important;
-  text-shadow: 0 2px 8px rgba(0,0,0,.9);
+  font-size: 0;
 }
-.room-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(180deg, rgba(2,6,23,.18), rgba(2,6,23,.78));
-}
+.room-card::before { display: none; }
+.room-card > * { display: none !important; }
 .room-card:nth-child(1) { background-image: url('/images/rooms/Holy%20Sword.png') !important; }
 .room-card:nth-child(2) { background-image: url('/images/rooms/Shadow%20Blade.png') !important; }
 .room-card:nth-child(3) { background-image: url('/images/rooms/Azure%20Bow.png') !important; }
 .room-card:nth-child(4) { background-image: url('/images/rooms/Oracle.png') !important; }
+.room-card.selected { box-shadow: 0 0 0 3px #38bdf8 inset, 0 0 22px rgba(56,189,248,.28); }
 
-/* Uploaded action artwork */
+/* Action cards: uploaded artwork only */
 .action-card {
-  min-height: 155px;
+  min-height: 165px;
+  padding: 0;
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  justify-content: flex-end;
   background-size: cover !important;
   background-position: center !important;
-  text-shadow: 0 2px 8px rgba(0,0,0,.9);
+  font-size: 0;
 }
-.action-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(180deg, rgba(2,6,23,.08), rgba(2,6,23,.82));
-}
+.action-card::before { display: none; }
+.action-card > * { display: none !important; }
 .action-card:nth-child(1) { background-image: url('/images/actions/upgrade.png') !important; }
 .action-card:nth-child(2) { background-image: url('/images/actions/attack.png') !important; }
 .action-card:nth-child(3) { background-image: url('/images/actions/treat.png') !important; }
 .action-card:nth-child(4) { background-image: url('/images/actions/Tailcut.png') !important; }
 .action-card:nth-child(5) { background-image: url('/images/actions/reduction.png') !important; }
-.action-card .action-icon { background: rgba(2,6,23,.46); backdrop-filter: blur(3px); }
-.action-card strong,
-.action-card small { position: relative; z-index: 1; }
+.action-card:disabled { filter: grayscale(.45); }
 
 @media (max-width: 760px) {
   .job-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
@@ -163,6 +100,6 @@
   .character-status-card { gap: 11px; }
   .rank-with-head { grid-template-columns: 34px 46px 1fr auto; gap: 8px; padding: 12px 10px; }
   .rank-with-head .character-head { width: 44px; height: 44px; }
-  .room-card { min-height: 175px; }
-  .action-card { min-height: 145px; }
+  .room-card { min-height: 180px; }
+  .action-card { min-height: 150px; }
 }
