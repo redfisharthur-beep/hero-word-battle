@@ -108,5 +108,11 @@ export const multiplayerApi = {
   answer: (roomId: string, playerId: string, choice: string, coefficient: number) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/answer`, { playerId, choice, coefficient }),
   tick: (roomId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/tick`, {}),
   leave: (roomId: string, playerId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/leave`, { playerId }),
+  leaveBeacon: (roomId: string, playerId: string) => {
+    const baseUrl = getBaseUrl()
+    if (!baseUrl || !roomId || !playerId) return false
+    const body = new Blob([JSON.stringify({ playerId })], { type: 'application/json' })
+    return navigator.sendBeacon(`${baseUrl}/api/rooms/${encodeURIComponent(roomId)}/leave`, body)
+  },
   reset: (roomId: string, playerId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/reset`, { playerId }),
 }
