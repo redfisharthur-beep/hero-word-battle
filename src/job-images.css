@@ -72,8 +72,10 @@ button, input { max-width: 100%; }
 }
 .hero-card > * { position: relative; z-index: 1; }
 .hero-card h1 { display: none !important; }
+.hero-card .subtitle,
+.hero-card .divider,
+.hero-card .hint { display: none !important; }
 .hero-card .eyebrow { margin-top: 1%; font-size: clamp(9px, 2vw, 12px); }
-.hero-card .subtitle { margin: 2% 0 5%; font-size: clamp(12px, 3vw, 18px); }
 .hero-card .login-panel {
   width: min(74%, 330px);
   margin: 0 auto;
@@ -96,7 +98,6 @@ button, input { max-width: 100%; }
   padding: 10px 14px;
   font-size: clamp(12px, 2.7vw, 15px);
 }
-.hero-card .divider { width: 72%; margin: 0 auto; }
 .hero-card .primary-button {
   position: absolute !important;
   left: 50%;
@@ -113,7 +114,6 @@ button, input { max-width: 100%; }
   backdrop-filter: blur(3px);
 }
 .hero-card .primary-button:hover:not(:disabled) { transform: translateX(-50%) translateY(-1px); }
-.hero-card .hint { position: absolute; left: 50%; bottom: 1.2%; transform: translateX(-50%); width: 92%; margin: 0; font-size: clamp(9px, 2vw, 11px); text-align: center; }
 
 /* Room cards: one per row, artwork only */
 .room-grid {
@@ -180,7 +180,7 @@ button, input { max-width: 100%; }
   .action-card { min-height: clamp(110px, 31vw, 150px); }
   .hero-card { width: min(96vw, 520px) !important; }
   .hero-card .login-panel { width: 82%; }
-  .hero-card .name-input, .hero-card .line-button, .hero-card .divider { width: 76%; }
+  .hero-card .name-input, .hero-card .line-button { width: 76%; }
   .hero-card .primary-button { width: 68%; bottom: 5%; }
 }
 
@@ -188,7 +188,7 @@ button, input { max-width: 100%; }
   .app-shell { padding: 8px !important; }
   .hero-card { width: 100% !important; border-radius: 20px; padding: 14px !important; }
   .hero-card .login-panel { width: 88%; }
-  .hero-card .name-input, .hero-card .line-button, .hero-card .divider { width: 80%; }
+  .hero-card .name-input, .hero-card .line-button { width: 80%; }
   .hero-card .primary-button { width: 72%; min-height: 44px; bottom: 5.2%; }
   .action-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .enemy-strip { grid-template-columns: 1fr; }
@@ -198,7 +198,7 @@ button, input { max-width: 100%; }
 
 @media (max-width: 360px) {
   .hero-card .login-panel { width: 94%; }
-  .hero-card .name-input, .hero-card .line-button, .hero-card .divider { width: 84%; }
+  .hero-card .name-input, .hero-card .line-button { width: 84%; }
   .hero-card .primary-button { width: 76%; }
   .job-grid, .action-grid { grid-template-columns: 1fr; }
 }
