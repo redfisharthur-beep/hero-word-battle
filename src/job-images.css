@@ -41,13 +41,25 @@
 .rank-player-copy > strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rank-player-copy small { color: #94a3b8; font-size: 11px; }
 
+/* Homepage artwork */
 .hero-card {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  background-image: linear-gradient(rgba(3,7,18,.38), rgba(3,7,18,.62)), url('/images/home/front%20page.png');
-  background-size: cover;
-  background-position: center;
+  min-height: 720px;
+  background-color: #0f172a !important;
+  background-image: url('/images/home/front%20page.png') !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-position: center top !important;
+}
+.hero-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(2,6,23,.04) 0%, rgba(2,6,23,.12) 45%, rgba(2,6,23,.72) 100%);
 }
 .hero-card > * { position: relative; z-index: 1; }
 
@@ -106,6 +118,7 @@
   .character-status-card { gap: 11px; }
   .rank-with-head { grid-template-columns: 34px 46px 1fr auto; gap: 8px; padding: 12px 10px; }
   .rank-with-head .character-head { width: 44px; height: 44px; }
+  .hero-card { min-height: 650px; background-position: center top !important; }
   .room-card { min-height: 180px; }
   .action-card { min-height: 150px; }
 }
