@@ -254,7 +254,7 @@ export default function App() {
     return <main className="page-shell lobby-page"><section className="page-card lobby-card">
       <button className="back-button" onClick={() => void leaveRoom()} type="button">← 返回</button>
       <img className="lobby-room-image" src={roomImage(roomId)} alt={selectedRoom?.name ?? '房間'} />
-      <div className="player-list lobby-player-list">{players.map((p) => <PlayerRow key={p.id} player={p} label={p.host ? '房主' : undefined} />)}{Array.from({ length: Math.max(0, 4 - players.length) }).map((_, i) => <PlayerRow key={i} name="等待玩家加入…" muted />)}</div>
+      <div className="player-list lobby-player-list">{players.map((p) => <PlayerRow key={p.id} player={p} label={p.host ? '房主' : undefined} textOnly />)}{Array.from({ length: Math.max(0, 4 - players.length) }).map((_, i) => <PlayerRow key={i} name="等待玩家加入…" muted textOnly />)}</div>
       <ErrorBox text={error} />
       <button className="primary-button lobby-start-button" disabled={players.length < 2} onClick={() => setPage('jobs')} type="button">開戰</button>
     </section></main>
@@ -313,8 +313,8 @@ function CharacterHead({ player, size = 'small' }: { player?: RemotePlayer; size
   return <img className={`character-head ${size}`} src={jobHeadImage(player.jobId)} alt={jobName(player.jobId)} />
 }
 
-function PlayerRow({ player, name, label, muted = false }: { player?: RemotePlayer; name?: string; label?: string; muted?: boolean }) {
-  return <div className={`player-row player-row-with-head ${muted ? 'muted' : ''}`}>{player ? <CharacterHead player={player} /> : <span className="player-dot" />}<strong>{player?.name ?? name}</strong>{label && <em>{label}</em>}</div>
+function PlayerRow({ player, name, label, muted = false, textOnly = false }: { player?: RemotePlayer; name?: string; label?: string; muted?: boolean; textOnly?: boolean }) {
+  return <div className={`player-row player-row-with-head ${muted ? 'muted' : ''}`}>{!textOnly && (player ? <CharacterHead player={player} /> : <span className="player-dot" />)}<strong>{player?.name ?? name}</strong>{label && <em>{label}</em>}</div>
 }
 
 function PlayerBattle({ player, effect }: { player: RemotePlayer; effect?: EffectKind }) {
