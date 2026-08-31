@@ -1,0 +1,75 @@
+.player-row,
+.self-card,
+.enemy-card,
+.rank-row {
+  position: relative;
+}
+
+.job-portrait {
+  display: block;
+  object-fit: contain;
+  object-position: center;
+  flex: 0 0 auto;
+  user-select: none;
+  pointer-events: none;
+  filter: drop-shadow(0 5px 12px rgba(0,0,0,.28));
+}
+
+.job-portrait-row {
+  width: 58px;
+  height: 58px;
+  margin: -8px 2px -8px -4px;
+}
+
+.job-portrait-self {
+  float: left;
+  width: 92px;
+  height: 92px;
+  margin: -8px 16px 0 -4px;
+}
+
+.self-card::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.job-portrait-enemy {
+  width: 66px;
+  height: 66px;
+  grid-row: 1 / span 2;
+  align-self: center;
+  margin-right: 2px;
+}
+
+.enemy-card:has(> .job-portrait-enemy) {
+  grid-template-columns: 66px minmax(0,1fr) auto;
+}
+
+.enemy-card:has(> .job-portrait-enemy) .mini-hp {
+  grid-column: 2 / -1;
+}
+
+.job-portrait-rank {
+  width: 72px;
+  height: 72px;
+  margin: -10px 0 -10px -4px;
+}
+
+.rank-row:has(> .job-portrait-rank) {
+  grid-template-columns: 42px 72px minmax(0,1fr) auto;
+}
+
+.rank-row.champion .job-portrait-rank {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 16px rgba(250,204,21,.45));
+}
+
+@media (max-width: 760px) {
+  .job-portrait-row { width: 50px; height: 50px; }
+  .job-portrait-self { width: 78px; height: 78px; margin-right: 10px; }
+  .job-portrait-enemy { width: 58px; height: 58px; }
+  .enemy-card:has(> .job-portrait-enemy) { grid-template-columns: 58px minmax(0,1fr) auto; }
+  .job-portrait-rank { width: 58px; height: 58px; }
+  .rank-row:has(> .job-portrait-rank) { grid-template-columns: 34px 58px minmax(0,1fr) auto; gap: 8px; }
+}
