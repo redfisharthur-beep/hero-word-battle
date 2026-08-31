@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "node scripts/build-vocab.mjs && tsc -b && vite build",
     "preview": "vite preview",
-    "worker:dev": "wrangler dev",
-    "worker:deploy": "wrangler deploy"
+    "worker:dev": "node scripts/build-vocab.mjs && wrangler dev",
+    "worker:deploy": "node scripts/build-vocab.mjs && wrangler deploy"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
@@ -17,7 +17,8 @@
     "react": "latest",
     "react-dom": "latest",
     "react-router-dom": "latest",
-    "zustand": "latest"
+    "zustand": "latest",
+    "opencc-js": "latest"
   },
   "devDependencies": {
     "@types/react": "latest",
