@@ -25,6 +25,7 @@ export type RemoteRoomState = {
   round: number
   questionIndex: number
   question?: RemoteQuestion
+  jobsEndsAt?: number
   actionEndsAt?: number
   quizEndsAt?: number
   players: RemotePlayer[]
@@ -87,8 +88,6 @@ export function connectRoom(roomId: string, onState: (state: RemoteRoomState) =>
   const onVisibilityChange = () => {
     if (document.visibilityState !== 'hidden') return
     leaveBecauseHidden()
-    // A minimized/backgrounded game is intentionally abandoned. When the
-    // document becomes visible again, always restart from the home screen.
     window.location.replace('/')
   }
   const onPageHide = () => leaveBecauseHidden()
@@ -136,6 +135,7 @@ export const multiplayerApi = {
   health: () => apiRequest<{ ok: boolean }>('/api/health'),
   state: (roomId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/state`),
   join: (roomId: string, name: string, playerId?: string) => apiRequest<{ playerId: string; state: RemoteRoomState }>(`/api/rooms/${encodeURIComponent(roomId)}/join`, { name, playerId }),
+  beginJobs: (roomId: string, playerId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/begin-jobs`, { playerId }),
   chooseJob: (roomId: string, playerId: string, jobId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/choose-job`, { playerId, jobId }),
   start: (roomId: string, playerId: string) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/start`, { playerId }),
   action: (roomId: string, playerId: string, action: RemoteAction) => apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/action`, { playerId, action }),
