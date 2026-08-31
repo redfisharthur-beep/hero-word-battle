@@ -9,319 +9,51 @@ type Phase = 'lobby' | 'jobs' | 'battle' | 'result'
 type BattlePhase = 'action' | 'quiz' | 'resolve'
 type ActionName = 'upgrade' | 'attack' | 'heal' | 'finish' | 'guard'
 
-type Player = {
-  id: string
-  name: string
-  host: boolean
-  jobId?: string
-  hp: number
-  maxHp: number
-  atk: number
-  def: number
-  alive: boolean
-  guard: boolean
-  action?: ActionName
-  answered?: boolean
-  coefficient?: number
-}
+type Player = { id:string; name:string; host:boolean; jobId?:string; hp:number; maxHp:number; atk:number; def:number; alive:boolean; guard:boolean; action?:ActionName; answered?:boolean; coefficient?:number }
+type Question = { id:number; word:string; answer:string; choices:string[] }
+type PublicQuestion = Omit<Question,'answer'>
+type RoomState = { roomId:string; phase:Phase; battlePhase:BattlePhase; round:number; questionIndex:number; question?:PublicQuestion; actionEndsAt?:number; quizEndsAt?:number; players:Player[]; log:string[] }
 
-type Question = { id: number; word: string; answer: string; choices: string[] }
-type PublicQuestion = Omit<Question, 'answer'>
-type RoomState = {
-  roomId: string
-  phase: Phase
-  battlePhase: BattlePhase
-  round: number
-  questionIndex: number
-  question?: PublicQuestion
-  actionEndsAt?: number
-  quizEndsAt?: number
-  players: Player[]
-  log: string[]
-}
+const ACTION_MS=5000, QUIZ_MS=8000
+const questions:Question[]=[
+{id:1,word:'brave',answer:'勇敢的',choices:['安靜的','勇敢的','飢餓的']},{id:2,word:'shield',answer:'盾牌',choices:['盾牌','箭矢','城堡']},{id:3,word:'heal',answer:'治療',choices:['逃跑','攻擊','治療']},{id:4,word:'victory',answer:'勝利',choices:['失敗','勝利','危險']},{id:5,word:'enemy',answer:'敵人',choices:['敵人','朋友','老師']},{id:6,word:'protect',answer:'保護',choices:['保護','破壞','尋找']},{id:7,word:'strong',answer:'強壯的',choices:['快速的','疲累的','強壯的']},{id:8,word:'attack',answer:'攻擊',choices:['防守','攻擊','等待']},{id:9,word:'magic',answer:'魔法',choices:['魔法','盔甲','道路']},{id:10,word:'survive',answer:'生存',choices:['投降','生存','睡覺']},{id:11,word:'sword',answer:'劍',choices:['弓','劍','盾牌']},{id:12,word:'danger',answer:'危險',choices:['安全','危險','和平']},]
+const jobs=new Set(['assassin','warrior','fighter','archer','priest','mage'])
+const actions=new Set<ActionName>(['upgrade','attack','heal','finish','guard'])
+const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json; charset=utf-8','access-control-allow-origin':'*','access-control-allow-headers':'content-type','access-control-allow-methods':'GET,POST,OPTIONS'}})
+const publicQuestion=(q:Question):PublicQuestion=>({id:q.id,word:q.word,choices:q.choices})
+const clampCoefficient=(value:number)=>Math.max(0,Math.min(4,Math.floor(value)))
 
-const ACTION_MS = 5000
-const QUIZ_MS = 8000
+export default { async fetch(request:Request,env:Env):Promise<Response>{
+ if(request.method==='OPTIONS')return json({ok:true}); const url=new URL(request.url)
+ if(url.pathname==='/api/health')return json({ok:true,service:'hero-word-battle-api',version:'0.6.1'})
+ const match=url.pathname.match(/^\/api\/rooms\/([^/]+)(\/.*)?$/)
+ if(match){const roomId=decodeURIComponent(match[1]).slice(0,64),subPath=match[2]||'/state',id=env.ROOMS.idFromName(roomId),stub=env.ROOMS.get(id),forwarded=new URL(request.url);forwarded.pathname=subPath;forwarded.searchParams.set('roomId',roomId);return stub.fetch(new Request(forwarded,request))}
+ return env.ASSETS.fetch(request)
+}}
 
-const questions: Question[] = [
-  { id: 1, word: 'brave', answer: '勇敢的', choices: ['安靜的', '勇敢的', '飢餓的'] },
-  { id: 2, word: 'shield', answer: '盾牌', choices: ['盾牌', '箭矢', '城堡'] },
-  { id: 3, word: 'heal', answer: '治療', choices: ['逃跑', '攻擊', '治療'] },
-  { id: 4, word: 'victory', answer: '勝利', choices: ['失敗', '勝利', '危險'] },
-  { id: 5, word: 'enemy', answer: '敵人', choices: ['敵人', '朋友', '老師'] },
-  { id: 6, word: 'protect', answer: '保護', choices: ['保護', '破壞', '尋找'] },
-  { id: 7, word: 'strong', answer: '強壯的', choices: ['快速的', '疲累的', '強壯的'] },
-  { id: 8, word: 'attack', answer: '攻擊', choices: ['防守', '攻擊', '等待'] },
-  { id: 9, word: 'magic', answer: '魔法', choices: ['魔法', '盔甲', '道路'] },
-  { id: 10, word: 'survive', answer: '生存', choices: ['投降', '生存', '睡覺'] },
-  { id: 11, word: 'sword', answer: '劍', choices: ['弓', '劍', '盾牌'] },
-  { id: 12, word: 'danger', answer: '危險', choices: ['安全', '危險', '和平'] },
-]
-
-const jobs = new Set(['assassin', 'warrior', 'fighter', 'archer', 'priest', 'mage'])
-const actions = new Set<ActionName>(['upgrade', 'attack', 'heal', 'finish', 'guard'])
-const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*', 'access-control-allow-headers': 'content-type', 'access-control-allow-methods': 'GET,POST,OPTIONS' } })
-const publicQuestion = (q: Question): PublicQuestion => ({ id: q.id, word: q.word, choices: q.choices })
-const clampCoefficient = (value: number) => Math.max(0, Math.min(4, Math.floor(value)))
-
-export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
-    if (request.method === 'OPTIONS') return json({ ok: true })
-    const url = new URL(request.url)
-    if (url.pathname === '/api/health') return json({ ok: true, service: 'hero-word-battle-api', version: '0.6.0' })
-
-    const match = url.pathname.match(/^\/api\/rooms\/([^/]+)(\/.*)?$/)
-    if (match) {
-      const roomId = decodeURIComponent(match[1]).slice(0, 64)
-      const subPath = match[2] || '/state'
-      const id = env.ROOMS.idFromName(roomId)
-      const stub = env.ROOMS.get(id)
-      const forwarded = new URL(request.url)
-      forwarded.pathname = subPath
-      forwarded.searchParams.set('roomId', roomId)
-      return stub.fetch(new Request(forwarded, request))
-    }
-
-    return env.ASSETS.fetch(request)
-  },
-}
-
-export class GameRoom extends DurableObject<Env> {
-  private stateData: RoomState | null = null
-
-  private async getState(roomId?: string) {
-    if (this.stateData) return this.stateData
-    const stored = await this.ctx.storage.get<RoomState>('state')
-    this.stateData = stored ?? { roomId: roomId || this.ctx.id.toString(), phase: 'lobby', battlePhase: 'action', round: 0, questionIndex: 0, players: [], log: [] }
-    return this.stateData
-  }
-
-  private async save(state: RoomState) {
-    state.log = state.log.slice(-12)
-    this.stateData = state
-    await this.ctx.storage.put('state', state)
-
-    const nextAlarm = state.phase === 'battle'
-      ? state.battlePhase === 'action' ? state.actionEndsAt : state.battlePhase === 'quiz' ? state.quizEndsAt : undefined
-      : undefined
-    if (nextAlarm) await this.ctx.storage.setAlarm(nextAlarm)
-    else await this.ctx.storage.deleteAlarm()
-
-    const payload = JSON.stringify({ type: 'state', state })
-    for (const ws of this.ctx.getWebSockets()) {
-      try { ws.send(payload) } catch { /* disconnected */ }
-    }
-  }
-
-  private beginAction(state: RoomState) {
-    state.battlePhase = 'action'
-    state.question = undefined
-    state.quizEndsAt = undefined
-    state.actionEndsAt = Date.now() + ACTION_MS
-    for (const p of state.players) {
-      p.action = undefined
-      p.answered = false
-      p.coefficient = undefined
-    }
-  }
-
-  private prepareQuiz(state: RoomState) {
-    state.battlePhase = 'quiz'
-    state.actionEndsAt = undefined
-    state.quizEndsAt = Date.now() + QUIZ_MS
-    state.question = publicQuestion(questions[state.questionIndex % questions.length])
-    for (const p of state.players) {
-      p.answered = !p.alive
-      p.coefficient = p.alive ? undefined : 0
-    }
-  }
-
-  private coefficientFromDeadline(state: RoomState) {
-    if (!state.quizEndsAt) return 0
-    const remainingSeconds = Math.max(0, Math.ceil((state.quizEndsAt - Date.now()) / 1000))
-    return remainingSeconds >= 7 ? 4 : remainingSeconds >= 5 ? 3 : remainingSeconds >= 3 ? 2 : remainingSeconds >= 1 ? 1 : 0
-  }
-
-  private applyAction(actor: Player, state: RoomState) {
-    const action = actor.action
-    const coefficient = clampCoefficient(actor.coefficient ?? 0)
-    if (!action || coefficient <= 0 || !actor.alive) return `${actor.name} 本回合沒有行動。`
-
-    const targets = state.players.filter((p) => p.id !== actor.id && p.alive)
-    const jobMultiplier = action === 'attack' && actor.jobId === 'archer' ? 1.6 : action === 'heal' && actor.jobId === 'priest' ? 1.8 : action === 'finish' && actor.jobId === 'assassin' ? 1.35 : 1
-
-    if (action === 'upgrade') {
-      const hp = Math.round((actor.jobId === 'warrior' ? 8 : 4) * coefficient)
-      const atk = Math.round((actor.jobId === 'assassin' ? 3 : 1) * coefficient)
-      const def = Math.round((actor.jobId === 'fighter' ? 3 : 1) * coefficient)
-      actor.maxHp += hp; actor.hp += hp; actor.atk += atk; actor.def += def
-      return `${actor.name} 升級：HP +${hp}、ATK +${atk}、DEF +${def}`
-    }
-
-    if (action === 'heal') {
-      const amount = Math.round((14 + actor.atk * .45) * coefficient * jobMultiplier)
-      if (actor.hp >= actor.maxHp) {
-        const gain = Math.max(1, Math.round(amount * .5)); actor.maxHp += gain; actor.hp += gain
-        return `${actor.name} 滿血治療，生命上限 +${gain}`
-      }
-      const before = actor.hp; actor.hp = Math.min(actor.maxHp, actor.hp + amount)
-      return `${actor.name} 恢復 ${actor.hp - before} HP`
-    }
-
-    if (action === 'guard') { actor.guard = true; return `${actor.name} 進入減傷狀態。` }
-    if (!targets.length) return `${actor.name} 找不到攻擊目標。`
-
-    if (action === 'attack' && actor.jobId === 'mage') {
-      let totalDamage = 0
-      let knockedOut = 0
-      for (const target of targets) {
-        const raw = Math.max(1, Math.round(actor.atk * coefficient * .45 - target.def * .5))
-        const damage = target.guard ? Math.max(1, Math.round(raw * .5)) : raw
-        target.guard = false
-        target.hp = Math.max(0, target.hp - damage)
-        target.alive = target.hp > 0
-        totalDamage += damage
-        if (!target.alive) knockedOut += 1
-      }
-      return `${actor.name} 施放範圍魔法，攻擊全體 ${targets.length} 人，共造成 ${totalDamage} 傷害${knockedOut ? `（擊倒 ${knockedOut} 人）` : ''}`
-    }
-
-    const target = [...targets].sort((a, b) => action === 'attack' ? b.hp - a.hp : a.hp - b.hp)[0]
-    const raw = Math.max(1, Math.round(actor.atk * coefficient * (action === 'finish' ? 1.15 : 1) * jobMultiplier - target.def))
-    const damage = target.guard ? Math.max(1, Math.round(raw * .5)) : raw
-    target.guard = false; target.hp = Math.max(0, target.hp - damage); target.alive = target.hp > 0
-    return `${actor.name} ${action === 'finish' ? '尾刀' : '攻擊'} ${target.name}，造成 ${damage} 傷害${target.alive ? '' : '（擊倒）'}`
-  }
-
-  private resolveRound(state: RoomState) {
-    state.battlePhase = 'resolve'
-    state.actionEndsAt = undefined
-    state.quizEndsAt = undefined
-    for (const player of state.players.filter((p) => p.alive)) state.log.push(this.applyAction(player, state))
-    state.question = undefined
-    const living = state.players.filter((p) => p.alive)
-    if (state.round >= 10 || living.length <= 1) {
-      state.phase = 'result'; state.log.push('對戰結束！'); return
-    }
-    state.round += 1; state.questionIndex += 1; this.beginAction(state)
-  }
-
-  private advanceTimeouts(state: RoomState) {
-    const now = Date.now()
-    if (state.phase !== 'battle') return false
-    if (state.battlePhase === 'action' && state.actionEndsAt && now >= state.actionEndsAt) {
-      for (const p of state.players.filter((p) => p.alive)) if (!p.action) p.action = 'upgrade'
-      this.prepareQuiz(state)
-      state.log.push('動作時間到，未選擇者自動使用升級。')
-      return true
-    }
-    if (state.battlePhase === 'quiz' && state.quizEndsAt && now >= state.quizEndsAt) {
-      for (const p of state.players.filter((p) => p.alive)) if (!p.answered) { p.answered = true; p.coefficient = 0 }
-      state.log.push('答題時間到，未作答者本回合無動作。')
-      this.resolveRound(state)
-      return true
-    }
-    return false
-  }
-
-  async fetch(request: Request): Promise<Response> {
-    const url = new URL(request.url)
-    const state = await this.getState(url.searchParams.get('roomId') || undefined)
-
-    if (url.pathname === '/ws') {
-      if (request.headers.get('Upgrade') !== 'websocket') return new Response('Expected websocket', { status: 426 })
-      const pair = new WebSocketPair(); const [client, server] = Object.values(pair)
-      this.ctx.acceptWebSocket(server); server.send(JSON.stringify({ type: 'state', state }))
-      return new Response(null, { status: 101, webSocket: client })
-    }
-
-    if (url.pathname === '/state' && request.method === 'GET') {
-      if (this.advanceTimeouts(state)) await this.save(state)
-      return json(state)
-    }
-
-    if (url.pathname === '/tick' && request.method === 'POST') {
-      if (this.advanceTimeouts(state)) await this.save(state)
-      return json(state)
-    }
-
-    if (url.pathname === '/join' && request.method === 'POST') {
-      const body = await request.json() as { playerId?: string; name?: string }
-      const playerId = (body.playerId || crypto.randomUUID()).trim(); const name = (body.name || '').trim().slice(0, 12)
-      if (!name) return json({ error: 'Name required' }, 400)
-      const existing = state.players.find((p) => p.id === playerId)
-      if (existing) { existing.name = name; await this.save(state); return json({ playerId, state }) }
-      if (state.phase !== 'lobby' && state.phase !== 'jobs') return json({ error: 'Game already started' }, 409)
-      if (state.players.length >= 4) return json({ error: 'Room full' }, 409)
-      state.players.push({ id: playerId, name, host: state.players.length === 0, hp: 100, maxHp: 100, atk: 10, def: 5, alive: true, guard: false })
-      await this.save(state); return json({ playerId, state })
-    }
-
-    if (url.pathname === '/choose-job' && request.method === 'POST') {
-      const body = await request.json() as { playerId?: string; jobId?: string }; const player = state.players.find((p) => p.id === body.playerId)
-      if (!player) return json({ error: 'Player not found' }, 404)
-      if (!body.jobId || !jobs.has(body.jobId)) return json({ error: 'Invalid job' }, 400)
-      player.jobId = body.jobId; state.phase = 'jobs'; await this.save(state); return json(state)
-    }
-
-    if (url.pathname === '/start' && request.method === 'POST') {
-      const body = await request.json() as { playerId?: string }; const player = state.players.find((p) => p.id === body.playerId)
-      if (!player?.host) return json({ error: 'Host only' }, 403)
-      if (state.players.length < 2) return json({ error: 'Need at least 2 players' }, 409)
-      if (state.players.some((p) => !p.jobId)) return json({ error: 'Every player must choose a job' }, 409)
-      state.phase = 'battle'; state.round = 1; state.questionIndex = 0; state.log = ['戰鬥開始！']
-      for (const p of state.players) { p.hp = 100; p.maxHp = 100; p.atk = 10; p.def = 5; p.alive = true; p.guard = false }
-      this.beginAction(state); await this.save(state); return json(state)
-    }
-
-    if (url.pathname === '/action' && request.method === 'POST') {
-      if (this.advanceTimeouts(state)) { await this.save(state); return json(state) }
-      if (state.phase !== 'battle' || state.battlePhase !== 'action') return json({ error: 'Not accepting actions' }, 409)
-      const body = await request.json() as { playerId?: string; action?: ActionName }; const player = state.players.find((p) => p.id === body.playerId)
-      if (!player?.alive) return json({ error: 'Player not available' }, 404)
-      if (!body.action || !actions.has(body.action)) return json({ error: 'Invalid action' }, 400)
-      player.action = body.action
-      if (state.players.filter((p) => p.alive).every((p) => p.action)) this.prepareQuiz(state)
-      await this.save(state); return json(state)
-    }
-
-    if (url.pathname === '/answer' && request.method === 'POST') {
-      if (this.advanceTimeouts(state)) { await this.save(state); return json(state) }
-      if (state.phase !== 'battle' || state.battlePhase !== 'quiz') return json({ error: 'Not accepting answers' }, 409)
-      const body = await request.json() as { playerId?: string; choice?: string }; const player = state.players.find((p) => p.id === body.playerId)
-      if (!player?.alive) return json({ error: 'Player not available' }, 404)
-      if (player.answered) return json({ error: 'Already answered' }, 409)
-      const q = questions[state.questionIndex % questions.length]
-      player.answered = true
-      player.coefficient = body.choice === q.answer ? this.coefficientFromDeadline(state) : 0
-      if (state.players.filter((p) => p.alive).every((p) => p.answered)) this.resolveRound(state)
-      await this.save(state); return json(state)
-    }
-
-    if (url.pathname === '/leave' && request.method === 'POST') {
-      const body = await request.json() as { playerId?: string }; const leaving = state.players.find((p) => p.id === body.playerId)
-      state.players = state.players.filter((p) => p.id !== body.playerId)
-      if (leaving?.host && state.players[0]) state.players[0].host = true
-      if (!state.players.length) { state.phase = 'lobby'; state.battlePhase = 'action'; state.round = 0; state.question = undefined; state.log = []; state.actionEndsAt = undefined; state.quizEndsAt = undefined }
-      else if (state.phase === 'battle' && state.players.filter((p) => p.alive).length <= 1) state.phase = 'result'
-      await this.save(state); return json(state)
-    }
-
-    if (url.pathname === '/reset' && request.method === 'POST') {
-      const body = await request.json() as { playerId?: string }; const player = state.players.find((p) => p.id === body.playerId)
-      if (!player?.host) return json({ error: 'Host only' }, 403)
-      state.phase = 'jobs'; state.round = 0; state.question = undefined; state.log = []; state.actionEndsAt = undefined; state.quizEndsAt = undefined
-      for (const p of state.players) { p.hp = 100; p.maxHp = 100; p.atk = 10; p.def = 5; p.alive = true; p.guard = false; p.action = undefined; p.answered = false; p.coefficient = undefined }
-      await this.save(state); return json(state)
-    }
-
-    return json({ error: 'Not found' }, 404)
-  }
-
-  async alarm() {
-    const state = await this.getState()
-    if (this.advanceTimeouts(state)) await this.save(state)
-  }
-
-  webSocketMessage(ws: WebSocket, message: string | ArrayBuffer) { if (typeof message === 'string' && message === 'ping') ws.send('pong') }
+export class GameRoom extends DurableObject<Env>{
+ private stateData:RoomState|null=null
+ private async getState(roomId?:string){if(this.stateData)return this.stateData;const stored=await this.ctx.storage.get<RoomState>('state');this.stateData=stored??{roomId:roomId||this.ctx.id.toString(),phase:'lobby',battlePhase:'action',round:0,questionIndex:0,players:[],log:[]};return this.stateData}
+ private async save(state:RoomState){state.log=state.log.slice(-12);this.stateData=state;await this.ctx.storage.put('state',state);const nextAlarm=state.phase==='battle'?(state.battlePhase==='action'?state.actionEndsAt:state.battlePhase==='quiz'?state.quizEndsAt:undefined):undefined;if(nextAlarm)await this.ctx.storage.setAlarm(nextAlarm);else await this.ctx.storage.deleteAlarm();const payload=JSON.stringify({type:'state',state});for(const ws of this.ctx.getWebSockets()){try{ws.send(payload)}catch{}}}
+ private beginAction(state:RoomState){state.battlePhase='action';state.question=undefined;state.quizEndsAt=undefined;state.actionEndsAt=Date.now()+ACTION_MS;for(const p of state.players){p.action=undefined;p.answered=false;p.coefficient=undefined}}
+ private prepareQuiz(state:RoomState){state.battlePhase='quiz';state.actionEndsAt=undefined;state.quizEndsAt=Date.now()+QUIZ_MS;state.question=publicQuestion(questions[state.questionIndex%questions.length]);for(const p of state.players){p.answered=!p.alive;p.coefficient=p.alive?undefined:0}}
+ private coefficientFromDeadline(state:RoomState){if(!state.quizEndsAt)return 0;const s=Math.max(0,Math.ceil((state.quizEndsAt-Date.now())/1000));return s>=7?4:s>=5?3:s>=3?2:s>=1?1:0}
+ private applyAction(actor:Player,state:RoomState){const action=actor.action,coefficient=clampCoefficient(actor.coefficient??0);if(!action||coefficient<=0||!actor.alive)return `${actor.name} 本回合沒有行動。`;const targets=state.players.filter(p=>p.id!==actor.id&&p.alive);const jobMultiplier=action==='attack'&&actor.jobId==='archer'?1.6:action==='heal'&&actor.jobId==='priest'?1.8:action==='finish'&&actor.jobId==='assassin'?1.35:1;if(action==='upgrade'){const hp=Math.round((actor.jobId==='warrior'?8:4)*coefficient),atk=Math.round((actor.jobId==='assassin'?3:1)*coefficient),def=Math.round((actor.jobId==='fighter'?3:1)*coefficient);actor.maxHp+=hp;actor.hp+=hp;actor.atk+=atk;actor.def+=def;return `${actor.name} 升級：HP +${hp}、ATK +${atk}、DEF +${def}`};if(action==='heal'){const amount=Math.round((14+actor.atk*.45)*coefficient*jobMultiplier);if(actor.hp>=actor.maxHp){const gain=Math.max(1,Math.round(amount*.5));actor.maxHp+=gain;actor.hp+=gain;return `${actor.name} 滿血治療，生命上限 +${gain}`};const before=actor.hp;actor.hp=Math.min(actor.maxHp,actor.hp+amount);return `${actor.name} 恢復 ${actor.hp-before} HP`};if(action==='guard'){actor.guard=true;return `${actor.name} 進入減傷狀態。`};if(!targets.length)return `${actor.name} 找不到攻擊目標。`;if(action==='attack'&&actor.jobId==='mage'){let totalDamage=0,knockedOut=0;for(const target of targets){const raw=Math.max(1,Math.round(actor.atk*coefficient*.45-target.def*.5)),damage=target.guard?Math.max(1,Math.round(raw*.5)):raw;target.guard=false;target.hp=Math.max(0,target.hp-damage);target.alive=target.hp>0;totalDamage+=damage;if(!target.alive)knockedOut++}return `${actor.name} 施放範圍魔法，攻擊全體 ${targets.length} 人，共造成 ${totalDamage} 傷害${knockedOut?`（擊倒 ${knockedOut} 人）`:''}`};const target=[...targets].sort((a,b)=>action==='attack'?b.hp-a.hp:a.hp-b.hp)[0],raw=Math.max(1,Math.round(actor.atk*coefficient*(action==='finish'?1.15:1)*jobMultiplier-target.def)),damage=target.guard?Math.max(1,Math.round(raw*.5)):raw;target.guard=false;target.hp=Math.max(0,target.hp-damage);target.alive=target.hp>0;return `${actor.name} ${action==='finish'?'尾刀':'攻擊'} ${target.name}，造成 ${damage} 傷害${target.alive?'':'（擊倒）'}`}
+ private resolveRound(state:RoomState){state.battlePhase='resolve';state.actionEndsAt=undefined;state.quizEndsAt=undefined;for(const player of state.players.filter(p=>p.alive))state.log.push(this.applyAction(player,state));state.question=undefined;const living=state.players.filter(p=>p.alive);if(state.round>=10||living.length<=1){state.phase='result';state.log.push('對戰結束！');return}state.round++;state.questionIndex++;this.beginAction(state)}
+ private advanceTimeouts(state:RoomState){const now=Date.now();if(state.phase!=='battle')return false;if(state.battlePhase==='action'&&state.actionEndsAt&&now>=state.actionEndsAt){for(const p of state.players.filter(p=>p.alive))if(!p.action)p.action='upgrade';this.prepareQuiz(state);state.log.push('動作時間到，未選擇者自動使用升級。');return true}if(state.battlePhase==='quiz'&&state.quizEndsAt&&now>=state.quizEndsAt){for(const p of state.players.filter(p=>p.alive))if(!p.answered){p.answered=true;p.coefficient=0}state.log.push('答題時間到，未作答者本回合無動作。');this.resolveRound(state);return true}return false}
+ async fetch(request:Request):Promise<Response>{const url=new URL(request.url),state=await this.getState(url.searchParams.get('roomId')||undefined)
+  if(url.pathname==='/ws'){if(request.headers.get('Upgrade')!=='websocket')return new Response('Expected websocket',{status:426});const pair=new WebSocketPair(),[client,server]=Object.values(pair);this.ctx.acceptWebSocket(server);server.send(JSON.stringify({type:'state',state}));return new Response(null,{status:101,webSocket:client})}
+  if(url.pathname==='/state'&&request.method==='GET'){if(this.advanceTimeouts(state))await this.save(state);return json(state)}
+  if(url.pathname==='/tick'&&request.method==='POST'){if(this.advanceTimeouts(state))await this.save(state);return json(state)}
+  if(url.pathname==='/join'&&request.method==='POST'){const body=await request.json() as {playerId?:string;name?:string};const playerId=(body.playerId||crypto.randomUUID()).trim(),name=(body.name||'').trim().slice(0,12);if(!name)return json({error:'Name required'},400);if(state.phase==='jobs'){state.phase='lobby';state.round=0;state.question=undefined;state.actionEndsAt=undefined;state.quizEndsAt=undefined;state.log=[];for(const p of state.players){p.jobId=undefined;p.action=undefined;p.answered=false;p.coefficient=undefined}}const existing=state.players.find(p=>p.id===playerId);if(existing){existing.name=name;await this.save(state);return json({playerId,state})}if(state.phase!=='lobby')return json({error:'Game already started'},409);if(state.players.length>=4)return json({error:'Room full'},409);state.players.push({id:playerId,name,host:state.players.length===0,hp:100,maxHp:100,atk:10,def:5,alive:true,guard:false});await this.save(state);return json({playerId,state})}
+  if(url.pathname==='/choose-job'&&request.method==='POST'){const body=await request.json() as {playerId?:string;jobId?:string},player=state.players.find(p=>p.id===body.playerId);if(!player)return json({error:'Player not found'},404);if(!body.jobId||!jobs.has(body.jobId))return json({error:'Invalid job'},400);player.jobId=body.jobId;state.phase='jobs';await this.save(state);return json(state)}
+  if(url.pathname==='/start'&&request.method==='POST'){const body=await request.json() as {playerId?:string},player=state.players.find(p=>p.id===body.playerId);if(!player?.host)return json({error:'Host only'},403);if(state.players.length<2)return json({error:'Need at least 2 players'},409);if(state.players.some(p=>!p.jobId))return json({error:'Every player must choose a job'},409);state.phase='battle';state.round=1;state.questionIndex=0;state.log=['戰鬥開始！'];for(const p of state.players){p.hp=100;p.maxHp=100;p.atk=10;p.def=5;p.alive=true;p.guard=false}this.beginAction(state);await this.save(state);return json(state)}
+  if(url.pathname==='/action'&&request.method==='POST'){if(this.advanceTimeouts(state)){await this.save(state);return json(state)}if(state.phase!=='battle'||state.battlePhase!=='action')return json({error:'Not accepting actions'},409);const body=await request.json() as {playerId?:string;action?:ActionName},player=state.players.find(p=>p.id===body.playerId);if(!player?.alive)return json({error:'Player not available'},404);if(!body.action||!actions.has(body.action))return json({error:'Invalid action'},400);player.action=body.action;if(state.players.filter(p=>p.alive).every(p=>p.action))this.prepareQuiz(state);await this.save(state);return json(state)}
+  if(url.pathname==='/answer'&&request.method==='POST'){if(this.advanceTimeouts(state)){await this.save(state);return json(state)}if(state.phase!=='battle'||state.battlePhase!=='quiz')return json({error:'Not accepting answers'},409);const body=await request.json() as {playerId?:string;choice?:string},player=state.players.find(p=>p.id===body.playerId);if(!player?.alive)return json({error:'Player not available'},404);if(player.answered)return json({error:'Already answered'},409);const q=questions[state.questionIndex%questions.length];player.answered=true;player.coefficient=body.choice===q.answer?this.coefficientFromDeadline(state):0;if(state.players.filter(p=>p.alive).every(p=>p.answered))this.resolveRound(state);await this.save(state);return json(state)}
+  if(url.pathname==='/leave'&&request.method==='POST'){const body=await request.json() as {playerId?:string},leaving=state.players.find(p=>p.id===body.playerId);state.players=state.players.filter(p=>p.id!==body.playerId);if(leaving?.host&&state.players[0])state.players[0].host=true;if(!state.players.length){state.phase='lobby';state.battlePhase='action';state.round=0;state.question=undefined;state.log=[];state.actionEndsAt=undefined;state.quizEndsAt=undefined}else if(state.phase==='battle'&&state.players.filter(p=>p.alive).length<=1)state.phase='result';await this.save(state);return json(state)}
+  if(url.pathname==='/reset'&&request.method==='POST'){const body=await request.json() as {playerId?:string},player=state.players.find(p=>p.id===body.playerId);if(!player?.host)return json({error:'Host only'},403);state.phase='jobs';state.round=0;state.question=undefined;state.log=[];state.actionEndsAt=undefined;state.quizEndsAt=undefined;for(const p of state.players){p.hp=100;p.maxHp=100;p.atk=10;p.def=5;p.alive=true;p.guard=false;p.action=undefined;p.answered=false;p.coefficient=undefined}await this.save(state);return json(state)}
+  return json({error:'Not found'},404)
+ }
+ async alarm(){const state=await this.getState();if(this.advanceTimeouts(state))await this.save(state)}
+ webSocketMessage(ws:WebSocket,message:string|ArrayBuffer){if(typeof message==='string'&&message==='ping')ws.send('pong')}
 }
