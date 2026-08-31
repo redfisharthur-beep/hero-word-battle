@@ -29,17 +29,21 @@ export type RemoteRoomState = {
   round: number
   questionIndex: number
   question?: RemoteQuestion
+  actionEndsAt?: number
+  quizEndsAt?: number
   players: RemotePlayer[]
   log: string[]
 }
 
-const getBaseUrl = () => (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
-const requestUrl = (path: string) => `${getBaseUrl()}${path}`
+const configuredBaseUrl = () => (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
+const getBaseUrl = () => configuredBaseUrl() || (typeof window !== 'undefined' ? window.location.origin : '')
 
-export const hasMultiplayerApi = () => true
+export const hasMultiplayerApi = () => Boolean(getBaseUrl())
 
 async function apiRequest<T>(path: string, body?: unknown): Promise<T> {
-  const response = await fetch(requestUrl(path), {
+  const baseUrl = getBaseUrl()
+  if (!baseUrl) throw new Error('多人伺服器尚未設定')
+  const response = await fetch(baseUrl + path, {
     method: body ? 'POST' : 'GET',
     headers: { 'content-type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined,
@@ -49,32 +53,48 @@ async function apiRequest<T>(path: string, body?: unknown): Promise<T> {
   return data as T
 }
 
-export function connectRoom(roomId: string, onState: (state: RemoteRoomState) => void) {
+export function connectRoom(roomId: string, onState: (state: RemoteRoomState) => void, onConnection?: (connected: boolean) => void) {
   const baseUrl = getBaseUrl()
-  const wsBase = baseUrl
-    ? baseUrl.replace(/^http/, 'ws')
-    : `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}`
-  let socket: WebSocket | null = new WebSocket(`${wsBase}/api/rooms/${encodeURIComponent(roomId)}/ws`)
+  if (!baseUrl) return () => undefined
+
+  const wsBase = baseUrl.replace(/^http/, 'ws')
+  let stopped = false
+  let socket: WebSocket | null = null
   let pingTimer: number | undefined
+  let reconnectTimer: number | undefined
 
-  socket.onopen = () => {
-    pingTimer = window.setInterval(() => {
-      if (socket?.readyState === WebSocket.OPEN) socket.send('ping')
-    }, 20000)
-  }
-
-  socket.onmessage = (event) => {
-    if (event.data === 'pong') return
-    try {
-      const payload = JSON.parse(event.data)
-      if (payload?.type === 'state' && payload.state) onState(payload.state)
-    } catch {
-      // Ignore malformed realtime packets.
+  const connect = () => {
+    if (stopped) return
+    socket = new WebSocket(`${wsBase}/api/rooms/${encodeURIComponent(roomId)}/ws`)
+    socket.onopen = () => {
+      onConnection?.(true)
+      pingTimer = window.setInterval(() => {
+        if (socket?.readyState === WebSocket.OPEN) socket.send('ping')
+      }, 20000)
     }
+    socket.onmessage = (event) => {
+      if (event.data === 'pong') return
+      try {
+        const payload = JSON.parse(event.data)
+        if (payload?.type === 'state' && payload.state) onState(payload.state)
+      } catch {
+        // Ignore malformed realtime packets.
+      }
+    }
+    socket.onclose = () => {
+      onConnection?.(false)
+      if (pingTimer) window.clearInterval(pingTimer)
+      if (!stopped) reconnectTimer = window.setTimeout(connect, 1200)
+    }
+    socket.onerror = () => socket?.close()
   }
+
+  connect()
 
   return () => {
+    stopped = true
     if (pingTimer) window.clearInterval(pingTimer)
+    if (reconnectTimer) window.clearTimeout(reconnectTimer)
     socket?.close()
     socket = null
   }
@@ -91,10 +111,10 @@ export const multiplayerApi = {
     apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/start`, { playerId }),
   action: (roomId: string, playerId: string, action: RemoteAction) =>
     apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/action`, { playerId, action }),
-  forceQuiz: (roomId: string, playerId: string) =>
-    apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/force-quiz`, { playerId }),
   answer: (roomId: string, playerId: string, choice: string, coefficient: number) =>
     apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/answer`, { playerId, choice, coefficient }),
+  tick: (roomId: string) =>
+    apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/tick`, {}),
   leave: (roomId: string, playerId: string) =>
     apiRequest<RemoteRoomState>(`/api/rooms/${encodeURIComponent(roomId)}/leave`, { playerId }),
   reset: (roomId: string, playerId: string) =>
