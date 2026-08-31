@@ -7,6 +7,8 @@
   background: rgba(2,6,23,.78);
 }
 
+.job-grid { grid-template-columns: repeat(3, minmax(0,1fr)) !important; }
+
 .job-full-art {
   width: 100%;
   aspect-ratio: 1 / 1;
@@ -41,13 +43,11 @@
 .rank-player-copy > strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rank-player-copy small { color: #94a3b8; font-size: 11px; }
 
-/* Global responsive safety */
 img { max-width: 100%; height: auto; }
 button, input { max-width: 100%; }
 .page-card, .battle-panel, .self-card, .enemy-strip { min-width: 0; }
 .page-title, .battle-heading h1, .subtitle, .page-subtitle, .notice-box, button, input { overflow-wrap: anywhere; }
 
-/* Homepage artwork and controls */
 .hero-card {
   position: relative;
   overflow: hidden;
@@ -115,7 +115,6 @@ button, input { max-width: 100%; }
 }
 .hero-card .primary-button:hover:not(:disabled) { transform: translateX(-50%) translateY(-1px); }
 
-/* Room cards: one per row, artwork only */
 .room-grid {
   grid-template-columns: 1fr !important;
   width: min(620px, 100%);
@@ -140,7 +139,6 @@ button, input { max-width: 100%; }
 .room-card:nth-child(4) { background-image: url('/images/rooms/Oracle.png') !important; }
 .room-card.selected { box-shadow: 0 0 0 3px #38bdf8 inset, 0 0 22px rgba(56,189,248,.28); }
 
-/* Action cards: uploaded artwork only */
 .action-card {
   min-height: 165px;
   padding: 0;
@@ -167,7 +165,7 @@ button, input { max-width: 100%; }
 }
 
 @media (max-width: 760px) {
-  .job-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .job-grid { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
   .job-art-card { min-height: 0; }
   .job-full-art { aspect-ratio: 1 / 1; }
   .job-art-card:last-child { grid-column: auto; }
@@ -200,5 +198,5 @@ button, input { max-width: 100%; }
   .hero-card .login-panel { width: 94%; }
   .hero-card .name-input, .hero-card .line-button { width: 84%; }
   .hero-card .primary-button { width: 76%; }
-  .job-grid, .action-grid { grid-template-columns: 1fr; }
+  .job-grid, .action-grid { grid-template-columns: 1fr !important; }
 }
