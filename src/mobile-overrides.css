@@ -91,16 +91,16 @@ label {
     margin: 0 !important;
   }
 
-  /* Lobby: room artwork goes another 10px down; selector and player list keep their current position. */
+  /* Lobby: move room artwork, word pool, player names, and start button all down by another 10px. */
   .lobby-page .lobby-room-image {
-    transform: translateY(55px) !important;
+    transform: translateY(65px) !important;
   }
   .lobby-page .word-pool-selector,
   .lobby-page .lobby-player-list {
-    transform: translateY(45px) !important;
+    transform: translateY(55px) !important;
   }
   .lobby-page .lobby-start-button {
-    transform: translateY(60px) !important;
+    transform: translateY(70px) !important;
   }
 
   /* Keep the established spacing around room artwork and selector. */
