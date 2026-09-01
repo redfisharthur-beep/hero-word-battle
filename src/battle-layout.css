@@ -34,6 +34,7 @@
 .action-card:active:not(:disabled){transform:scale(.97)!important}
 .action-card.selected{filter:drop-shadow(0 0 10px rgba(250,204,21,.55))!important}
 .action-card:disabled{opacity:.42!important;filter:grayscale(.65)!important}
+.quiz-help,.score-guide{display:none!important}
 
 /* All previous-page controls use the provided artwork only. */
 .back-button{width:112px!important;min-width:112px!important;max-width:112px!important;height:112px!important;min-height:112px!important;max-height:112px!important;padding:0!important;border:0!important;border-radius:0!important;background-color:transparent!important;background-image:url('/images/rooms/return.png')!important;background-repeat:no-repeat!important;background-position:center!important;background-size:contain!important;box-shadow:none!important;font-size:0!important;line-height:0!important;color:transparent!important;overflow:hidden!important}
