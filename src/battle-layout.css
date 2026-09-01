@@ -43,12 +43,19 @@
 .action-card:disabled{opacity:.42!important;filter:grayscale(.65)!important}
 .quiz-help,.score-guide{display:none!important}
 
-.rooms-page .room-grid{gap:10px!important;row-gap:10px!important}
+/* Desktop room artwork: move all four room images up 30px. */
+.rooms-page .room-grid{gap:10px!important;row-gap:10px!important;transform:translateY(-30px)!important}
 .rooms-page .room-card{width:250px!important;min-width:250px!important;max-width:250px!important;height:150px!important;min-height:150px!important;max-height:150px!important;background-size:contain!important;background-position:center!important;overflow:visible!important;margin:0!important}
 
 .back-button{width:146px!important;min-width:146px!important;max-width:146px!important;height:146px!important;min-height:146px!important;max-height:146px!important;padding:0!important;border:0!important;border-radius:0!important;background-color:transparent!important;background-image:url('/images/rooms/return.png')!important;background-repeat:no-repeat!important;background-position:center!important;background-size:contain!important;box-shadow:none!important;font-size:0!important;line-height:0!important;color:transparent!important;overflow:hidden!important}
 .back-button:hover:not(:disabled),.back-button:focus-visible{transform:scale(1.05)!important;filter:brightness(1.08)}
 .back-button:active:not(:disabled){transform:scale(.96)!important}
+
+/* Lobby main content moves together; back button keeps its own position. */
+.lobby-page .lobby-room-image,
+.lobby-page .word-pool-selector,
+.lobby-page .lobby-player-list,
+.lobby-page .lobby-start-button{position:relative!important;top:-30px!important}
 
 .lobby-player-list .player-row.muted strong{font-size:0!important}
 .lobby-player-list .player-row.muted strong::after{content:'虛位以待';font-size:18px!important;font-weight:300!important;letter-spacing:.06em;color:#94a3b8}
@@ -70,6 +77,7 @@ button,input,textarea,select,p,span,strong,b,small,em,h1,h2,h3,h4,h5,h6,label{fo
 .action-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-template-rows:repeat(2,auto)!important;gap:8px!important;width:100%!important;max-width:540px!important}
 .action-card,.action-card.ultimate-action{width:100%!important;height:auto!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;aspect-ratio:1/1!important}
 .action-card:nth-child(1){grid-column:1!important;grid-row:1!important}.action-card:nth-child(2){grid-column:2!important;grid-row:1!important}.action-card:nth-child(3){grid-column:3!important;grid-row:1!important}.action-card:nth-child(4){grid-column:1!important;grid-row:2!important}.action-card:nth-child(5){grid-column:2!important;grid-row:2!important}.action-card:nth-child(6),.action-card.ultimate-action:nth-child(6){grid-column:3!important;grid-row:2!important}
+/* Keep the existing mobile room position unchanged. */
 .rooms-page .room-grid{gap:0!important;row-gap:0!important;transform:translateY(-100px)!important}
 .rooms-page .room-card{height:150px!important;min-height:150px!important;max-height:150px!important;background-size:contain!important;overflow:visible!important}
 .back-button{width:125px!important;min-width:125px!important;max-width:125px!important;height:125px!important;min-height:125px!important;max-height:125px!important;position:relative!important;top:-40px!important}
