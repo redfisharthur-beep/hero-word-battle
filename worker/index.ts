@@ -103,7 +103,7 @@ export default {
     if (request.method === 'OPTIONS') return json({ ok: true })
     const url = new URL(request.url)
     if (url.pathname === '/api/health') {
-      return json({ ok: true, service: 'hero-word-battle-api', version: '0.9.1', vocabularyCounts })
+      return json({ ok: true, service: 'hero-word-battle-api', version: '0.9.2', vocabularyCounts })
     }
     const m = url.pathname.match(/^\/api\/rooms\/([^/]+)(\/.*)?$/)
     if (m) {
@@ -334,17 +334,17 @@ export class GameRoom extends DurableObject<Env> {
     const targets = s.players.filter((p) => p.id !== a.id && p.alive)
     const mul =
       action === 'attack' && a.jobId === 'archer'
-        ? 1.6
+        ? 1.5
         : action === 'heal' && a.jobId === 'priest'
-          ? 1.8
+          ? 1.08
           : action === 'finish' && a.jobId === 'assassin'
-            ? 1.35
+            ? 1.12
             : 1
 
     if (action === 'upgrade') {
-      const hp = Math.round((a.jobId === 'warrior' ? 8 : 4) * c)
-      const atk = Math.round((a.jobId === 'assassin' ? 3 : 1) * c)
-      const def = Math.round((a.jobId === 'fighter' ? 3 : 1) * c)
+      const hp = Math.round((a.jobId === 'warrior' ? 5.8 : 4) * c)
+      const atk = Math.round((a.jobId === 'assassin' ? 2.2 : 1) * c)
+      const def = Math.round((a.jobId === 'fighter' ? 2.7 : 1) * c)
       a.maxHp += hp
       a.hp += hp
       a.atk += atk
@@ -355,7 +355,7 @@ export class GameRoom extends DurableObject<Env> {
     if (action === 'heal') {
       const amount = Math.round((14 + a.atk * 0.45) * c * mul)
       if (a.hp >= a.maxHp) {
-        const gain = Math.max(1, Math.round(amount * 0.5))
+        const gain = Math.max(1, Math.round(amount * 0.15))
         a.maxHp += gain
         a.hp += gain
         return `${a.name} 滿血治療，生命上限 +${gain}`
@@ -375,8 +375,9 @@ export class GameRoom extends DurableObject<Env> {
     if (action === 'attack' && a.jobId === 'mage') {
       let total = 0
       let ko = 0
+      const mageMul = targets.length === 1 ? 1.2 : targets.length === 2 ? 1.05 : 0.9
       for (const t of targets) {
-        const raw = Math.max(1, Math.round(a.atk * c * 0.45 - t.def * 0.5))
+        const raw = Math.max(1, Math.round(a.atk * c * mageMul - t.def * 0.5))
         const damage = t.guard ? Math.max(1, Math.round(raw * 0.5)) : raw
         t.guard = false
         t.hp = Math.max(0, t.hp - damage)
@@ -390,7 +391,7 @@ export class GameRoom extends DurableObject<Env> {
     const t = [...targets].sort((x, y) => (action === 'attack' ? y.hp - x.hp : x.hp - y.hp))[0]
     const raw = Math.max(
       1,
-      Math.round(a.atk * c * (action === 'finish' ? 1.15 : 1) * mul - t.def),
+      Math.round(a.atk * c * (action === 'finish' ? 1.1 : 1) * mul - t.def),
     )
     const damage = t.guard ? Math.max(1, Math.round(raw * 0.5)) : raw
     t.guard = false
