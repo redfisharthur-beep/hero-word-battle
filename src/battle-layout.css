@@ -34,4 +34,10 @@
 .action-card:active:not(:disabled){transform:scale(.97)!important}
 .action-card.selected{filter:drop-shadow(0 0 10px rgba(250,204,21,.55))!important}
 .action-card:disabled{opacity:.42!important;filter:grayscale(.65)!important}
-@media(max-width:760px){.battle-shell{padding-left:10px!important;padding-right:10px!important}.self-card.character-status-card,.enemy-card.enemy-card-with-head{padding:6px 2px!important}.action-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}.action-card{min-height:0!important}.self-card .stats,.enemy-card .enemy-stats{font-size:13px!important}}
+
+/* All previous-page controls use the provided artwork only. */
+.back-button{width:56px!important;min-width:56px!important;max-width:56px!important;height:56px!important;min-height:56px!important;max-height:56px!important;padding:0!important;border:0!important;border-radius:0!important;background-color:transparent!important;background-image:url('/images/rooms/return.png')!important;background-repeat:no-repeat!important;background-position:center!important;background-size:contain!important;box-shadow:none!important;font-size:0!important;line-height:0!important;color:transparent!important;overflow:hidden!important}
+.back-button:hover:not(:disabled),.back-button:focus-visible{transform:scale(1.05)!important;filter:brightness(1.08)}
+.back-button:active:not(:disabled){transform:scale(.96)!important}
+
+@media(max-width:760px){.battle-shell{padding-left:10px!important;padding-right:10px!important}.self-card.character-status-card,.enemy-card.enemy-card-with-head{padding:6px 2px!important}.action-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}.action-card{min-height:0!important}.self-card .stats,.enemy-card .enemy-stats{font-size:13px!important}.back-button{width:48px!important;min-width:48px!important;max-width:48px!important;height:48px!important;min-height:48px!important;max-height:48px!important}}
