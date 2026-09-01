@@ -5,11 +5,8 @@
 .self-card.character-status-card,.enemy-card.enemy-card-with-head{width:100%!important;max-width:none!important;min-height:36px!important;height:36px!important;border-radius:0!important;border:0!important;background:transparent!important;box-shadow:none!important;padding:0 4px 6px!important;margin:0!important;display:grid!important;grid-template-columns:30px minmax(0,1fr)!important;gap:8px!important;align-items:center!important;position:relative!important;overflow:visible!important}
 .self-card .character-head.large,.enemy-card .character-head{width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;max-width:30px!important;max-height:30px!important;border-radius:6px!important;padding:0!important;object-fit:contain!important;background:transparent!important;box-shadow:none!important;filter:none!important;animation:none!important;transition:none!important}
 .character-head,.character-head.large{background:transparent!important;filter:none!important;box-shadow:none!important;animation:none!important;transition:none!important}
-
-/* Do not animate the player rows themselves; this prevents the avatar/card flash on every stat update. */
 .self-card.fx-hit,.self-card.fx-heal,.self-card.fx-ko,.self-card.fx-buff,.enemy-card.fx-hit,.enemy-card.fx-heal,.enemy-card.fx-ko,.enemy-card.fx-buff{animation:none!important;transform:none!important;filter:none!important;opacity:1!important}
 .enemy-card.muted{opacity:.42!important}
-
 .self-card .character-status-body{height:30px!important;min-height:30px!important;display:flex!important;align-items:center!important;gap:9px!important;min-width:0!important;white-space:nowrap!important}
 .self-card .self-top{height:30px!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:7px!important;flex:0 0 auto!important;min-width:0!important}
 .self-card .self-top>div{height:30px!important;display:flex!important;align-items:center!important;gap:7px!important;min-width:0!important}
@@ -19,7 +16,6 @@
 .self-card .stats{height:30px!important;display:flex!important;align-items:center!important;gap:9px!important;flex-wrap:nowrap!important;font-size:13px!important;line-height:30px!important;white-space:nowrap!important;min-width:0!important}
 .self-card .ultimate-status{display:none!important}
 .self-card .hp-track{position:absolute!important;left:42px!important;right:4px!important;bottom:0!important;height:4px!important;width:auto!important;margin:0!important;border-radius:999px!important}
-
 .enemy-strip{display:grid!important;grid-template-columns:1fr!important;gap:6px!important;width:100%!important;margin:0 auto 8px!important}
 .enemy-card.enemy-card-with-head{grid-template-columns:30px minmax(0,1fr)!important}
 .enemy-card.enemy-card-with-head>div:not(.mini-hp){height:30px!important;display:flex!important;align-items:center!important;gap:8px!important;min-width:0!important;flex-wrap:nowrap!important;white-space:nowrap!important}
@@ -30,6 +26,8 @@
 .enemy-card.enemy-card-with-head .mini-hp{position:absolute!important;left:42px!important;right:4px!important;bottom:0!important;grid-column:auto!important;height:4px!important;margin:0!important;width:auto!important;border-radius:999px!important}
 
 .battle-panel{margin-top:6px!important}
+.battle-heading{justify-content:flex-end!important;margin-bottom:10px!important;min-height:58px!important}
+.battle-heading>div:first-child{display:none!important}
 .action-grid{display:grid!important;grid-template-columns:repeat(3,180px)!important;grid-template-rows:repeat(2,180px)!important;gap:14px 18px!important;width:max-content!important;max-width:100%!important;margin:0 auto!important;justify-content:center!important;align-items:center!important;grid-auto-flow:row!important}
 .action-card,.action-card.ultimate-action{width:180px!important;height:180px!important;min-width:180px!important;min-height:180px!important;max-width:180px!important;max-height:180px!important;aspect-ratio:1/1!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background-color:transparent!important;background-repeat:no-repeat!important;background-size:contain!important;background-position:center!important;box-shadow:none!important;overflow:hidden!important;transform:none!important;justify-self:center!important;align-self:center!important;grid-column:auto!important;grid-row:auto!important}
 .action-card::before,.action-card>*{display:none!important}
