@@ -31,19 +31,19 @@ label {
 
 /* Mobile-only positioning overrides requested for room and lobby screens. */
 @media (max-width: 760px) {
-  /* Return button: lobby and room-selection pages sit 10px from the top; jobs keeps its current position. */
+  /* Return button: shorter 2:1 hit area matching the artwork more closely. */
   .back-button,
   .jobs-card .back-button {
     position: fixed !important;
     left: 3vw !important;
     top: 0 !important;
     z-index: 50 !important;
-    width: 141px !important;
-    min-width: 141px !important;
+    width: 112px !important;
+    min-width: 112px !important;
     max-width: none !important;
-    height: 70.5px !important;
-    min-height: 70.5px !important;
-    max-height: 70.5px !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
     margin: 0 !important;
     padding: 0 !important;
     border: 0 !important;
@@ -61,12 +61,12 @@ label {
     left: 3vw !important;
     top: 10px !important;
     z-index: 50 !important;
-    width: 141px !important;
-    min-width: 141px !important;
+    width: 112px !important;
+    min-width: 112px !important;
     max-width: none !important;
-    height: 70.5px !important;
-    min-height: 70.5px !important;
-    max-height: 70.5px !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
     margin: 0 !important;
     padding: 0 !important;
     border: 0 !important;
