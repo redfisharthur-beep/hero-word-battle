@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300;400;500;700&display=swap');
 
-/* Global UI typography: cute, clean Japanese rounded style. */
+/* Global UI typography: use Zen Maru Gothic for all visible text and numbers. */
 :root,
 html,
 body,
@@ -111,7 +111,8 @@ label {
     margin-bottom: 20px !important;
   }
   .lobby-page .word-pool-selector .word-pool-button {
-    font-size: 28px !important;
+    font-family: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'Hiragino Sans', 'Yu Gothic', 'YuGothic', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif !important;
+    font-size: 24px !important;
     line-height: 1 !important;
   }
 
