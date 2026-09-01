@@ -22,9 +22,9 @@ const makeStat = (kind: StatKind, value: string) => {
 }
 
 const parseStats = (text: string) => {
-  const life = text.match(/HP\s+([^\s　]+)/i)?.[1]
-  const atk = text.match(/ATK\s+([^\s　]+)/i)?.[1]
-  const def = text.match(/DEF\s+([^\s　]+)/i)?.[1]
+  const life = text.match(/HP\s+([0-9]+(?:\/[0-9]+)?)/i)?.[1]
+  const atk = text.match(/ATK\s+([0-9]+)/i)?.[1]
+  const def = text.match(/DEF\s+([0-9]+)/i)?.[1]
   return life && atk && def ? { life, atk, def } : null
 }
 
