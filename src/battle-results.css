@@ -20,20 +20,28 @@
 .critical-burst,.ultimate-burst { position:absolute; z-index:2; top:-13px; padding:6px 14px; border-radius:999px; font-weight:900; letter-spacing:.08em; box-shadow:0 8px 22px rgba(0,0,0,.24); }
 .critical-burst { right:24px; background:#facc15; color:#422006; animation:criticalPop .55s cubic-bezier(.15,.9,.25,1.3); }
 .ultimate-burst { left:24px; background:#fff7d6; color:#713f12; border:1px solid rgba(250,204,21,.7); }
-.result-capsule-top { display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:16px; align-items:center; }
-.result-capsule .character-head.large,.result-capsule .character-head-placeholder.large { width:78px; height:78px; border-radius:24px; animation: resultHeroPop .55s cubic-bezier(.2,.9,.25,1); }
-.result-actor-copy { min-width:0; display:grid; gap:2px; }
-.result-actor-copy>strong { font-size:clamp(24px,5vw,34px); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.result-actor-copy>small { color:#94a3b8; font-size:14px; }
-.result-action-mark { min-width:112px; padding:12px 16px; border-radius:999px; display:grid; grid-template-columns:auto auto; gap:0 8px; align-items:center; justify-content:center; color:#e0f2fe; background:rgba(14,116,144,.18); border:1px solid rgba(125,211,252,.2); }
-.result-action-mark>span { grid-row:1/3; font-size:28px; }
-.result-action-mark>b { font-size:16px; white-space:nowrap; }
-.result-action-mark>em { font-style:normal; font-size:14px; color:#fde68a; }
-.result-main-text { margin:18px 2px 14px; font-size:clamp(18px,3.8vw,24px); line-height:1.45; text-align:center; color:#f8fafc; }
-.result-change-list { display:flex; flex-wrap:wrap; justify-content:center; gap:9px; }
-.result-change-chip,.result-no-change { min-height:42px; padding:9px 14px; border-radius:999px; display:flex; align-items:center; flex-wrap:wrap; justify-content:center; gap:8px; background:rgba(2,6,23,.55); border:1px solid rgba(255,255,255,.09); color:#cbd5e1; font-size:14px; animation: resultDataUp .52s .16s both ease; }
-.result-change-chip>strong { color:#f8fafc; }
-.result-change-chip>span { color:#bfdbfe; }
+
+/* Result row 1: portrait + player name + selected action artwork. */
+.result-capsule-top { display:grid; grid-template-columns:auto minmax(0,1fr) 118px; gap:14px; align-items:center; min-height:92px; }
+.result-capsule .character-head.large,.result-capsule .character-head-placeholder.large { width:82px; height:82px; min-width:82px; min-height:82px; max-width:82px; max-height:82px; border-radius:24px; animation:resultHeroPop .55s cubic-bezier(.2,.9,.25,1); }
+.result-actor-copy { min-width:0; display:flex; align-items:center; }
+.result-actor-copy>.mini-label,.result-actor-copy>small { display:none!important; }
+.result-actor-copy>strong { font-size:clamp(25px,5.2vw,36px); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.result-action-mark { width:118px; height:92px; min-width:118px; padding:0; border:0; border-radius:0; background-color:transparent!important; background-repeat:no-repeat!important; background-position:center!important; background-size:contain!important; box-shadow:none!important; }
+.result-action-mark>* { display:none!important; }
+.result-upgrade .result-action-mark{background-image:url('/images/actions/upgrade.png')!important}
+.result-attack .result-action-mark{background-image:url('/images/actions/attack.png')!important}
+.result-heal .result-action-mark{background-image:url('/images/actions/treat.png')!important}
+.result-finish .result-action-mark{background-image:url('/images/actions/Tailcut.png')!important}
+.result-guard .result-action-mark{background-image:url('/images/actions/reduction.png')!important}
+.result-ultimate .result-action-mark{background-image:url('/images/actions/Signature.png')!important}
+
+/* Result row 2: only the affected characters' stat changes. */
+.result-main-text { display:none!important; }
+.result-change-list { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:18px; }
+.result-change-chip,.result-no-change { min-height:52px; padding:11px 16px; border-radius:18px; display:flex; align-items:center; flex-wrap:wrap; justify-content:center; gap:10px; background:rgba(2,6,23,.55); border:1px solid rgba(255,255,255,.09); color:#cbd5e1; font-size:16px; animation:resultDataUp .52s .16s both ease; }
+.result-change-chip>strong { color:#f8fafc; font-size:17px; }
+.result-change-chip>span { color:#bfdbfe; font-size:16px; }
 .result-change-chip.ko { border-color:rgba(248,113,113,.35); box-shadow:0 0 26px rgba(239,68,68,.13); }
 .result-change-chip.ko>span:last-child { color:#fecaca; }
 .result-upgrade { box-shadow:0 20px 46px rgba(0,0,0,.28),0 0 34px rgba(56,189,248,.12); }
@@ -70,12 +78,14 @@
 @keyframes criticalPop { 0% { opacity:0; transform:scale(.35) rotate(-8deg); } 65% { transform:scale(1.18) rotate(2deg); } 100% { opacity:1; transform:none; } }
 @keyframes criticalFlash { 0%,100% { filter:brightness(1); } 30% { filter:brightness(1.55); } }
 @media(max-width:620px){
-  .result-capsule { min-height:220px; padding:18px 16px; border-radius:34px; }
-  .result-capsule-top { grid-template-columns:auto minmax(0,1fr); gap:11px; }
-  .result-action-mark { grid-column:1/-1; width:100%; min-width:0; grid-template-columns:auto auto auto; }
-  .result-action-mark>span { grid-row:auto; font-size:23px; }
-  .result-main-text { margin-top:14px; }
-  .result-change-chip,.result-no-change { width:100%; }
+  .result-capsule { min-height:206px; padding:16px 14px; border-radius:30px; overflow:visible; }
+  .result-capsule-top { grid-template-columns:68px minmax(0,1fr) 98px; gap:9px; min-height:74px; }
+  .result-capsule .character-head.large,.result-capsule .character-head-placeholder.large { width:68px; height:68px; min-width:68px; min-height:68px; max-width:68px; max-height:68px; border-radius:20px; }
+  .result-actor-copy>strong { font-size:clamp(21px,6vw,29px); }
+  .result-action-mark { width:98px; min-width:98px; height:78px; }
+  .result-change-list { margin-top:14px; gap:8px; }
+  .result-change-chip,.result-no-change { width:100%; min-height:48px; padding:10px 12px; border-radius:16px; font-size:15px; }
+  .result-change-chip>strong,.result-change-chip>span { font-size:15px; }
   .critical-burst { right:14px; }
   .ultimate-burst { left:14px; }
 
