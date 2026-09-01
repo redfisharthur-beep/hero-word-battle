@@ -87,12 +87,12 @@ body .battle-shell > .self-card.character-status-card > .player-status-grid > .p
 }
 
 /* Mobile navigation spacing: fixed return artwork must never overlap page content.
-   Keep 10px of clear space below the return button while preserving all current artwork sizes. */
+   Shorter return button + 10px clear space. */
 @media(max-width:760px){
   .rooms-card,
   .lobby-card,
   .jobs-card{
-    padding-top:91px!important;
+    padding-top:76px!important;
   }
 
   .rooms-page .room-grid{
