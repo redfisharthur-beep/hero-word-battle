@@ -1,8 +1,7 @@
 /* Mobile-only positioning overrides requested for room and lobby screens. */
 @media (max-width: 760px) {
-  /* Return button: keep current width, halve only the frame height, and align to the top edge. */
+  /* Return button: room-selection page moves down 10px; other pages keep their current top position. */
   .back-button,
-  .rooms-card .back-button,
   .lobby-card .back-button,
   .jobs-card .back-button {
     position: fixed !important;
@@ -26,11 +25,33 @@
     box-shadow: none !important;
     overflow: visible !important;
   }
+  .rooms-card .back-button {
+    position: fixed !important;
+    left: 3vw !important;
+    top: 10px !important;
+    z-index: 50 !important;
+    width: 141px !important;
+    min-width: 141px !important;
+    max-width: none !important;
+    height: 70.5px !important;
+    min-height: 70.5px !important;
+    max-height: 70.5px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background-color: transparent !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: left top !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
 
   /* Room selection: move the current four-room group down another 10px; keep zero spacing. */
   .rooms-page .room-grid {
     position: relative !important;
-    top: 35px !important;
+    top: 45px !important;
     gap: 0 !important;
     row-gap: 0 !important;
     column-gap: 0 !important;
