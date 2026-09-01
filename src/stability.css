@@ -32,7 +32,7 @@ body .battle-shell > .enemy-strip > .enemy-card.enemy-card-with-head > .player-s
   overflow:hidden!important;
 }
 
-/* Explicitly neutralize the old enemy strong/small line-height rules that pushed names outside their row. */
+/* Names stay inside the first cell of the top row for every player. */
 body .battle-shell > .enemy-strip > .enemy-card.enemy-card-with-head > .player-status-grid > .player-status-top > .player-status-name,
 body .battle-shell > .self-card.character-status-card > .player-status-grid > .player-status-top > .player-status-name{
   display:flex!important;
@@ -60,3 +60,6 @@ body .battle-shell > .self-card.character-status-card > .player-status-grid > .p
 /* Keep icons and text on stable compositor layers without changing size or position. */
 .character-head,.player-stat img{backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important;transform:translateZ(0)!important}
 .battle-meta-row,.battle-panel,.quiz-card,.action-grid{backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important}
+
+/* Preserve the latest ranking design: no trophy/rank badge. */
+.result-rank-badge{display:none!important}
