@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { connectRoom, hasMultiplayerApi, multiplayerApi, type RemoteAction, type RemoteRoomState, type WordPoolSize } from './lib/multiplayer'
 import './job-images.css'
+import './home-fixes.css'
 
 type Page='home'|'rooms'|'lobby'|'jobs'|'battle'|'result'
 type Job={id:string;name:string;feature:string;badge:string}
