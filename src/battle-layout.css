@@ -74,7 +74,7 @@ button,input,textarea,select,p,span,strong,b,small,em,h1,h2,h3,h4,h5,h6,label{fo
 .self-card .character-status-body{gap:6px!important}
 .self-card .self-top,.self-card .self-top>div,.self-card .stats,.enemy-card.enemy-card-with-head>div:not(.mini-hp){gap:6px!important}
 .self-card .mini-label,.self-card h2,.self-card .stats,.enemy-card.enemy-card-with-head small,.enemy-card.enemy-card-with-head strong,.enemy-card .enemy-stats{font-size:12px!important}
-.action-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-template-rows:repeat(2,auto)!important;gap:8px!important;width:100%!important;max-width:540px!important}
+.action-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;grid-template-rows:repeat(2,auto)!important;gap:8px!important;width:100%!important;max-width:540px!important}
 .action-card,.action-card.ultimate-action{width:100%!important;height:auto!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;aspect-ratio:1/1!important}
 .action-card:nth-child(1){grid-column:1!important;grid-row:1!important}.action-card:nth-child(2){grid-column:2!important;grid-row:1!important}.action-card:nth-child(3){grid-column:3!important;grid-row:1!important}.action-card:nth-child(4){grid-column:1!important;grid-row:2!important}.action-card:nth-child(5){grid-column:2!important;grid-row:2!important}.action-card:nth-child(6),.action-card.ultimate-action:nth-child(6){grid-column:3!important;grid-row:2!important}
 /* Keep the existing mobile room position unchanged. */
@@ -99,6 +99,7 @@ button,input,textarea,select,p,span,strong,b,small,em,h1,h2,h3,h4,h5,h6,label{fo
 .self-card .hp-track,.enemy-card.enemy-card-with-head .mini-hp{left:58px!important;right:2px!important;height:5px!important}
 }
 
-.battle-panel>.action-banner{display:none!important}
+/* Hide status/log copy from the battle screen. */
+.battle-panel>.action-banner,.battle-panel>.battle-log{display:none!important}
 .self-card.character-status-card::before,.self-card.character-status-card::after,.enemy-card.enemy-card-with-head::before,.enemy-card.enemy-card-with-head::after,.self-card .character-head::before,.self-card .character-head::after,.enemy-card .character-head::before,.enemy-card .character-head::after,.self-card .character-head-placeholder::before,.self-card .character-head-placeholder::after,.enemy-card .character-head-placeholder::before,.enemy-card .character-head-placeholder::after{content:none!important;display:none!important;background:none!important;box-shadow:none!important;animation:none!important}
 .self-card .character-head,.enemy-card .character-head,.self-card .character-head-placeholder,.enemy-card .character-head-placeholder{position:relative!important;z-index:1!important;overflow:hidden!important;isolation:isolate!important}
