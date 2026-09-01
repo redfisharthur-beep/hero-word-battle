@@ -36,7 +36,7 @@ button,input { max-width:100%; }
 .jobs-page { min-height:100dvh; align-items:flex-start; }
 .jobs-card { width:100%; max-width:560px; background:transparent!important; border:0!important; box-shadow:none!important; padding-top:16px!important; }
 .jobs-card .back-button { margin-bottom:16px; }
-.jobs-card .job-grid { gap:12px!important; }
+.jobs-card .job-grid { gap:12px!important; transform:translateY(-50px)!important; }
 .jobs-card .job-art-card { background:transparent!important; border:0!important; border-radius:0!important; box-shadow:none!important; padding:0!important; min-height:0!important; overflow:visible!important; }
 .jobs-card .job-art-card::before { display:none!important; }
 .jobs-card .job-full-art { padding:0!important; }
