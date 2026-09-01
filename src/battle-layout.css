@@ -51,11 +51,11 @@
 .back-button:hover:not(:disabled),.back-button:focus-visible{transform:scale(1.05)!important;filter:brightness(1.08)}
 .back-button:active:not(:disabled){transform:scale(.96)!important}
 
-/* Lobby main content moves together; back button keeps its own position. */
+/* Lobby main content is now 60px above its original position; back button stays unchanged. */
 .lobby-page .lobby-room-image,
 .lobby-page .word-pool-selector,
 .lobby-page .lobby-player-list,
-.lobby-page .lobby-start-button{position:relative!important;top:-30px!important}
+.lobby-page .lobby-start-button{position:relative!important;top:-60px!important}
 
 .lobby-player-list .player-row.muted strong{font-size:0!important}
 .lobby-player-list .player-row.muted strong::after{content:'虛位以待';font-size:18px!important;font-weight:300!important;letter-spacing:.06em;color:#94a3b8}
