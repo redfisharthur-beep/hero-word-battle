@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { connectRoom, hasMultiplayerApi, multiplayerApi, type RemoteAction, type RemoteRoomState, type WordPoolSize } from './lib/multiplayer'
 import './job-images.css'
 import './home-fixes.css'
+import './battle-layout.css'
 
 type Page='home'|'rooms'|'lobby'|'jobs'|'battle'|'result'
 type Job={id:string;name:string;feature:string;badge:string}
@@ -56,5 +57,5 @@ function Screen({title,subtitle,onBack,children}:{title:string;subtitle:string;o
 function ConnectionBar({connected}:{connected:boolean}){return <div className={`connection-bar ${connected?'online':'offline'}`}><span/>{connected?'即時連線中':'連線中斷'}</div>}
 function CharacterHead({player,size='small'}:{player?:RemotePlayer;size?:'small'|'large'}){if(!player?.jobId)return <span className={`character-head-placeholder ${size}`}/>;return <img className={`character-head ${size}`} src={jobHeadImage(player.jobId)} alt={jobName(player.jobId)}/>}
 function PlayerRow({player,name,label,muted=false,textOnly=false}:{player?:RemotePlayer;name?:string;label?:string;muted?:boolean;textOnly?:boolean}){return <div className={`player-row ${textOnly?'':'player-row-with-head'} ${muted?'muted':''}`}>{!textOnly&&(player?<CharacterHead player={player}/>:<span className="player-dot"/>)}<strong>{player?.name??name}</strong>{label&&<em>{label}</em>}</div>}
-function PlayerBattle({player,effect}:{player:RemotePlayer;effect?:EffectKind}){const hp=Math.max(0,Math.min(100,player.hp/Math.max(1,player.maxHp)*100));return <div className={`enemy-card enemy-card-with-head ${!player.alive?'muted':''} ${effect?`fx-${effect}`:''}`}><CharacterHead player={player}/><div><strong>{player.name}</strong><small>{jobName(player.jobId)} · {player.ultimateUsed?'絕招已用':'★'}</small></div><span>{player.alive?`HP ${player.hp}/${player.maxHp}`:'K.O.'}</span><div className="mini-hp"><i style={{width:`${hp}%`}}/></div></div>}
+function PlayerBattle({player,effect}:{player:RemotePlayer;effect?:EffectKind}){const hp=Math.max(0,Math.min(100,player.hp/Math.max(1,player.maxHp)*100));return <div className={`enemy-card enemy-card-with-head ${!player.alive?'muted':''} ${effect?`fx-${effect}`:''}`}><CharacterHead player={player}/><div><small>{jobName(player.jobId)}</small><strong>{player.name}</strong><span className="enemy-stats">HP {player.hp}/{player.maxHp}　ATK {player.atk}　DEF {player.def}</span></div><div className="mini-hp"><i style={{width:`${hp}%`}}/></div></div>}
 function ErrorBox({text}:{text:string}){return text?<div className="notice-box">⚠️ {text}</div>:null}
