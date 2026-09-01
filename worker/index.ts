@@ -8,7 +8,7 @@ export interface Env {
 
 type Phase = 'lobby' | 'jobs' | 'battle' | 'result'
 type BattlePhase = 'action' | 'quiz' | 'resolve'
-type ActionName = 'upgrade' | 'attack' | 'heal' | 'finish' | 'guard'
+type ActionName = 'upgrade' | 'attack' | 'heal' | 'finish' | 'guard' | 'ultimate'
 
 type Player = {
   id: string
@@ -21,6 +21,9 @@ type Player = {
   def: number
   alive: boolean
   guard: boolean
+  guardCharges?: number
+  guardMultiplier?: number
+  ultimateUsed?: boolean
   action?: ActionName
   answered?: boolean
   coefficient?: number
@@ -48,6 +51,8 @@ type ActionResult = {
   action?: ActionName
   coefficient: number
   correct: boolean
+  critical: boolean
+  ultimate: boolean
   text: string
   changes: StatChange[]
 }
@@ -81,8 +86,10 @@ const SWEEP_MS = 15000
 const wordPoolSizes = new Set<WordPoolSize>([300, 1200, 6000])
 const jobIds = ['assassin', 'warrior', 'fighter', 'archer', 'priest', 'mage']
 const jobs = new Set(jobIds)
-const actionIds: ActionName[] = ['upgrade', 'attack', 'heal', 'finish', 'guard']
+const regularActionIds: ActionName[] = ['upgrade', 'attack', 'heal', 'finish', 'guard']
+const actionIds: ActionName[] = [...regularActionIds, 'ultimate']
 const actions = new Set<ActionName>(actionIds)
+const criticalChance: Record<string, number> = { assassin: 0.5, warrior: 0.3, archer: 0.45, fighter: 0.35, priest: 0.3, mage: 0.4 }
 
 const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -97,14 +104,15 @@ const json = (data: unknown, status = 200) =>
 
 const publicQuestion = (q: Question): PublicQuestion => ({ id: q.id, word: q.word, choices: q.choices })
 const clampCoefficient = (v: number) => Math.max(0, Math.min(4, Math.floor(v)))
-const guardDamageMultiplier = (p: Player) => (p.jobId === 'fighter' ? 0.15 : p.jobId === 'warrior' ? 0.32 : 0.5)
+const guardDamageMultiplier = (p: Player) => p.guardMultiplier ?? (p.jobId === 'fighter' ? 0.15 : p.jobId === 'warrior' ? 0.32 : 0.5)
+const rollCritical = (p: Player) => Math.random() < (criticalChance[p.jobId ?? ''] ?? 0.3)
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === 'OPTIONS') return json({ ok: true })
     const url = new URL(request.url)
     if (url.pathname === '/api/health') {
-      return json({ ok: true, service: 'hero-word-battle-api', version: '0.10.1', vocabularyCounts })
+      return json({ ok: true, service: 'hero-word-battle-api', version: '0.11.0', vocabularyCounts })
     }
     const m = url.pathname.match(/^\/api\/rooms\/([^/]+)(\/.*)?$/)
     if (m) {
@@ -183,13 +191,8 @@ export class GameRoom extends DurableObject<Env> {
     const cutoff = Date.now() - PRESENCE_MS
     const active = this.activeSocketIds()
     const before = s.players.length
-    s.players = s.players.filter(
-      (p) => active.has(p.id) || (typeof p.lastSeen === 'number' && p.lastSeen >= cutoff),
-    )
-    if (s.players.length !== before) {
-      this.normalizeAfterLeave(s)
-      return true
-    }
+    s.players = s.players.filter((p) => active.has(p.id) || (typeof p.lastSeen === 'number' && p.lastSeen >= cutoff))
+    if (s.players.length !== before) { this.normalizeAfterLeave(s); return true }
     return false
   }
 
@@ -197,24 +200,13 @@ export class GameRoom extends DurableObject<Env> {
     s.log = s.log.slice(-16)
     this.stateData = s
     await this.ctx.storage.put('state', s)
-    const deadline =
-      s.phase === 'jobs'
-        ? s.jobsEndsAt
-        : s.phase === 'battle'
-          ? s.battlePhase === 'action'
-            ? s.actionEndsAt
-            : s.battlePhase === 'quiz'
-              ? s.quizEndsAt
-              : s.resolveEndsAt
-          : undefined
+    const deadline = s.phase === 'jobs' ? s.jobsEndsAt : s.phase === 'battle' ? s.battlePhase === 'action' ? s.actionEndsAt : s.battlePhase === 'quiz' ? s.quizEndsAt : s.resolveEndsAt : undefined
     const presence = s.players.length ? Date.now() + SWEEP_MS : undefined
     const alarm = deadline && presence ? Math.min(deadline, presence) : deadline ?? presence
     if (alarm) await this.ctx.storage.setAlarm(alarm)
     else await this.ctx.storage.deleteAlarm()
     const payload = JSON.stringify({ type: 'state', state: s })
-    for (const ws of this.ctx.getWebSockets()) {
-      try { ws.send(payload) } catch {}
-    }
+    for (const ws of this.ctx.getWebSockets()) { try { ws.send(payload) } catch {} }
   }
 
   private beginAction(s: RoomState) {
@@ -242,12 +234,8 @@ export class GameRoom extends DurableObject<Env> {
     s.questionIndex = Math.floor(Math.random() * s.wordPoolSize)
     s.log = [`戰鬥開始！題庫：${s.wordPoolSize} 字`]
     for (const p of s.players) {
-      p.hp = 100
-      p.maxHp = 100
-      p.atk = 10
-      p.def = 5
-      p.alive = true
-      p.guard = false
+      p.hp = 100; p.maxHp = 100; p.atk = 10; p.def = 5; p.alive = true
+      p.guard = false; p.guardCharges = 0; p.guardMultiplier = undefined; p.ultimateUsed = false
     }
     this.beginAction(s)
   }
@@ -257,26 +245,16 @@ export class GameRoom extends DurableObject<Env> {
     for (const p of s.players.filter((p) => !p.jobId)) {
       const available = jobIds.filter((j) => !used.has(j))
       const pick = available[Math.floor(Math.random() * available.length)]
-      p.jobId = pick
-      used.add(pick)
+      p.jobId = pick; used.add(pick)
     }
   }
 
   private currentQuestion(s: RoomState): Question { return getVocabularyQuestion(s.wordPoolSize, s.questionIndex) }
 
   private prepareQuiz(s: RoomState) {
-    s.battlePhase = 'quiz'
-    s.actionEndsAt = undefined
-    s.resolveEndsAt = undefined
-    s.currentResult = undefined
-    s.quizEndsAt = Date.now() + QUIZ_MS
-    s.question = publicQuestion(this.currentQuestion(s))
-    for (const p of s.players) {
-      p.answered = !p.alive
-      p.coefficient = p.alive ? undefined : 0
-      p.answeredAt = undefined
-      p.answerCorrect = p.alive ? undefined : false
-    }
+    s.battlePhase = 'quiz'; s.actionEndsAt = undefined; s.resolveEndsAt = undefined; s.currentResult = undefined
+    s.quizEndsAt = Date.now() + QUIZ_MS; s.question = publicQuestion(this.currentQuestion(s))
+    for (const p of s.players) { p.answered = !p.alive; p.coefficient = p.alive ? undefined : 0; p.answeredAt = undefined; p.answerCorrect = p.alive ? undefined : false }
   }
 
   private coefficientFromDeadline(s: RoomState) {
@@ -292,8 +270,7 @@ export class GameRoom extends DurableObject<Env> {
   private changesFrom(before: Snapshot, s: RoomState): StatChange[] {
     const changes: StatChange[] = []
     for (const p of s.players) {
-      const old = before.get(p.id)
-      if (!old) continue
+      const old = before.get(p.id); if (!old) continue
       const change: StatChange = { playerId: p.id, name: p.name }
       if (p.hp !== old.hp) change.hp = p.hp - old.hp
       if (p.maxHp !== old.maxHp) change.maxHp = p.maxHp - old.maxHp
@@ -306,7 +283,67 @@ export class GameRoom extends DurableObject<Env> {
     return changes
   }
 
-  private applyAction(a: Player, s: RoomState) {
+  private receiveDamage(t: Player, raw: number) {
+    const damage = t.guard ? Math.max(1, Math.round(raw * guardDamageMultiplier(t))) : raw
+    if (t.guard) {
+      t.guardCharges = Math.max(0, (t.guardCharges ?? 1) - 1)
+      if ((t.guardCharges ?? 0) <= 0) { t.guard = false; t.guardMultiplier = undefined }
+    }
+    t.hp = Math.max(0, t.hp - damage); t.alive = t.hp > 0
+    return damage
+  }
+
+  private applyUltimate(a: Player, s: RoomState, c: number, critical: boolean) {
+    const power = critical ? 1.5 : 1
+    const targets = s.players.filter((p) => p.id !== a.id && p.alive)
+    if (!targets.length) return `${a.name} 找不到可施放絕招的目標。`
+    a.ultimateUsed = true
+
+    if (a.jobId === 'assassin') {
+      const t = [...targets].sort((x, y) => x.hp - y.hp)[0]
+      const raw = Math.max(1, Math.round(a.atk * c * 1.55 * power - t.def * 0.7))
+      const damage = this.receiveDamage(t, raw)
+      return `${a.name} 施放「影殺・終結」！對 ${t.name} 造成 ${damage} 傷害${t.alive ? '。' : '，擊倒！'}`
+    }
+    if (a.jobId === 'warrior') {
+      const gain = Math.round(8 * c * power)
+      a.maxHp += gain; a.hp += gain; a.guard = true; a.guardCharges = 2; a.guardMultiplier = 0.32
+      return `${a.name} 施放「不屈戰魂」！MAX HP／HP +${gain}，獲得 2 次戰魂減傷。`
+    }
+    if (a.jobId === 'archer') {
+      const t = [...targets].sort((x, y) => y.hp - x.hp)[0]
+      const raw = Math.max(1, Math.round(a.atk * c * 1.55 * power - t.def * 0.5))
+      const damage = this.receiveDamage(t, raw)
+      return `${a.name} 施放「穿雲狙擊」！對 ${t.name} 造成 ${damage} 傷害${t.alive ? '。' : '，擊倒！'}`
+    }
+    if (a.jobId === 'fighter') {
+      const gain = Math.round(6 * c * power)
+      a.def += gain; a.guard = true; a.guardCharges = 1; a.guardMultiplier = 0.1
+      return `${a.name} 施放「金剛不壞」！DEF +${gain}，下一次攻擊僅承受 10% 傷害。`
+    }
+    if (a.jobId === 'priest') {
+      const amount = Math.round((20 + a.atk * 0.5) * c * 1.25 * power)
+      if (a.hp >= a.maxHp) {
+        const hpGain = Math.max(1, Math.round(amount * 0.25)); const defGain = Math.round(2 * c * power)
+        a.maxHp += hpGain; a.hp += hpGain; a.def += defGain
+        return `${a.name} 施放「神聖奇蹟」！MAX HP +${hpGain}、DEF +${defGain}。`
+      }
+      const before = a.hp; a.hp = Math.min(a.maxHp, a.hp + amount)
+      return `${a.name} 施放「神聖奇蹟」！HP +${a.hp - before}。`
+    }
+    if (a.jobId === 'mage') {
+      let total = 0; let ko = 0
+      const mageMul = targets.length === 1 ? 1.35 : targets.length === 2 ? 0.95 : targets.length === 3 ? 0.7 : 0.55
+      for (const t of targets) {
+        const raw = Math.max(1, Math.round(a.atk * c * mageMul * power - t.def * 0.5))
+        total += this.receiveDamage(t, raw); if (!t.alive) ko++
+      }
+      return `${a.name} 施放「末日魔法」！席捲 ${targets.length} 人，共造成 ${total} 傷害${ko ? `，擊倒 ${ko} 人` : ''}。`
+    }
+    return `${a.name} 的絕招沒有生效。`
+  }
+
+  private applyAction(a: Player, s: RoomState, critical: boolean) {
     const action = a.action
     const c = clampCoefficient(a.coefficient ?? 0)
     if (!action || c <= 0 || !a.alive) {
@@ -314,98 +351,84 @@ export class GameRoom extends DurableObject<Env> {
       if (!a.answerCorrect) return `${a.name} 答題未成功，技能係數 ×0。`
       return `${a.name} 本回合沒有行動。`
     }
+    if (action === 'ultimate') {
+      if (a.ultimateUsed) return `${a.name} 的絕招本場已使用。`
+      return this.applyUltimate(a, s, c, critical)
+    }
 
     const targets = s.players.filter((p) => p.id !== a.id && p.alive)
+    const power = critical ? 1.5 : 1
     const actionMul = action === 'attack' && a.jobId === 'archer' ? 1.25 : action === 'heal' && a.jobId === 'priest' ? 1.12 : action === 'finish' && a.jobId === 'assassin' ? 1.1 : 1
 
     if (action === 'upgrade') {
       const hpBase = a.jobId === 'warrior' ? 5.5 : 4
       const atkBase = a.jobId === 'assassin' ? 1.6 : a.jobId === 'archer' ? 1.4 : a.jobId === 'mage' ? 1.5 : 1
       const defBase = a.jobId === 'fighter' ? 3.5 : a.jobId === 'priest' ? 2 : 1
-      const hp = Math.round(hpBase * c)
-      const atk = Math.round(atkBase * c)
-      const def = Math.round(defBase * c)
-      a.maxHp += hp
-      a.hp += hp
-      a.atk += atk
-      a.def += def
+      const hp = Math.round(hpBase * c * power); const atk = Math.round(atkBase * c * power); const def = Math.round(defBase * c * power)
+      a.maxHp += hp; a.hp += hp; a.atk += atk; a.def += def
       return `${a.name} 升級成功：HP +${hp}、ATK +${atk}、DEF +${def}`
     }
 
     if (action === 'heal') {
-      const amount = Math.round((14 + a.atk * 0.45) * c * actionMul)
+      const amount = Math.round((14 + a.atk * 0.45) * c * actionMul * power)
       if (a.hp >= a.maxHp) {
-        const gain = Math.max(1, Math.round(amount * 0.15))
-        a.maxHp += gain
-        a.hp += gain
+        const gain = Math.max(1, Math.round(amount * 0.15)); a.maxHp += gain; a.hp += gain
         return `${a.name} 滿血治療，生命上限 +${gain}`
       }
-      const before = a.hp
-      a.hp = Math.min(a.maxHp, a.hp + amount)
+      const before = a.hp; a.hp = Math.min(a.maxHp, a.hp + amount)
       return `${a.name} 治療自己，HP +${a.hp - before}`
     }
 
     if (action === 'guard') {
-      a.guard = true
-      const keep = Math.round(guardDamageMultiplier(a) * 100)
-      return `${a.name} 展開減傷，下次攻擊僅承受 ${keep}% 傷害。`
+      a.guard = true; a.guardCharges = critical ? 2 : 1; a.guardMultiplier = a.jobId === 'fighter' ? 0.15 : a.jobId === 'warrior' ? 0.32 : 0.5
+      const keep = Math.round(a.guardMultiplier * 100)
+      return `${a.name} 展開減傷，下次攻擊僅承受 ${keep}% 傷害${critical ? '，爆擊使護盾可抵擋 2 次' : ''}。`
     }
 
     if (!targets.length) return `${a.name} 找不到可攻擊的目標。`
 
     if (action === 'attack' && a.jobId === 'mage') {
-      let total = 0
-      let ko = 0
-      const mageMul = targets.length === 1 ? 1.15 : targets.length === 2 ? 0.85 : 0.68
+      let total = 0; let ko = 0
+      const mageMul = targets.length === 1 ? 1.15 : targets.length === 2 ? 0.85 : targets.length === 3 ? 0.68 : 0.55
       for (const t of targets) {
-        const raw = Math.max(1, Math.round(a.atk * c * mageMul - t.def * 0.5))
-        const damage = t.guard ? Math.max(1, Math.round(raw * guardDamageMultiplier(t))) : raw
-        t.guard = false
-        t.hp = Math.max(0, t.hp - damage)
-        t.alive = t.hp > 0
-        total += damage
-        if (!t.alive) ko++
+        const raw = Math.max(1, Math.round(a.atk * c * mageMul * power - t.def * 0.5))
+        total += this.receiveDamage(t, raw); if (!t.alive) ko++
       }
-      return `${a.name} 施放範圍魔法（敵人越少威力越高），攻擊 ${targets.length} 人，共造成 ${total} 傷害${ko ? `，擊倒 ${ko} 人` : ''}。`
+      return `${a.name} 施放範圍魔法，攻擊 ${targets.length} 人，共造成 ${total} 傷害${ko ? `，擊倒 ${ko} 人` : ''}。`
     }
 
     const t = [...targets].sort((x, y) => (action === 'attack' ? y.hp - x.hp : x.hp - y.hp))[0]
-    const raw = Math.max(1, Math.round(a.atk * c * (action === 'finish' ? 1.1 : 1) * actionMul - t.def))
-    const damage = t.guard ? Math.max(1, Math.round(raw * guardDamageMultiplier(t))) : raw
-    t.guard = false
-    t.hp = Math.max(0, t.hp - damage)
-    t.alive = t.hp > 0
+    const raw = Math.max(1, Math.round(a.atk * c * (action === 'finish' ? 1.1 : 1) * actionMul * power - t.def))
+    const damage = this.receiveDamage(t, raw)
     return `${a.name} ${action === 'finish' ? '尾刀' : '攻擊'} ${t.name}，造成 ${damage} 傷害${t.alive ? '。' : '，擊倒！'}`
   }
 
   private makeResult(player: Player, s: RoomState): ActionResult {
     const before = this.snapshot(s)
-    const text = this.applyAction(player, s)
-    return { id: `${s.round}-${player.id}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, playerId: player.id, playerName: player.name, action: player.action, coefficient: clampCoefficient(player.coefficient ?? 0), correct: Boolean(player.answerCorrect), text, changes: this.changesFrom(before, s) }
+    const eligible = player.alive && Boolean(player.answerCorrect) && clampCoefficient(player.coefficient ?? 0) > 0 && Boolean(player.action)
+    const critical = eligible ? rollCritical(player) : false
+    const text = this.applyAction(player, s, critical)
+    return {
+      id: `${s.round}-${player.id}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      playerId: player.id, playerName: player.name, action: player.action,
+      coefficient: clampCoefficient(player.coefficient ?? 0), correct: Boolean(player.answerCorrect),
+      critical, ultimate: player.action === 'ultimate', text, changes: this.changesFrom(before, s),
+    }
   }
 
   private startResolve(s: RoomState) {
-    s.battlePhase = 'resolve'
-    s.quizEndsAt = undefined
-    s.question = undefined
+    s.battlePhase = 'resolve'; s.quizEndsAt = undefined; s.question = undefined
     const aliveThisTurn = s.players.filter((p) => p.alive && p.answeredAt !== undefined)
     aliveThisTurn.sort((a, b) => (a.answeredAt ?? Number.MAX_SAFE_INTEGER) - (b.answeredAt ?? Number.MAX_SAFE_INTEGER))
-    s.resolveQueue = aliveThisTurn.map((p) => p.id)
-    s.resolveIndex = 0
-    this.showResolveStep(s)
+    s.resolveQueue = aliveThisTurn.map((p) => p.id); s.resolveIndex = 0; this.showResolveStep(s)
   }
 
   private showResolveStep(s: RoomState) {
-    const queue = s.resolveQueue ?? []
-    const index = s.resolveIndex ?? 0
-    const playerId = queue[index]
+    const queue = s.resolveQueue ?? []; const index = s.resolveIndex ?? 0; const playerId = queue[index]
     if (!playerId) { this.finishRound(s); return }
     const player = s.players.find((p) => p.id === playerId)
     if (!player) { s.resolveIndex = index + 1; this.showResolveStep(s); return }
-    const result = this.makeResult(player, s)
-    s.currentResult = result
-    s.log.push(result.text)
-    s.resolveEndsAt = Date.now() + RESOLVE_STEP_MS
+    const result = this.makeResult(player, s); s.currentResult = result; s.log.push(`${result.critical ? 'CRITICAL！' : ''}${result.text}`); s.resolveEndsAt = Date.now() + RESOLVE_STEP_MS
   }
 
   private nextResolveStep(s: RoomState) {
@@ -415,15 +438,10 @@ export class GameRoom extends DurableObject<Env> {
   }
 
   private finishRound(s: RoomState) {
-    s.resolveEndsAt = undefined
-    s.resolveQueue = undefined
-    s.resolveIndex = undefined
-    s.currentResult = undefined
+    s.resolveEndsAt = undefined; s.resolveQueue = undefined; s.resolveIndex = undefined; s.currentResult = undefined
     const living = s.players.filter((p) => p.alive)
     if (s.round >= 10 || living.length <= 1) { s.phase = 'result'; s.log.push('對戰結束！'); return }
-    s.round++
-    s.questionIndex = (s.questionIndex + 1) % s.wordPoolSize
-    this.beginAction(s)
+    s.round++; s.questionIndex = (s.questionIndex + 1) % s.wordPoolSize; this.beginAction(s)
   }
 
   private advanceTimeouts(s: RoomState) {
@@ -431,34 +449,26 @@ export class GameRoom extends DurableObject<Env> {
     if (s.phase === 'jobs' && s.jobsEndsAt && now >= s.jobsEndsAt) { this.fillRandomJobs(s); this.startBattle(s); return true }
     if (s.phase !== 'battle') return false
     if (s.battlePhase === 'action' && s.actionEndsAt && now >= s.actionEndsAt) {
-      for (const p of s.players.filter((p) => p.alive)) if (!p.action) p.action = actionIds[Math.floor(Math.random() * actionIds.length)]
-      this.prepareQuiz(s)
-      s.log.push('動作時間到，未選擇者已隨機決定技能。')
-      return true
+      for (const p of s.players.filter((p) => p.alive)) if (!p.action) p.action = regularActionIds[Math.floor(Math.random() * regularActionIds.length)]
+      this.prepareQuiz(s); s.log.push('動作時間到，未選擇者已隨機決定一般技能。'); return true
     }
     if (s.battlePhase === 'quiz' && s.quizEndsAt && now >= s.quizEndsAt) {
       const endTime = s.quizEndsAt
       for (const p of s.players.filter((p) => p.alive)) if (!p.answered) { p.answered = true; p.coefficient = 0; p.answerCorrect = false; p.answeredAt = endTime + 1 }
-      s.log.push('8 秒答題結束，依作答完成順序開始行動。')
-      this.startResolve(s)
-      return true
+      s.log.push('8 秒答題結束，依作答完成順序開始行動。'); this.startResolve(s); return true
     }
     if (s.battlePhase === 'resolve' && s.resolveEndsAt && now >= s.resolveEndsAt) { this.nextResolveStep(s); return true }
     return false
   }
 
   async fetch(request: Request): Promise<Response> {
-    const url = new URL(request.url)
-    const s = await this.getState(url.searchParams.get('roomId') || undefined)
+    const url = new URL(request.url); const s = await this.getState(url.searchParams.get('roomId') || undefined)
     if (url.pathname === '/ws') {
       if (request.headers.get('Upgrade') !== 'websocket') return new Response('Expected websocket', { status: 426 })
-      const playerId = url.searchParams.get('playerId') || ''
-      const pair = new WebSocketPair(); const [client, server] = Object.values(pair)
-      this.ctx.acceptWebSocket(server); server.serializeAttachment({ playerId })
-      const p = s.players.find((x) => x.id === playerId)
+      const playerId = url.searchParams.get('playerId') || ''; const pair = new WebSocketPair(); const [client, server] = Object.values(pair)
+      this.ctx.acceptWebSocket(server); server.serializeAttachment({ playerId }); const p = s.players.find((x) => x.id === playerId)
       if (p) { p.lastSeen = Date.now(); await this.save(s) }
-      server.send(JSON.stringify({ type: 'state', state: s }))
-      return new Response(null, { status: 101, webSocket: client })
+      server.send(JSON.stringify({ type: 'state', state: s })); return new Response(null, { status: 101, webSocket: client })
     }
     if (url.pathname === '/state' && request.method === 'GET') { const a=this.pruneStale(s),b=this.advanceTimeouts(s); if(a||b) await this.save(s); return json(s) }
     if (url.pathname === '/tick' && request.method === 'POST') { const a=this.pruneStale(s),b=this.advanceTimeouts(s); if(a||b) await this.save(s); return json(s) }
@@ -467,16 +477,27 @@ export class GameRoom extends DurableObject<Env> {
       if(!name)return json({error:'Name required'},400); this.pruneStale(s); const existing=s.players.find((p)=>p.id===playerId)
       if(existing){existing.name=name;existing.lastSeen=Date.now();await this.save(s);return json({playerId,state:s})}
       if(s.phase!=='lobby')return json({error:'Game already started'},409); if(s.players.length>=5)return json({error:'Room full'},409)
-      s.players.push({id:playerId,name,host:s.players.length===0,hp:100,maxHp:100,atk:10,def:5,alive:true,guard:false,lastSeen:Date.now()}); await this.save(s); return json({playerId,state:s})
+      s.players.push({id:playerId,name,host:s.players.length===0,hp:100,maxHp:100,atk:10,def:5,alive:true,guard:false,guardCharges:0,ultimateUsed:false,lastSeen:Date.now()}); await this.save(s); return json({playerId,state:s})
     }
     if (url.pathname === '/word-pool' && request.method === 'POST') { const b=await request.json() as {playerId?:string;wordPoolSize?:number},p=s.players.find(x=>x.id===b.playerId);if(!p?.host)return json({error:'Host only'},403);if(s.phase!=='lobby')return json({error:'Room not in lobby'},409);const size=Number(b.wordPoolSize) as WordPoolSize;if(!wordPoolSizes.has(size))return json({error:'Invalid word pool'},400);s.wordPoolSize=size;p.lastSeen=Date.now();await this.save(s);return json(s) }
     if (url.pathname === '/begin-jobs' && request.method === 'POST') { const b=await request.json() as {playerId?:string},p=s.players.find(x=>x.id===b.playerId);if(!p?.host)return json({error:'Host only'},403);if(s.phase!=='lobby')return json({error:'Room not in lobby'},409);if(s.players.length<2)return json({error:'Need at least 2 players'},409);for(const x of s.players)x.jobId=undefined;s.phase='jobs';s.jobsEndsAt=Date.now()+JOBS_MS;await this.save(s);return json(s) }
     if (url.pathname === '/choose-job' && request.method === 'POST') { if(this.advanceTimeouts(s)){await this.save(s);return json(s)}const b=await request.json() as {playerId?:string;jobId?:string},p=s.players.find(x=>x.id===b.playerId);if(!p)return json({error:'Player not found'},404);if(s.phase!=='jobs')return json({error:'Not choosing jobs'},409);if(!b.jobId||!jobs.has(b.jobId))return json({error:'Invalid job'},400);if(s.players.some(x=>x.id!==p.id&&x.jobId===b.jobId))return json({error:'Profession already chosen'},409);p.jobId=b.jobId;p.lastSeen=Date.now();if(s.players.every(x=>x.jobId))this.startBattle(s);await this.save(s);return json(s) }
     if (url.pathname === '/start' && request.method === 'POST') { const b=await request.json() as {playerId?:string},p=s.players.find(x=>x.id===b.playerId);if(!p?.host)return json({error:'Host only'},403);if(s.players.length<2)return json({error:'Need at least 2 players'},409);this.fillRandomJobs(s);this.startBattle(s);await this.save(s);return json(s) }
-    if (url.pathname === '/action' && request.method === 'POST') { if(this.advanceTimeouts(s)){await this.save(s);return json(s)}if(s.phase!=='battle'||s.battlePhase!=='action')return json({error:'Not accepting actions'},409);const b=await request.json() as {playerId?:string;action?:ActionName},p=s.players.find(x=>x.id===b.playerId);if(!p?.alive)return json({error:'Player not available'},404);if(!b.action||!actions.has(b.action))return json({error:'Invalid action'},400);p.lastSeen=Date.now();p.action=b.action;await this.save(s);return json(s) }
+    if (url.pathname === '/action' && request.method === 'POST') {
+      if(this.advanceTimeouts(s)){await this.save(s);return json(s)}
+      if(s.phase!=='battle'||s.battlePhase!=='action')return json({error:'Not accepting actions'},409)
+      const b=await request.json() as {playerId?:string;action?:ActionName},p=s.players.find(x=>x.id===b.playerId)
+      if(!p?.alive)return json({error:'Player not available'},404);if(!b.action||!actions.has(b.action))return json({error:'Invalid action'},400)
+      if(b.action==='ultimate'&&p.ultimateUsed)return json({error:'Ultimate already used'},409)
+      p.lastSeen=Date.now();p.action=b.action;await this.save(s);return json(s)
+    }
     if (url.pathname === '/answer' && request.method === 'POST') { if(this.advanceTimeouts(s)){await this.save(s);return json(s)}if(s.phase!=='battle'||s.battlePhase!=='quiz')return json({error:'Not accepting answers'},409);const b=await request.json() as {playerId?:string;choice?:string},p=s.players.find(x=>x.id===b.playerId);if(!p?.alive)return json({error:'Player not available'},404);if(p.answered)return json({error:'Already answered'},409);p.lastSeen=Date.now();const q=this.currentQuestion(s),correct=b.choice===q.answer;p.answered=true;p.answerCorrect=correct;p.coefficient=correct?this.coefficientFromDeadline(s):0;p.answeredAt=Date.now();await this.save(s);return json(s) }
     if (url.pathname === '/leave' && request.method === 'POST') { const b=await request.json() as {playerId?:string};s.players=s.players.filter(x=>x.id!==b.playerId);this.normalizeAfterLeave(s);await this.save(s);return json(s) }
-    if (url.pathname === '/reset' && request.method === 'POST') { const b=await request.json() as {playerId?:string},p=s.players.find(x=>x.id===b.playerId);if(!p?.host)return json({error:'Host only'},403);for(const x of s.players){x.jobId=undefined;x.hp=100;x.maxHp=100;x.atk=10;x.def=5;x.alive=true;x.guard=false;x.action=undefined;x.answered=false;x.coefficient=undefined;x.answeredAt=undefined;x.answerCorrect=undefined;x.lastSeen=Date.now()}s.phase='jobs';s.battlePhase='action';s.jobsEndsAt=Date.now()+JOBS_MS;s.round=0;s.log=[];s.question=undefined;s.actionEndsAt=undefined;s.quizEndsAt=undefined;s.resolveEndsAt=undefined;s.resolveQueue=undefined;s.resolveIndex=undefined;s.currentResult=undefined;await this.save(s);return json(s) }
+    if (url.pathname === '/reset' && request.method === 'POST') {
+      const b=await request.json() as {playerId?:string},p=s.players.find(x=>x.id===b.playerId);if(!p?.host)return json({error:'Host only'},403)
+      for(const x of s.players){x.jobId=undefined;x.hp=100;x.maxHp=100;x.atk=10;x.def=5;x.alive=true;x.guard=false;x.guardCharges=0;x.guardMultiplier=undefined;x.ultimateUsed=false;x.action=undefined;x.answered=false;x.coefficient=undefined;x.answeredAt=undefined;x.answerCorrect=undefined;x.lastSeen=Date.now()}
+      s.phase='jobs';s.battlePhase='action';s.jobsEndsAt=Date.now()+JOBS_MS;s.round=0;s.log=[];s.question=undefined;s.actionEndsAt=undefined;s.quizEndsAt=undefined;s.resolveEndsAt=undefined;s.resolveQueue=undefined;s.resolveIndex=undefined;s.currentResult=undefined;await this.save(s);return json(s)
+    }
     return json({ error: 'Not found' }, 404)
   }
 
