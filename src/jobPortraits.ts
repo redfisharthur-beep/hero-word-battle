@@ -1,6 +1,8 @@
 const statIcon = (kind: 'life' | 'atk' | 'def') => `/images/actions/${kind === 'life' ? 'life' : kind === 'atk' ? 'ATK' : 'DEF'}.png`
 
-const makeStat = (kind: 'life' | 'atk' | 'def', value: string) => {
+type StatKind = 'life' | 'atk' | 'def'
+
+const makeStat = (kind: StatKind, value: string) => {
   const wrap = document.createElement('span')
   wrap.className = `stat-pill stat-${kind}`
 
@@ -19,45 +21,60 @@ const makeStat = (kind: 'life' | 'atk' | 'def', value: string) => {
   return wrap
 }
 
-const decorateSelfStats = () => {
-  document.querySelectorAll('.self-card .stats').forEach((stats) => {
-    const spans = Array.from(stats.children).filter((el): el is HTMLElement => el instanceof HTMLElement)
-    const specs: Array<{ index: number; kind: 'life' | 'atk' | 'def'; pattern: RegExp }> = [
-      { index: 0, kind: 'life', pattern: /HP\s+([^\s]+)/i },
-      { index: 1, kind: 'atk', pattern: /ATK\s+([^\s]+)/i },
-      { index: 2, kind: 'def', pattern: /DEF\s+([^\s]+)/i },
-    ]
+const parseStats = (text: string) => {
+  const life = text.match(/HP\s+([^\s　]+)/i)?.[1]
+  const atk = text.match(/ATK\s+([^\s　]+)/i)?.[1]
+  const def = text.match(/DEF\s+([^\s　]+)/i)?.[1]
+  return life && atk && def ? { life, atk, def } : null
+}
 
-    for (const { index, kind, pattern } of specs) {
-      const target = spans[index]
-      if (!target || target.querySelector('.stat-icon')) continue
-      const match = (target.textContent ?? '').match(pattern)
-      if (!match) continue
-      target.replaceChildren(...Array.from(makeStat(kind, match[1]).childNodes))
-      target.classList.add('stat-pill', `stat-${kind}`)
+const syncStrip = (source: HTMLElement, host: HTMLElement) => {
+  const values = parseStats(source.textContent ?? '')
+  if (!values) return
+
+  let strip = host.querySelector(':scope > .live-stat-strip') as HTMLElement | null
+  if (!strip) {
+    strip = document.createElement('div')
+    strip.className = 'live-stat-strip'
+    host.append(strip)
+  }
+
+  const signature = `${values.life}|${values.atk}|${values.def}`
+  if (strip.dataset.signature === signature) return
+  strip.dataset.signature = signature
+  strip.replaceChildren(
+    makeStat('life', values.life),
+    makeStat('atk', values.atk),
+    makeStat('def', values.def),
+  )
+}
+
+const syncSelfProfession = () => {
+  document.querySelectorAll<HTMLElement>('.self-card .self-top > div').forEach((host) => {
+    const source = host.querySelector<HTMLElement>('.mini-label')
+    if (!source) return
+    const profession = (source.textContent ?? '').replace(/^YOU\s*·\s*/i, '').trim()
+    if (!profession) return
+
+    let label = host.querySelector<HTMLElement>(':scope > .self-job-label')
+    if (!label) {
+      label = document.createElement('span')
+      label.className = 'self-job-label'
+      host.insertBefore(label, host.querySelector('h2'))
     }
+    if (label.textContent !== profession) label.textContent = profession
   })
 }
 
-const decorateEnemyStats = () => {
-  document.querySelectorAll<HTMLElement>('.enemy-card .enemy-stats').forEach((stats) => {
-    if (stats.querySelector('.stat-icon')) return
-    const text = stats.textContent ?? ''
-    const life = text.match(/HP\s+([^\s　]+)/i)?.[1]
-    const atk = text.match(/ATK\s+([^\s　]+)/i)?.[1]
-    const def = text.match(/DEF\s+([^\s　]+)/i)?.[1]
-    if (!life || !atk || !def) return
+const syncStats = () => {
+  document.querySelectorAll<HTMLElement>('.self-card .stats').forEach((source) => {
+    const host = source.parentElement
+    if (host) syncStrip(source, host)
+  })
 
-    const guard = text.includes('減傷待命') || text.includes('減傷')
-    stats.textContent = ''
-    stats.classList.add('stat-strip')
-    stats.append(makeStat('life', life), makeStat('atk', atk), makeStat('def', def))
-    if (guard) {
-      const guardMark = document.createElement('span')
-      guardMark.className = 'stat-guard'
-      guardMark.textContent = '減傷'
-      stats.append(guardMark)
-    }
+  document.querySelectorAll<HTMLElement>('.enemy-card .enemy-stats').forEach((source) => {
+    const host = source.parentElement
+    if (host) syncStrip(source, host)
   })
 }
 
@@ -67,8 +84,8 @@ const removeLegacyPortraits = () => {
 
 const decorate = () => {
   removeLegacyPortraits()
-  decorateSelfStats()
-  decorateEnemyStats()
+  syncSelfProfession()
+  syncStats()
 }
 
 export function installJobPortraits() {
