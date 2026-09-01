@@ -3,15 +3,24 @@ import * as OpenCC from 'opencc-js'
 
 const sources = {
   frequency: 'https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english.txt',
-  junior: 'https://raw.githubusercontent.com/KyleBing/english-vocabulary/master/初中-乱序.json',
-  senior: 'https://raw.githubusercontent.com/KyleBing/english-vocabulary/master/高中-乱序.json',
+  junior: 'https://raw.githubusercontent.com/KyleBing/english-vocabulary/master/json/1-%E5%88%9D%E4%B8%AD-%E9%A1%BA%E5%BA%8F.json',
+  senior: 'https://raw.githubusercontent.com/KyleBing/english-vocabulary/master/json/2-%E9%AB%98%E4%B8%AD-%E9%A1%BA%E5%BA%8F.json',
 }
 
 const converter = OpenCC.Converter({ from: 'cn', to: 'tw' })
-const fetchText = async url => {
-  const r = await fetch(url)
-  if (!r.ok) throw new Error(`Vocabulary source failed: ${r.status} ${url}`)
-  return r.text()
+const fetchText = async (url, attempts = 3) => {
+  let lastError
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      const r = await fetch(url, { headers: { 'user-agent': 'hero-word-battle-build' } })
+      if (!r.ok) throw new Error(`HTTP ${r.status}`)
+      return await r.text()
+    } catch (error) {
+      lastError = error
+      if (i < attempts) await new Promise(resolve => setTimeout(resolve, 500 * i))
+    }
+  }
+  throw new Error(`Vocabulary source failed after ${attempts} attempts: ${url}\n${String(lastError)}`)
 }
 const cleanMeaning = value => converter(String(value ?? '')
   .replace(/\s+/g, ' ')
@@ -43,7 +52,7 @@ const uniquePairs = (frequency, primary, fallback, count) => {
   return out.slice(0, count)
 }
 
-const [frequencyText, juniorText, seniorText] = await Promise.all(Object.values(sources).map(fetchText))
+const [frequencyText, juniorText, seniorText] = await Promise.all(Object.values(sources).map(url => fetchText(url)))
 const frequency = frequencyText.split(/\r?\n/).map(x => x.trim().toLowerCase()).filter(Boolean)
 const junior = makeMap(JSON.parse(juniorText))
 const senior = makeMap(JSON.parse(seniorText))
