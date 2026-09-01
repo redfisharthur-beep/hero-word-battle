@@ -4,6 +4,7 @@ import App from './App'
 import './index.css'
 import './jobPortraits.css'
 import './battle-results.css'
+import './battle-roster.css'
 import { installJobPortraits } from './jobPortraits'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
