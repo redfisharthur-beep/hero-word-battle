@@ -1,17 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App'
 import './index.css'
-import './jobPortraits.css'
+import './job-images.css'
+import './home-fixes.css'
+import './battle-layout.css'
 import './battle-results.css'
-import './battle-roster.css'
+import './battle-refinements.css'
 import './mobile-overrides.css'
-import { installJobPortraits } from './jobPortraits'
+import App from './App'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
 )
-
-installJobPortraits()
