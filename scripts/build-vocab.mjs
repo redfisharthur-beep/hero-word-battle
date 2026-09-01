@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import * as OpenCC from 'opencc-js'
 
+// Build source v2: current vocabulary paths live under the upstream json/ directory.
 const sources = {
   frequency: 'https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english.txt',
   junior: 'https://raw.githubusercontent.com/KyleBing/english-vocabulary/master/json/1-%E5%88%9D%E4%B8%AD-%E9%A1%BA%E5%BA%8F.json',
