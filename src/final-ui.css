@@ -24,6 +24,7 @@
   box-shadow:none!important;
 }
 .player-status-grid{
+  width:100%!important;
   min-width:0!important;
   display:grid!important;
   grid-template-rows:1fr 1fr!important;
@@ -31,20 +32,22 @@
 }
 .player-status-top,
 .player-status-bottom{
+  width:100%!important;
   min-width:0!important;
   display:grid!important;
-  grid-template-columns:minmax(92px,1fr) auto auto!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
   align-items:center!important;
-  gap:12px!important;
+  justify-items:center!important;
+  gap:8px!important;
 }
 .player-status-top{padding-bottom:5px!important;border-bottom:1px solid rgba(148,163,184,.16)!important}
-.player-status-name{min-width:0!important;font-size:21px!important;line-height:1.15!important;font-weight:500!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;color:#f8fafc!important}
-.player-job-name{font-size:15px!important;line-height:1.15!important;color:#7dd3fc!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
-.player-stat{display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;gap:5px!important;white-space:nowrap!important;color:#f8fafc!important}
+.player-status-name{width:100%!important;min-width:0!important;font-size:21px!important;line-height:1.15!important;font-weight:500!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;color:#f8fafc!important;text-align:center!important}
+.player-job-name{width:100%!important;min-width:0!important;font-size:15px!important;line-height:1.15!important;color:#7dd3fc!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;text-align:center!important}
+.player-stat{width:100%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;white-space:nowrap!important;color:#f8fafc!important}
 .player-stat img{width:29px!important;height:29px!important;min-width:29px!important;min-height:29px!important;object-fit:contain!important;background:transparent!important}
 .player-stat b{font-size:18px!important;line-height:1!important;font-weight:500!important;font-variant-numeric:tabular-nums!important}
 .player-stat-life img{width:27px!important;height:27px!important;min-width:27px!important;min-height:27px!important}
-.player-effect-status{min-width:0!important;font-size:13px!important;line-height:1.15!important;color:#dbeafe!important;text-align:left!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.player-effect-status{width:100%!important;min-width:0!important;font-size:13px!important;line-height:1.15!important;color:#dbeafe!important;text-align:center!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
 .enemy-card.muted{opacity:.48!important}
 
 /* Profession selection: shrink the button itself and the artwork together. */
@@ -80,8 +83,8 @@
   margin:0!important;
 }
 
-/* Countdown: plain red number at the left, no frame or fixed box. */
-.battle-heading{position:relative!important}
+/* Countdown: action and quiz use exactly the same left position and size. */
+.battle-heading{position:relative!important;min-height:52px!important}
 .battle-heading .timer,
 .battle-heading .timer.danger{
   position:absolute!important;
@@ -103,20 +106,22 @@
   background:transparent!important;
   box-shadow:none!important;
   color:#ef4444!important;
+  font-size:48px!important;
   font-weight:700!important;
   line-height:1!important;
   transform:translateY(-10px)!important;
   overflow:visible!important;
 }
 
-/* Remove the extra status/English helper copy. */
+/* Remove extra helper/status copy and the pronunciation button completely. */
 .connection-bar{display:none!important}
 .self-card .mini-label,
 .quiz-card .mini-label,
 .quiz-help,
-.score-guide{display:none!important}
+.score-guide,
+.quiz-card .speak-button{display:none!important}
 
-/* Center the English word. Pronunciation stays icon-only. */
+/* Center the English word with no pronunciation control occupying space. */
 .quiz-card .word-line{
   position:relative!important;
   display:flex!important;
@@ -124,7 +129,7 @@
   justify-content:center!important;
   width:100%!important;
   min-height:92px!important;
-  padding:12px 54px!important;
+  padding:12px!important;
   text-align:center!important;
 }
 .quiz-card .word-line .word{
@@ -134,23 +139,6 @@
   text-align:center!important;
   font-size:clamp(38px,10vw,66px)!important;
   line-height:1.05!important;
-}
-.quiz-card .speak-button{
-  position:absolute!important;
-  right:4px!important;
-  top:50%!important;
-  transform:translateY(-50%)!important;
-  width:42px!important;
-  height:42px!important;
-  min-width:42px!important;
-  min-height:42px!important;
-  padding:0!important;
-  border:0!important;
-  border-radius:50%!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  font-size:22px!important;
-  line-height:1!important;
 }
 
 /* Three answer choices use three clearly different frame colors. */
@@ -169,6 +157,10 @@
 .answer-grid .answer-choice-3{border-color:#4ade80!important;background:rgba(22,163,74,.14)!important}
 .answer-grid .answer-choice:disabled{opacity:.62!important}
 
+/* Failed resolve copy: replace the old no-change sentence. */
+.result-no-change{font-size:0!important}
+.result-no-change::after{content:'失敗、無法行動';font-size:17px!important;line-height:1.3!important;color:#cbd5e1!important}
+
 @media(max-width:760px){
   .self-card.character-status-card,
   .enemy-card.enemy-card-with-head{
@@ -186,22 +178,24 @@
     max-width:70px!important;
     max-height:70px!important;
   }
-  .player-status-top,.player-status-bottom{grid-template-columns:minmax(72px,1fr) auto auto!important;gap:7px!important}
-  .player-status-name{font-size:18px!important}
-  .player-job-name{font-size:13px!important}
+  .player-status-top,.player-status-bottom{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;justify-items:center!important}
+  .player-status-name{font-size:18px!important;text-align:center!important}
+  .player-job-name{font-size:13px!important;text-align:center!important}
+  .player-stat{justify-content:center!important}
   .player-stat img{width:24px!important;height:24px!important;min-width:24px!important;min-height:24px!important}
   .player-stat-life img{width:23px!important;height:23px!important;min-width:23px!important;min-height:23px!important}
   .player-stat b{font-size:15px!important}
-  .player-effect-status{font-size:11px!important}
+  .player-effect-status{font-size:11px!important;text-align:center!important}
   .jobs-card .job-art-card{width:80%!important;max-width:80%!important}
-  .battle-heading .timer,.battle-heading .timer.danger{left:0!important;transform:translateY(-10px)!important}
-  .quiz-card .word-line{min-height:82px!important;padding:10px 48px!important}
-  .quiz-card .speak-button{width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important;font-size:20px!important}
+  .battle-heading{min-height:48px!important}
+  .battle-heading .timer,.battle-heading .timer.danger{left:0!important;top:0!important;font-size:44px!important;transform:translateY(-10px)!important}
+  .quiz-card .word-line{min-height:82px!important;padding:10px!important}
   .answer-grid .answer-choice{min-height:54px!important;font-size:19px!important}
+  .result-no-change::after{font-size:16px!important}
 }
 
 @media(max-width:390px){
-  .player-status-top,.player-status-bottom{grid-template-columns:minmax(64px,1fr) auto auto!important;gap:5px!important}
+  .player-status-top,.player-status-bottom{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:3px!important}
   .player-status-name{font-size:17px!important}
   .player-stat img{width:22px!important;height:22px!important;min-width:22px!important;min-height:22px!important}
   .player-stat b{font-size:14px!important}
