@@ -1,0 +1,37 @@
+/* Battle layout: compact stacked player rows and artwork-only 3x2 actions */
+.battle-shell{gap:10px!important}
+.self-card.character-status-card,.enemy-card.enemy-card-with-head{width:100%!important;max-width:none!important;min-height:0!important;border-radius:0!important;border:0!important;background:transparent!important;box-shadow:none!important;padding:8px 4px!important;display:grid!important;grid-template-columns:58px minmax(0,1fr)!important;gap:10px!important;align-items:center!important}
+.self-card .character-head.large{width:58px!important;height:58px!important;border-radius:12px!important}
+.self-card .character-status-body{display:grid!important;gap:5px!important}
+.self-card .self-top{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important}
+.self-card .self-top>div{display:flex!important;align-items:center!important;gap:8px!important;min-width:0}
+.self-card .mini-label{order:0;font-size:14px!important;white-space:nowrap}
+.self-card h2{order:1;font-size:19px!important;margin:0!important;white-space:nowrap}
+.self-card .alive-badge{display:none!important}
+.self-card .stats{display:flex!important;gap:10px!important;flex-wrap:wrap!important;font-size:14px!important}
+.self-card .ultimate-status{font-size:13px!important}
+.self-card .hp-track{height:7px!important;width:100%!important;margin-top:0!important}
+.enemy-strip{display:grid!important;grid-template-columns:1fr!important;gap:4px!important;width:100%!important}
+.enemy-card.enemy-card-with-head{grid-template-columns:50px minmax(0,1fr)!important}
+.enemy-card .character-head{width:50px!important;height:50px!important;border-radius:10px!important}
+.enemy-card.enemy-card-with-head>div:not(.mini-hp){display:flex!important;align-items:center!important;gap:8px!important;min-width:0!important;flex-wrap:wrap!important}
+.enemy-card.enemy-card-with-head strong{font-size:16px!important;white-space:nowrap}
+.enemy-card.enemy-card-with-head small{font-size:14px!important;white-space:nowrap;order:-1;color:#93c5fd!important}
+.enemy-card .enemy-stats{font-size:14px!important;color:#cbd5e1!important;white-space:nowrap}
+.enemy-card.enemy-card-with-head>span:not(.enemy-stats){display:none!important}
+.enemy-card.enemy-card-with-head .mini-hp{grid-column:2!important;height:7px!important;margin-top:0!important;width:100%!important}
+.battle-panel{margin-top:4px!important}
+.action-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important;max-width:620px!important;margin:0 auto!important}
+.action-card{aspect-ratio:1/1!important;width:100%!important;min-height:0!important;padding:0!important;border:0!important;border-radius:0!important;background-color:transparent!important;background-repeat:no-repeat!important;background-size:contain!important;background-position:center!important;box-shadow:none!important;overflow:visible!important;transform:none!important}
+.action-card::before,.action-card>*{display:none!important}
+.action-card:nth-child(1){background-image:url('/images/actions/upgrade.png')!important}
+.action-card:nth-child(2){background-image:url('/images/actions/attack.png')!important}
+.action-card:nth-child(3){background-image:url('/images/actions/treat.png')!important}
+.action-card:nth-child(4){background-image:url('/images/actions/Tailcut.png')!important}
+.action-card:nth-child(5){background-image:url('/images/actions/reduction.png')!important}
+.action-card:nth-child(6){background-image:url('/images/actions/Signature.png')!important}
+.action-card:hover:not(:disabled),.action-card:focus-visible{transform:scale(1.04)!important;filter:brightness(1.08)}
+.action-card:active:not(:disabled){transform:scale(.97)!important}
+.action-card.selected{filter:drop-shadow(0 0 10px rgba(250,204,21,.55))!important}
+.action-card:disabled{opacity:.42!important;filter:grayscale(.65)!important}
+@media(max-width:760px){.battle-shell{padding-left:10px!important;padding-right:10px!important}.self-card.character-status-card,.enemy-card.enemy-card-with-head{padding:6px 2px!important}.action-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}.action-card{min-height:0!important}.self-card .stats,.enemy-card .enemy-stats{font-size:13px!important}}
