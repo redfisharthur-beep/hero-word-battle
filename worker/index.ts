@@ -83,7 +83,7 @@ const JOBS_MS = 30000
 const RESOLVE_STEP_MS = 5000
 const PRESENCE_MS = 45000
 const SWEEP_MS = 15000
-const wordPoolSizes = new Set<WordPoolSize>([300, 1200, 6000])
+const wordPoolSizes = new Set<WordPoolSize>([300, 1200, 5000])
 const jobIds = ['assassin', 'warrior', 'fighter', 'archer', 'priest', 'mage']
 const jobs = new Set(jobIds)
 const regularActionIds: ActionName[] = ['upgrade', 'attack', 'heal', 'finish', 'guard']
@@ -112,7 +112,7 @@ export default {
     if (request.method === 'OPTIONS') return json({ ok: true })
     const url = new URL(request.url)
     if (url.pathname === '/api/health') {
-      return json({ ok: true, service: 'hero-word-battle-api', version: '0.11.0', vocabularyCounts })
+      return json({ ok: true, service: 'hero-word-battle-api', version: '0.11.1', vocabularyCounts })
     }
     const m = url.pathname.match(/^\/api\/rooms\/([^/]+)(\/.*)?$/)
     if (m) {
