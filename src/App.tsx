@@ -24,7 +24,7 @@ const actionMeta=(id?:RemoteAction)=>actions.find(a=>a.id===id)
 const actionName=(id?:RemoteAction,jobId?:string)=>id==='ultimate'?(ultimateNames[jobId??'']??'絕招'):(actionMeta(id)?.name??'無效')
 const signed=(value:number)=>`${value>0?'+':''}${value}`
 const hpPercent=(p?:RemotePlayer)=>Math.max(0,Math.min(100,((p?.hp??0)/Math.max(1,p?.maxHp??100))*100))
-const guardText=(p?:RemotePlayer)=>{if(!p?.guard)return'';const take=p.guardMultiplier??(p.jobId==='fighter'?.15:p.jobId==='warrior'?.32:.5);const reduce=Math.round((1-take)*100);return`減傷 ${reduce}%，剩 ${Math.max(1,p.guardCharges??1)} 次`}
+const guardText=(p?:RemotePlayer)=>{if(!p?.guard)return'';const take=p.guardMultiplier??(p.jobId==='fighter'?0.15:p.jobId==='warrior'?0.32:0.5);const reduce=Math.round((1-take)*100);return`減傷 ${reduce}%，剩 ${Math.max(1,p.guardCharges??1)} 次`}
 const createDemoState=(name:string,roomId:string):RemoteRoomState=>({roomId,phase:'lobby',battlePhase:'action',round:0,questionIndex:0,wordPoolSize:300,players:[{id:'demo-me',name,host:true,hp:100,maxHp:100,atk:10,def:5,alive:true,guard:false,ultimateUsed:false},{id:'demo-bot',name:'英文字典王',host:false,jobId:'warrior',hp:100,maxHp:100,atk:10,def:5,alive:true,guard:false,ultimateUsed:false}],log:[]})
 
 export default function App(){
