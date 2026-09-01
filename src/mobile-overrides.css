@@ -60,8 +60,10 @@
     margin: 0 !important;
   }
 
-  /* Lobby: move all artwork, text groups and buttons down another 10px. */
-  .lobby-page .lobby-room-image,
+  /* Lobby: room artwork goes another 10px down; selector and player list keep their current position. */
+  .lobby-page .lobby-room-image {
+    transform: translateY(55px) !important;
+  }
   .lobby-page .word-pool-selector,
   .lobby-page .lobby-player-list {
     transform: translateY(45px) !important;
@@ -70,7 +72,7 @@
     transform: translateY(60px) !important;
   }
 
-  /* Keep 20px between room artwork, word-pool selector, and the host/player list. */
+  /* Keep the established spacing around room artwork and selector. */
   .lobby-page .lobby-room-image {
     margin-bottom: 20px !important;
   }
@@ -78,10 +80,10 @@
     margin-bottom: 20px !important;
   }
 
-  /* Player rows stay large, but player names are slightly smaller and centered. */
+  /* Player rows: reduce the vertical spacing between names. */
   .lobby-page .lobby-player-list {
-    gap: 20px !important;
-    row-gap: 20px !important;
+    gap: 10px !important;
+    row-gap: 10px !important;
   }
   .lobby-page .lobby-player-list .player-row {
     position: relative !important;
@@ -102,11 +104,10 @@
     line-height: 1.15 !important;
     text-align: center !important;
   }
+
+  /* Hide the host label text entirely. */
   .lobby-page .lobby-player-list .player-row em {
-    position: absolute !important;
-    right: 15px !important;
-    font-size: 18px !important;
-    line-height: 1.15 !important;
+    display: none !important;
   }
 
   /* Empty player slots stay visually empty: remove both placeholder copies. */
