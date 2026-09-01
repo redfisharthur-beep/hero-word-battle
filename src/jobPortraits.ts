@@ -26,7 +26,7 @@ const makeStat = (kind: StatKind, value: string) => {
 }
 
 const parseStats = (text: string) => {
-  const life = text.match(/HP\s+([^\s　]+)/i)?.[1]
+  const life = text.match(/HP\s+(\d+\/\d+)/i)?.[1]
   const atk = text.match(/ATK\s+(\d+)/i)?.[1]
   const def = text.match(/DEF\s+(\d+)/i)?.[1]
   return life && atk && def ? { life, atk, def } : null
