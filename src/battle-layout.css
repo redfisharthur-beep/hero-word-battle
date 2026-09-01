@@ -106,5 +106,7 @@ button,input,textarea,select,p,span,strong,b,small,em,h1,h2,h3,h4,h5,h6,label{fo
 
 /* Hide status/log copy from the battle screen. */
 .battle-panel>.action-banner,.battle-panel>.battle-log{display:none!important}
+/* Hide the submitted-answer confirmation message. */
+.quiz-card>.notice-box{display:none!important}
 .self-card.character-status-card::before,.self-card.character-status-card::after,.enemy-card.enemy-card-with-head::before,.enemy-card.enemy-card-with-head::after,.self-card .character-head::before,.self-card .character-head::after,.enemy-card .character-head::before,.enemy-card .character-head::after,.self-card .character-head-placeholder::before,.self-card .character-head-placeholder::after,.enemy-card .character-head-placeholder::before,.enemy-card .character-head-placeholder::after{content:none!important;display:none!important;background:none!important;box-shadow:none!important;animation:none!important}
 .self-card .character-head,.enemy-card .character-head,.self-card .character-head-placeholder,.enemy-card .character-head-placeholder{position:relative!important;z-index:1!important;overflow:hidden!important;isolation:isolate!important}
