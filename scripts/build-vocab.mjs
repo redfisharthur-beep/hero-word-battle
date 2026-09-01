@@ -1,12 +1,13 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import * as OpenCC from 'opencc-js'
 
-// Build source v3: use junior + senior + CET4 to reliably fill the 6000-word bank.
+// Build source v4: use junior + senior + CET4 + CET6 to reliably fill the 6000-word bank.
 const sources = {
   frequency: 'https://raw.githubusercontent.com/first20hours/google-10000-english/master/google-10000-english.txt',
   junior: 'https://raw.githubusercontent.com/KyleBing/english-vocabulary/master/json/1-%E5%88%9D%E4%B8%AD-%E9%A1%BA%E5%BA%8F.json',
   senior: 'https://raw.githubusercontent.com/KyleBing/english-vocabulary/master/json/2-%E9%AB%98%E4%B8%AD-%E9%A1%BA%E5%BA%8F.json',
   cet4: 'https://raw.githubusercontent.com/KyleBing/english-vocabulary/master/json/3-CET4-%E9%A1%BA%E5%BA%8F.json',
+  cet6: 'https://raw.githubusercontent.com/KyleBing/english-vocabulary/master/json/4-CET6-%E9%A1%BA%E5%BA%8F.json',
 }
 
 const converter = OpenCC.Converter({ from: 'cn', to: 'tw' })
@@ -59,12 +60,13 @@ const uniquePairs = (frequency, primary, fallback, count) => {
   return out.slice(0, count)
 }
 
-const [frequencyText, juniorText, seniorText, cet4Text] = await Promise.all(Object.values(sources).map(url => fetchText(url)))
+const [frequencyText, juniorText, seniorText, cet4Text, cet6Text] = await Promise.all(Object.values(sources).map(url => fetchText(url)))
 const frequency = frequencyText.split(/\r?\n/).map(x => x.trim().toLowerCase()).filter(Boolean)
 const junior = makeMap(JSON.parse(juniorText))
 const senior = makeMap(JSON.parse(seniorText))
 const cet4 = makeMap(JSON.parse(cet4Text))
-const highSchoolFallback = mergeMaps(junior, cet4)
+const cet6 = makeMap(JSON.parse(cet6Text))
+const highSchoolFallback = mergeMaps(junior, cet4, cet6)
 const bank300 = uniquePairs(frequency, junior, senior, 300)
 const bank1200 = uniquePairs(frequency, junior, senior, 1200)
 const bank6000 = uniquePairs(frequency, senior, highSchoolFallback, 6000)
