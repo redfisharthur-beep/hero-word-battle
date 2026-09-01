@@ -1,4 +1,4 @@
-/* Rendering stability layer. Loaded last. It intentionally does not change the latest visual design. */
+/* Rendering stability layer. Loaded last. It intentionally preserves the latest visual design. */
 
 /* Isolate each player card so frequent countdown/state updates do not repaint the whole battle screen. */
 .battle-shell > .self-card.character-status-card,
@@ -63,3 +63,64 @@ body .battle-shell > .self-card.character-status-card > .player-status-grid > .p
 
 /* Preserve the latest ranking design: no trophy/rank badge. */
 .result-rank-badge{display:none!important}
+
+/* Round and countdown share the same black-gold battle typography. */
+.battle-round,
+.battle-meta-timer{
+  font-family:'Noto Serif TC','Songti TC','PMingLiU','Times New Roman',serif!important;
+  font-weight:900!important;
+  letter-spacing:.04em!important;
+  color:#d6a928!important;
+  background:linear-gradient(180deg,#fff1a8 0%,#d6a928 42%,#7a4a00 76%,#17110a 100%)!important;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+  text-shadow:0 1px 0 #fff2a6,0 2px 0 #5d3900,0 3px 7px rgba(0,0,0,.85)!important;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.7))!important;
+}
+.battle-meta-timer.danger{color:#d6a928!important}
+
+/* Action area no longer shows verbose battle/log copy below the six action artworks. */
+.battle-shell .action-banner,
+.battle-shell .battle-log{
+  display:none!important;
+}
+
+/* Mobile navigation spacing: fixed return artwork must never overlap page content.
+   Keep at least 20px of clear space below the return button while preserving all current artwork sizes. */
+@media(max-width:760px){
+  .rooms-card,
+  .lobby-card,
+  .jobs-card{
+    padding-top:101px!important;
+  }
+
+  .rooms-page .room-grid{
+    position:relative!important;
+    top:0!important;
+    transform:none!important;
+    margin-top:0!important;
+  }
+
+  .lobby-page .lobby-room-image,
+  .lobby-page .word-pool-selector,
+  .lobby-page .lobby-player-list,
+  .lobby-page .lobby-start-button{
+    position:relative!important;
+    top:0!important;
+    transform:none!important;
+  }
+
+  .jobs-card .job-grid{
+    position:relative!important;
+    top:0!important;
+    transform:none!important;
+    margin-top:0!important;
+  }
+
+  .battle-round,
+  .battle-meta-timer{
+    font-size:30px!important;
+    line-height:1!important;
+  }
+}
