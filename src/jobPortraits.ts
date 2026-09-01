@@ -1,41 +1,87 @@
-const PORTRAITS: Record<string, string> = {
-  '刺客': '/images/job-heads/assassin.png',
-  '戰士': '/images/job-heads/warrior.png',
-  '武道家': '/images/job-heads/fighter.png',
-  '弓箭手': '/images/job-heads/archer.png',
-  '牧師': '/images/job-heads/priest.png',
-}
+const statIcon = (kind: 'life' | 'atk' | 'def') => `/images/actions/${kind === 'life' ? 'life' : kind === 'atk' ? 'ATK' : 'DEF'}.png`
 
-const portraitForText = (text = '') => {
-  const entry = Object.entries(PORTRAITS).find(([job]) => text.includes(job))
-  return entry?.[1]
-}
-
-const mountPortrait = (target: Element, className: string) => {
-  if (target.querySelector(':scope > .job-portrait')) return
-  const src = portraitForText(target.textContent ?? '')
-  if (!src) return
+const makeStat = (kind: 'life' | 'atk' | 'def', value: string) => {
+  const wrap = document.createElement('span')
+  wrap.className = `stat-pill stat-${kind}`
 
   const img = document.createElement('img')
-  img.className = `job-portrait ${className}`
-  img.src = src
-  img.alt = ''
+  img.className = 'stat-icon'
+  img.src = statIcon(kind)
+  img.alt = kind === 'life' ? '生命' : kind === 'atk' ? '攻擊' : '防禦'
   img.decoding = 'async'
   img.loading = 'eager'
-  img.onerror = () => img.remove()
-  target.prepend(img)
+
+  const number = document.createElement('b')
+  number.className = 'stat-number'
+  number.textContent = value
+
+  wrap.append(img, number)
+  return wrap
+}
+
+const decorateSelfStats = () => {
+  document.querySelectorAll('.self-card .stats').forEach((stats) => {
+    const spans = Array.from(stats.children).filter((el): el is HTMLElement => el instanceof HTMLElement)
+    const specs: Array<{ index: number; kind: 'life' | 'atk' | 'def'; pattern: RegExp }> = [
+      { index: 0, kind: 'life', pattern: /HP\s+([^\s]+)/i },
+      { index: 1, kind: 'atk', pattern: /ATK\s+([^\s]+)/i },
+      { index: 2, kind: 'def', pattern: /DEF\s+([^\s]+)/i },
+    ]
+
+    for (const { index, kind, pattern } of specs) {
+      const target = spans[index]
+      if (!target || target.querySelector('.stat-icon')) continue
+      const match = (target.textContent ?? '').match(pattern)
+      if (!match) continue
+      target.replaceChildren(...Array.from(makeStat(kind, match[1]).childNodes))
+      target.classList.add('stat-pill', `stat-${kind}`)
+    }
+  })
+}
+
+const decorateEnemyStats = () => {
+  document.querySelectorAll<HTMLElement>('.enemy-card .enemy-stats').forEach((stats) => {
+    if (stats.querySelector('.stat-icon')) return
+    const text = stats.textContent ?? ''
+    const life = text.match(/HP\s+([^\s　]+)/i)?.[1]
+    const atk = text.match(/ATK\s+([^\s　]+)/i)?.[1]
+    const def = text.match(/DEF\s+([^\s　]+)/i)?.[1]
+    if (!life || !atk || !def) return
+
+    const guard = text.includes('減傷待命') || text.includes('減傷')
+    stats.textContent = ''
+    stats.classList.add('stat-strip')
+    stats.append(makeStat('life', life), makeStat('atk', atk), makeStat('def', def))
+    if (guard) {
+      const guardMark = document.createElement('span')
+      guardMark.className = 'stat-guard'
+      guardMark.textContent = '減傷'
+      stats.append(guardMark)
+    }
+  })
+}
+
+const removeLegacyPortraits = () => {
+  document.querySelectorAll('.job-portrait').forEach((el) => el.remove())
 }
 
 const decorate = () => {
-  document.querySelectorAll('.player-row').forEach((el) => mountPortrait(el, 'job-portrait-row'))
-  document.querySelectorAll('.self-card').forEach((el) => mountPortrait(el, 'job-portrait-self'))
-  document.querySelectorAll('.enemy-card').forEach((el) => mountPortrait(el, 'job-portrait-enemy'))
-  document.querySelectorAll('.rank-row').forEach((el) => mountPortrait(el, 'job-portrait-rank'))
+  removeLegacyPortraits()
+  decorateSelfStats()
+  decorateEnemyStats()
 }
 
 export function installJobPortraits() {
   decorate()
-  const observer = new MutationObserver(decorate)
+  let queued = false
+  const observer = new MutationObserver(() => {
+    if (queued) return
+    queued = true
+    queueMicrotask(() => {
+      queued = false
+      decorate()
+    })
+  })
   observer.observe(document.body, { childList: true, subtree: true, characterData: true })
   return () => observer.disconnect()
 }
