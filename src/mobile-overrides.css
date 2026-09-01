@@ -1,20 +1,20 @@
 /* Mobile-only positioning overrides requested for room and lobby screens. */
 @media (max-width: 760px) {
-  /* Return button: 50% of the current 282px size, fixed near the top-left at 3% from each edge. */
+  /* Return button: keep current width, halve only the frame height, and align to the top edge. */
   .back-button,
   .rooms-card .back-button,
   .lobby-card .back-button,
   .jobs-card .back-button {
     position: fixed !important;
     left: 3vw !important;
-    top: 3vh !important;
+    top: 0 !important;
     z-index: 50 !important;
     width: 141px !important;
     min-width: 141px !important;
     max-width: none !important;
-    height: 141px !important;
-    min-height: 141px !important;
-    max-height: none !important;
+    height: 70.5px !important;
+    min-height: 70.5px !important;
+    max-height: 70.5px !important;
     margin: 0 !important;
     padding: 0 !important;
     border: 0 !important;
@@ -22,7 +22,7 @@
     background-color: transparent !important;
     background-size: contain !important;
     background-repeat: no-repeat !important;
-    background-position: center !important;
+    background-position: left top !important;
     box-shadow: none !important;
     overflow: visible !important;
   }
