@@ -104,7 +104,7 @@ export default {
     if (request.method === 'OPTIONS') return json({ ok: true })
     const url = new URL(request.url)
     if (url.pathname === '/api/health') {
-      return json({ ok: true, service: 'hero-word-battle-api', version: '0.10.0', vocabularyCounts })
+      return json({ ok: true, service: 'hero-word-battle-api', version: '0.10.1', vocabularyCounts })
     }
     const m = url.pathname.match(/^\/api\/rooms\/([^/]+)(\/.*)?$/)
     if (m) {
@@ -466,7 +466,7 @@ export class GameRoom extends DurableObject<Env> {
       const b = (await request.json()) as { playerId?: string; name?: string }; const playerId=(b.playerId||crypto.randomUUID()).trim(); const name=(b.name||'').trim().slice(0,12)
       if(!name)return json({error:'Name required'},400); this.pruneStale(s); const existing=s.players.find((p)=>p.id===playerId)
       if(existing){existing.name=name;existing.lastSeen=Date.now();await this.save(s);return json({playerId,state:s})}
-      if(s.phase!=='lobby')return json({error:'Game already started'},409); if(s.players.length>=4)return json({error:'Room full'},409)
+      if(s.phase!=='lobby')return json({error:'Game already started'},409); if(s.players.length>=5)return json({error:'Room full'},409)
       s.players.push({id:playerId,name,host:s.players.length===0,hp:100,maxHp:100,atk:10,def:5,alive:true,guard:false,lastSeen:Date.now()}); await this.save(s); return json({playerId,state:s})
     }
     if (url.pathname === '/word-pool' && request.method === 'POST') { const b=await request.json() as {playerId?:string;wordPoolSize?:number},p=s.players.find(x=>x.id===b.playerId);if(!p?.host)return json({error:'Host only'},403);if(s.phase!=='lobby')return json({error:'Room not in lobby'},409);const size=Number(b.wordPoolSize) as WordPoolSize;if(!wordPoolSizes.has(size))return json({error:'Invalid word pool'},400);s.wordPoolSize=size;p.lastSeen=Date.now();await this.save(s);return json(s) }
