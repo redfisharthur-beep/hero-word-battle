@@ -5,6 +5,7 @@ import './index.css'
 import './jobPortraits.css'
 import './battle-results.css'
 import './battle-roster.css'
+import './mobile-overrides.css'
 import { installJobPortraits } from './jobPortraits'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
