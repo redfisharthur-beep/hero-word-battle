@@ -1,7 +1,7 @@
 /* Battle layout: compact stacked player rows and artwork-only 3x2 actions */
 .battle-shell{gap:8px!important}
 
-/* Player list: one fixed 30px information row + thin HP bar. */
+/* Player list: compact information rows without HP bars. */
 .self-card.character-status-card,.enemy-card.enemy-card-with-head{width:100%!important;max-width:none!important;min-height:36px!important;height:36px!important;border-radius:0!important;border:0!important;background:transparent!important;box-shadow:none!important;padding:0 4px 6px!important;margin:0!important;display:grid!important;grid-template-columns:30px minmax(0,1fr)!important;gap:8px!important;align-items:center!important;position:relative!important;overflow:visible!important}
 .self-card .character-head.large,.enemy-card .character-head{width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;max-width:30px!important;max-height:30px!important;border-radius:6px!important;padding:0!important;object-fit:contain!important;background:transparent!important;box-shadow:none!important;filter:none!important;animation:none!important;transition:none!important}
 .character-head,.character-head.large{background:transparent!important;filter:none!important;box-shadow:none!important;animation:none!important;transition:none!important}
@@ -15,7 +15,7 @@
 .self-card .alive-badge{display:none!important}
 .self-card .stats{height:30px!important;display:flex!important;align-items:center!important;gap:9px!important;flex-wrap:nowrap!important;font-size:13px!important;line-height:30px!important;white-space:nowrap!important;min-width:0!important}
 .self-card .ultimate-status{display:none!important}
-.self-card .hp-track{position:absolute!important;left:42px!important;right:4px!important;bottom:0!important;height:4px!important;width:auto!important;margin:0!important;border-radius:999px!important}
+.self-card .hp-track{display:none!important}
 .enemy-strip{display:grid!important;grid-template-columns:1fr!important;gap:6px!important;width:100%!important;margin:0 auto 8px!important}
 .enemy-card.enemy-card-with-head{grid-template-columns:30px minmax(0,1fr)!important}
 .enemy-card.enemy-card-with-head>div:not(.mini-hp){height:30px!important;display:flex!important;align-items:center!important;gap:8px!important;min-width:0!important;flex-wrap:nowrap!important;white-space:nowrap!important}
@@ -23,7 +23,7 @@
 .enemy-card.enemy-card-with-head strong{order:1!important;font-size:14px!important;line-height:30px!important;white-space:nowrap!important}
 .enemy-card .enemy-stats{order:2!important;font-size:13px!important;line-height:30px!important;color:#cbd5e1!important;white-space:nowrap!important}
 .enemy-card.enemy-card-with-head>span:not(.enemy-stats){display:none!important}
-.enemy-card.enemy-card-with-head .mini-hp{position:absolute!important;left:42px!important;right:4px!important;bottom:0!important;grid-column:auto!important;height:4px!important;margin:0!important;width:auto!important;border-radius:999px!important}
+.enemy-card.enemy-card-with-head .mini-hp{display:none!important}
 
 .battle-panel{margin-top:6px!important}
 .battle-heading{justify-content:flex-end!important;margin-bottom:10px!important;min-height:58px!important}
@@ -70,7 +70,6 @@ button,input,textarea,select,p,span,strong,b,small,em,h1,h2,h3,h4,h5,h6,label{fo
 @media(max-width:760px){
 .battle-shell{padding-left:10px!important;padding-right:10px!important}
 .self-card.character-status-card,.enemy-card.enemy-card-with-head{height:36px!important;min-height:36px!important;padding:0 2px 6px!important;grid-template-columns:30px minmax(0,1fr)!important;gap:6px!important}
-.self-card .hp-track,.enemy-card.enemy-card-with-head .mini-hp{left:38px!important;right:2px!important}
 .self-card .character-status-body{gap:6px!important}
 .self-card .self-top,.self-card .self-top>div,.self-card .stats,.enemy-card.enemy-card-with-head>div:not(.mini-hp){gap:6px!important}
 .self-card .mini-label,.self-card h2,.self-card .stats,.enemy-card.enemy-card-with-head small,.enemy-card.enemy-card-with-head strong,.enemy-card .enemy-stats{font-size:12px!important}
@@ -94,14 +93,12 @@ button,input,textarea,select,p,span,strong,b,small,em,h1,h2,h3,h4,h5,h6,label{fo
 .self-card .character-head.large,.enemy-card .character-head{width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;max-width:50px!important;max-height:50px!important;border-radius:10px!important}
 .self-card .character-status-body,.self-card .self-top,.self-card .self-top>div,.self-card .stats,.enemy-card.enemy-card-with-head>div:not(.mini-hp){height:50px!important;min-height:50px!important}
 .self-card .mini-label,.self-card h2,.self-card .stats,.enemy-card.enemy-card-with-head small,.enemy-card.enemy-card-with-head strong,.enemy-card .enemy-stats{line-height:50px!important}
-.self-card .hp-track,.enemy-card.enemy-card-with-head .mini-hp{left:64px!important;right:4px!important;bottom:0!important;height:5px!important}
 .enemy-strip{gap:6px!important}
 @media(max-width:760px){
 .self-card.character-status-card,.enemy-card.enemy-card-with-head{height:60px!important;min-height:60px!important;padding:0 2px 7px!important;grid-template-columns:48px minmax(0,1fr)!important;gap:8px!important}
 .self-card .character-head.large,.enemy-card .character-head{width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;max-width:48px!important;max-height:48px!important}
 .self-card .character-status-body,.self-card .self-top,.self-card .self-top>div,.self-card .stats,.enemy-card.enemy-card-with-head>div:not(.mini-hp){height:48px!important;min-height:48px!important}
 .self-card .mini-label,.self-card h2,.self-card .stats,.enemy-card.enemy-card-with-head small,.enemy-card.enemy-card-with-head strong,.enemy-card .enemy-stats{line-height:48px!important}
-.self-card .hp-track,.enemy-card.enemy-card-with-head .mini-hp{left:58px!important;right:2px!important;height:5px!important}
 }
 
 /* Hide status/log copy from the battle screen. */
