@@ -8,7 +8,7 @@ import './battle-results.css'
 import './battle-refinements.css'
 import './mobile-overrides.css'
 import './final-ui.css'
-import './player-name-ranking-hotfix.css'
+import './stability.css'
 import App from './App'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
