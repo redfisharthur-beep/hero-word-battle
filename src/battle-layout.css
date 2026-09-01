@@ -80,3 +80,18 @@ button,input,textarea,select,p,span,strong,b,small,em,h1,h2,h3,h4,h5,h6,label{fo
 .lobby-start-button{width:220px!important;height:96px!important;min-height:96px!important}
 .lobby-player-list .player-row.muted strong::after{font-size:17px!important}
 }
+
+/* Battle player list: fixed 60px height for every player row. */
+.self-card.character-status-card,.enemy-card.enemy-card-with-head{height:60px!important;min-height:60px!important;padding:0 4px 7px!important;grid-template-columns:50px minmax(0,1fr)!important;gap:10px!important}
+.self-card .character-head.large,.enemy-card .character-head{width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important;max-width:50px!important;max-height:50px!important;border-radius:10px!important}
+.self-card .character-status-body,.self-card .self-top,.self-card .self-top>div,.self-card .stats,.enemy-card.enemy-card-with-head>div:not(.mini-hp){height:50px!important;min-height:50px!important}
+.self-card .mini-label,.self-card h2,.self-card .stats,.enemy-card.enemy-card-with-head small,.enemy-card.enemy-card-with-head strong,.enemy-card .enemy-stats{line-height:50px!important}
+.self-card .hp-track,.enemy-card.enemy-card-with-head .mini-hp{left:64px!important;right:4px!important;bottom:0!important;height:5px!important}
+.enemy-strip{gap:6px!important}
+@media(max-width:760px){
+.self-card.character-status-card,.enemy-card.enemy-card-with-head{height:60px!important;min-height:60px!important;padding:0 2px 7px!important;grid-template-columns:48px minmax(0,1fr)!important;gap:8px!important}
+.self-card .character-head.large,.enemy-card .character-head{width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;max-width:48px!important;max-height:48px!important}
+.self-card .character-status-body,.self-card .self-top,.self-card .self-top>div,.self-card .stats,.enemy-card.enemy-card-with-head>div:not(.mini-hp){height:48px!important;min-height:48px!important}
+.self-card .mini-label,.self-card h2,.self-card .stats,.enemy-card.enemy-card-with-head small,.enemy-card.enemy-card-with-head strong,.enemy-card .enemy-stats{line-height:48px!important}
+.self-card .hp-track,.enemy-card.enemy-card-with-head .mini-hp{left:58px!important;right:2px!important;height:5px!important}
+}
