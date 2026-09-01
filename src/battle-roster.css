@@ -6,35 +6,36 @@
 .job-portrait{display:none!important;width:0!important;height:0!important;margin:0!important;padding:0!important}
 .self-card.character-status-card::before,.self-card.character-status-card::after,.enemy-card.enemy-card-with-head::before,.enemy-card.enemy-card-with-head::after,.character-head::before,.character-head::after{content:none!important;display:none!important;animation:none!important}
 
-/* Taller player rows with room for life / attack / defense data. */
-.self-card.character-status-card,.enemy-card.enemy-card-with-head{box-sizing:border-box!important;width:100%!important;max-width:none!important;height:88px!important;min-height:88px!important;margin:0!important;padding:9px 14px 16px!important;display:grid!important;grid-template-columns:58px minmax(0,1fr)!important;grid-template-rows:1fr!important;column-gap:14px!important;align-items:center!important;position:relative!important;overflow:hidden!important;border:1px solid rgba(148,163,184,.24)!important;border-radius:14px!important;background:rgba(15,23,42,.82)!important;box-shadow:none!important}
+/* Two-row player roster: large portrait at left, clean data area at right. */
+.self-card.character-status-card,.enemy-card.enemy-card-with-head{box-sizing:border-box!important;width:100%!important;max-width:none!important;height:104px!important;min-height:104px!important;margin:0!important;padding:10px 16px!important;display:grid!important;grid-template-columns:76px minmax(0,1fr)!important;column-gap:16px!important;align-items:center!important;position:relative!important;overflow:hidden!important;border:1px solid rgba(148,163,184,.24)!important;border-radius:14px!important;background:rgba(15,23,42,.82)!important;box-shadow:none!important}
 .self-card.character-status-card{border-color:rgba(96,165,250,.42)!important;background:rgba(12,31,49,.9)!important}
 
-.self-card .character-head.large,.enemy-card .character-head{width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important;max-width:58px!important;max-height:58px!important;margin:0!important;padding:0!important;object-fit:contain!important;border-radius:10px!important;background:transparent!important;box-shadow:none!important;filter:none!important;animation:none!important;transition:none!important;transform:none!important}
+.self-card .character-head.large,.enemy-card .character-head{width:76px!important;height:76px!important;min-width:76px!important;min-height:76px!important;max-width:76px!important;max-height:76px!important;margin:0!important;padding:0!important;object-fit:contain!important;border-radius:12px!important;background:transparent!important;box-shadow:none!important;filter:none!important;animation:none!important;transition:none!important;transform:none!important;align-self:center!important}
 
-.self-card .character-status-body{width:100%!important;min-width:0!important;height:58px!important;min-height:58px!important;display:grid!important;grid-template-columns:minmax(160px,.95fr) minmax(400px,2.1fr)!important;column-gap:16px!important;align-items:center!important;white-space:nowrap!important}
-.self-card .self-top,.self-card .self-top>div{width:100%!important;min-width:0!important;height:auto!important;min-height:0!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;overflow:hidden!important}
-.self-card .mini-label{display:none!important}
-.self-job-label{display:inline-block!important;flex:0 0 auto!important;font-size:16px!important;line-height:1.2!important;color:#7dd3fc!important;white-space:nowrap!important}
-.self-card h2{min-width:0!important;margin:0!important;font-size:20px!important;line-height:1.2!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;color:#f8fafc!important}
-.self-card .alive-badge,.self-card .ultimate-status{display:none!important}
+/* Right side is a stable two-line layout. */
+.self-card .character-status-body,.enemy-card.enemy-card-with-head>div:not(.mini-hp){position:relative!important;width:100%!important;min-width:0!important;height:76px!important;min-height:76px!important;display:block!important;white-space:nowrap!important;overflow:hidden!important}
 
-/* Keep React's original stat text as the live data source; show a separate icon strip. */
+/* Hide old text stats; React remains the live data source for the icon strip. */
 .self-card .stats,.enemy-card .enemy-stats{display:none!important}
-.live-stat-strip{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:26px!important;min-width:0!important;white-space:nowrap!important;color:#f8fafc!important}
-.stat-pill{display:inline-flex!important;align-items:center!important;gap:8px!important;min-width:0!important;font-size:0!important;line-height:1!important;overflow:visible!important}
-.stat-icon{display:block!important;width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important;max-width:38px!important;max-height:38px!important;object-fit:contain!important;background:transparent!important;filter:none!important;animation:none!important;transition:none!important;transform:none!important}
+.self-card .alive-badge,.self-card .ultimate-status{display:none!important}
+.self-card .mini-label{display:none!important}
+
+/* Top row: player name at left, life / attack / defense at right. */
+.self-card .self-top,.self-card .self-top>div{position:static!important;width:auto!important;height:auto!important;min-height:0!important;display:block!important;overflow:visible!important}
+.self-card h2,.enemy-card.enemy-card-with-head strong{position:absolute!important;left:0!important;top:7px!important;width:clamp(110px,24%,190px)!important;max-width:190px!important;margin:0!important;font-size:21px!important;line-height:1.1!important;font-weight:400!important;color:#f8fafc!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+.live-stat-strip{position:absolute!important;right:0!important;top:0!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:24px!important;min-width:0!important;max-width:calc(100% - 205px)!important;white-space:nowrap!important;color:#f8fafc!important;overflow:hidden!important}
+.stat-pill{display:inline-flex!important;align-items:center!important;gap:7px!important;min-width:0!important;font-size:0!important;line-height:1!important;overflow:visible!important;flex:0 0 auto!important}
+.stat-icon{display:block!important;width:37px!important;height:37px!important;min-width:37px!important;min-height:37px!important;max-width:37px!important;max-height:37px!important;object-fit:contain!important;background:transparent!important;filter:none!important;animation:none!important;transition:none!important;transform:none!important}
 .stat-number{display:inline-block!important;font-size:21px!important;line-height:1!important;font-weight:500!important;font-variant-numeric:tabular-nums!important;color:#f8fafc!important;white-space:nowrap!important}
 
-.enemy-strip{box-sizing:border-box!important;display:grid!important;grid-template-columns:1fr!important;gap:8px!important;width:min(900px,calc(100vw - 32px))!important;max-width:900px!important;margin:8px auto 10px!important}
-.enemy-card.enemy-card-with-head>div:not(.mini-hp){width:100%!important;min-width:0!important;height:58px!important;min-height:58px!important;display:grid!important;grid-template-columns:105px 165px minmax(0,1fr)!important;column-gap:12px!important;align-items:center!important;white-space:nowrap!important}
-.enemy-card.enemy-card-with-head small,.enemy-card.enemy-card-with-head strong{min-width:0!important;margin:0!important;line-height:1.2!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
-.enemy-card.enemy-card-with-head small{font-size:16px!important;color:#93c5fd!important}
-.enemy-card.enemy-card-with-head strong{font-size:20px!important;color:#f8fafc!important}
-.enemy-card .live-stat-strip{gap:22px!important;overflow:visible!important}
+/* Bottom row: profession on the left, HP bar to its right. */
+.self-job-label,.enemy-card.enemy-card-with-head small{position:absolute!important;left:0!important;bottom:5px!important;width:92px!important;max-width:92px!important;margin:0!important;font-size:16px!important;line-height:1.2!important;font-weight:300!important;color:#7dd3fc!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+.enemy-card.enemy-card-with-head small{color:#93c5fd!important}
 
-/* HP tracks stay anchored inside every row and still update from live room state. */
-.self-card .hp-track,.enemy-card.enemy-card-with-head .mini-hp{position:absolute!important;left:86px!important;right:14px!important;bottom:7px!important;width:auto!important;max-width:none!important;height:5px!important;min-height:5px!important;margin:0!important;padding:0!important;border:0!important;border-radius:999px!important;overflow:hidden!important;background:rgba(71,85,105,.45)!important;box-shadow:none!important}
+.enemy-strip{box-sizing:border-box!important;display:grid!important;grid-template-columns:1fr!important;gap:8px!important;width:min(900px,calc(100vw - 32px))!important;max-width:900px!important;margin:8px auto 10px!important}
+
+/* HP tracks use live room-state widths and sit on the second row. */
+.self-card .hp-track,.enemy-card.enemy-card-with-head .mini-hp{position:absolute!important;left:202px!important;right:16px!important;bottom:18px!important;width:auto!important;max-width:none!important;height:6px!important;min-height:6px!important;margin:0!important;padding:0!important;border:0!important;border-radius:999px!important;overflow:hidden!important;background:rgba(71,85,105,.45)!important;box-shadow:none!important}
 .self-card .hp-track>span,.enemy-card.enemy-card-with-head .mini-hp>i{display:block!important;height:100%!important;min-height:100%!important;margin:0!important;border-radius:999px!important;background:linear-gradient(90deg,#22c55e,#84cc16)!important;box-shadow:none!important;transition:width .25s ease!important}
 
 .enemy-card.muted{opacity:.48!important}
@@ -43,6 +44,9 @@
 /* Battle chrome cleanup. */
 .battle-shell>.connection-bar{display:none!important}
 .quiz-card .word-line .mini-label,.quiz-card .speak-button{display:none!important}
+
+/* Remove the action-locked explanation requested by the player. */
+.battle-panel:has(.action-grid)>.notice-box{display:none!important}
 
 /* Countdown: no circle, bold warm ivory, aligned at far right. */
 .battle-heading .timer{width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#f3e7cf!important;font-size:32px!important;font-weight:800!important;line-height:1!important;animation:none!important;transform:none!important}
@@ -58,22 +62,26 @@
 
 @media(max-width:760px){
   .battle-shell>.connection-bar,.battle-shell>.self-card.character-status-card,.battle-shell>.enemy-strip,.battle-shell>.battle-panel,.enemy-strip{width:calc(100vw - 20px)!important;max-width:none!important}
-  .self-card.character-status-card,.enemy-card.enemy-card-with-head{height:82px!important;min-height:82px!important;padding:8px 9px 15px!important;grid-template-columns:54px minmax(0,1fr)!important;column-gap:8px!important;border-radius:12px!important}
-  .self-card .character-head.large,.enemy-card .character-head{width:54px!important;height:54px!important;min-width:54px!important;min-height:54px!important;max-width:54px!important;max-height:54px!important}
-  .self-card .character-status-body{height:54px!important;min-height:54px!important;grid-template-columns:minmax(105px,.8fr) minmax(215px,1.8fr)!important;column-gap:5px!important}
-  .self-card .self-top,.self-card .self-top>div{gap:4px!important}
-  .self-job-label{font-size:13px!important}
-  .self-card h2,.enemy-card.enemy-card-with-head strong{font-size:15px!important}
-  .enemy-card.enemy-card-with-head small{font-size:13px!important}
-  .live-stat-strip{gap:10px!important}
-  .stat-pill{gap:4px!important}
-  .stat-icon{width:29px!important;height:29px!important;min-width:29px!important;min-height:29px!important;max-width:29px!important;max-height:29px!important}
-  .stat-number{font-size:16px!important}
-  .enemy-card.enemy-card-with-head>div:not(.mini-hp){height:54px!important;min-height:54px!important;grid-template-columns:55px 72px minmax(0,1fr)!important;column-gap:4px!important}
-  .enemy-card .live-stat-strip{gap:9px!important}
-  .self-card .hp-track,.enemy-card.enemy-card-with-head .mini-hp{left:71px!important;right:9px!important;bottom:6px!important;height:5px!important;min-height:5px!important}
+  .self-card.character-status-card,.enemy-card.enemy-card-with-head{height:96px!important;min-height:96px!important;padding:8px 10px!important;grid-template-columns:66px minmax(0,1fr)!important;column-gap:10px!important;border-radius:12px!important}
+  .self-card .character-head.large,.enemy-card .character-head{width:66px!important;height:66px!important;min-width:66px!important;min-height:66px!important;max-width:66px!important;max-height:66px!important}
+  .self-card .character-status-body,.enemy-card.enemy-card-with-head>div:not(.mini-hp){height:66px!important;min-height:66px!important}
+  .self-card h2,.enemy-card.enemy-card-with-head strong{top:4px!important;width:92px!important;max-width:92px!important;font-size:16px!important}
+  .live-stat-strip{top:0!important;right:0!important;gap:9px!important;max-width:calc(100% - 98px)!important}
+  .stat-pill{gap:3px!important}
+  .stat-icon{width:27px!important;height:27px!important;min-width:27px!important;min-height:27px!important;max-width:27px!important;max-height:27px!important}
+  .stat-number{font-size:15px!important}
+  .self-job-label,.enemy-card.enemy-card-with-head small{bottom:3px!important;width:64px!important;max-width:64px!important;font-size:13px!important}
+  .self-card .hp-track,.enemy-card.enemy-card-with-head .mini-hp{left:153px!important;right:10px!important;bottom:17px!important;height:5px!important;min-height:5px!important}
 
   .battle-heading .timer{font-size:27px!important}
   .battle-panel:has(.quiz-card) .battle-heading .timer{right:18px!important;top:47px!important}
   .battle-panel:has(.quiz-card) .word-line{min-height:86px!important;padding:16px 58px!important}
+}
+
+@media(max-width:430px){
+  .self-card h2,.enemy-card.enemy-card-with-head strong{width:76px!important;max-width:76px!important;font-size:15px!important}
+  .live-stat-strip{max-width:calc(100% - 80px)!important;gap:6px!important}
+  .stat-icon{width:24px!important;height:24px!important;min-width:24px!important;min-height:24px!important;max-width:24px!important;max-height:24px!important}
+  .stat-number{font-size:14px!important}
+  .self-card .hp-track,.enemy-card.enemy-card-with-head .mini-hp{left:143px!important}
 }
