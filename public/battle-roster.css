@@ -1,0 +1,299 @@
+/* Polished battle roster layout: aligned cards, stable stat columns, identical HP bars */
+.battle-shell{
+  align-items:center!important;
+}
+
+.battle-shell>.connection-bar,
+.battle-shell>.self-card.character-status-card,
+.battle-shell>.enemy-strip,
+.battle-shell>.battle-panel{
+  width:min(866px,calc(100vw - 32px))!important;
+  max-width:866px!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+
+.self-card.character-status-card,
+.enemy-card.enemy-card-with-head{
+  box-sizing:border-box!important;
+  width:100%!important;
+  max-width:none!important;
+  height:72px!important;
+  min-height:72px!important;
+  padding:8px 14px 13px!important;
+  margin:0!important;
+  display:grid!important;
+  grid-template-columns:54px minmax(0,1fr)!important;
+  column-gap:14px!important;
+  align-items:center!important;
+  position:relative!important;
+  overflow:hidden!important;
+  border:1px solid rgba(148,163,184,.24)!important;
+  border-radius:14px!important;
+  background:linear-gradient(90deg,rgba(15,23,42,.88),rgba(15,23,42,.72))!important;
+  box-shadow:0 8px 24px rgba(2,6,23,.14)!important;
+  color:#e5edf8!important;
+}
+
+.self-card.character-status-card{
+  border-color:rgba(96,165,250,.34)!important;
+  background:linear-gradient(90deg,rgba(10,30,48,.92),rgba(15,23,42,.76))!important;
+}
+
+.self-card .character-head.large,
+.enemy-card .character-head{
+  width:52px!important;
+  height:52px!important;
+  min-width:52px!important;
+  min-height:52px!important;
+  max-width:52px!important;
+  max-height:52px!important;
+  object-fit:contain!important;
+  border-radius:12px!important;
+  background:rgba(15,23,42,.35)!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
+
+.self-card .character-status-body{
+  min-width:0!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:18px!important;
+  white-space:nowrap!important;
+}
+
+.self-card .self-top{
+  flex:0 0 220px!important;
+  width:220px!important;
+  min-width:220px!important;
+  height:auto!important;
+  min-height:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:8px!important;
+  overflow:hidden!important;
+}
+
+.self-card .self-top>div{
+  min-width:0!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  overflow:hidden!important;
+}
+
+.self-card .mini-label{
+  flex:0 0 auto!important;
+  font-size:13px!important;
+  line-height:1.25!important;
+  color:#7dd3fc!important;
+  letter-spacing:.02em!important;
+}
+
+.self-card h2{
+  min-width:0!important;
+  margin:0!important;
+  font-size:15px!important;
+  line-height:1.25!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  color:#f8fafc!important;
+}
+
+.self-card .alive-badge,
+.self-card .ultimate-status{
+  display:none!important;
+}
+
+.self-card .stats{
+  min-width:0!important;
+  flex:1 1 auto!important;
+  height:auto!important;
+  min-height:0!important;
+  display:grid!important;
+  grid-template-columns:126px 84px 84px minmax(88px,1fr)!important;
+  align-items:center!important;
+  column-gap:10px!important;
+  font-size:13px!important;
+  line-height:1.2!important;
+  font-variant-numeric:tabular-nums!important;
+  white-space:nowrap!important;
+  color:#cbd5e1!important;
+}
+
+.self-card .stats>span{
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+.enemy-strip{
+  box-sizing:border-box!important;
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:8px!important;
+  margin-top:8px!important;
+  margin-bottom:10px!important;
+}
+
+.enemy-card.enemy-card-with-head>div:not(.mini-hp){
+  min-width:0!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  display:grid!important;
+  grid-template-columns:100px 160px minmax(0,1fr)!important;
+  column-gap:14px!important;
+  align-items:center!important;
+  white-space:nowrap!important;
+}
+
+.enemy-card.enemy-card-with-head small,
+.enemy-card.enemy-card-with-head strong,
+.enemy-card .enemy-stats{
+  min-width:0!important;
+  margin:0!important;
+  line-height:1.2!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+
+.enemy-card.enemy-card-with-head small{
+  font-size:13px!important;
+  color:#93c5fd!important;
+}
+
+.enemy-card.enemy-card-with-head strong{
+  font-size:15px!important;
+  color:#f8fafc!important;
+}
+
+.enemy-card .enemy-stats{
+  font-size:13px!important;
+  color:#cbd5e1!important;
+  font-variant-numeric:tabular-nums!important;
+  letter-spacing:.01em!important;
+}
+
+.self-card .hp-track,
+.enemy-card.enemy-card-with-head .mini-hp{
+  position:absolute!important;
+  left:80px!important;
+  right:14px!important;
+  bottom:7px!important;
+  width:auto!important;
+  height:5px!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:999px!important;
+  overflow:hidden!important;
+  background:rgba(71,85,105,.42)!important;
+  box-shadow:inset 0 0 0 1px rgba(148,163,184,.08)!important;
+}
+
+.self-card .hp-track>span,
+.enemy-card.enemy-card-with-head .mini-hp>i{
+  display:block!important;
+  height:100%!important;
+  min-height:100%!important;
+  margin:0!important;
+  border-radius:999px!important;
+  background:linear-gradient(90deg,#22c55e,#84cc16)!important;
+  box-shadow:none!important;
+  transition:width .25s ease!important;
+}
+
+.enemy-card.muted{
+  opacity:.48!important;
+}
+
+.self-card.fx-hit,.self-card.fx-heal,.self-card.fx-ko,.self-card.fx-buff,
+.enemy-card.fx-hit,.enemy-card.fx-heal,.enemy-card.fx-ko,.enemy-card.fx-buff{
+  transform:none!important;
+  filter:none!important;
+  animation:none!important;
+}
+
+@media(max-width:760px){
+  .battle-shell>.connection-bar,
+  .battle-shell>.self-card.character-status-card,
+  .battle-shell>.enemy-strip,
+  .battle-shell>.battle-panel{
+    width:calc(100vw - 20px)!important;
+    max-width:none!important;
+  }
+
+  .self-card.character-status-card,
+  .enemy-card.enemy-card-with-head{
+    height:68px!important;
+    min-height:68px!important;
+    grid-template-columns:46px minmax(0,1fr)!important;
+    column-gap:9px!important;
+    padding:7px 9px 13px!important;
+    border-radius:12px!important;
+  }
+
+  .self-card .character-head.large,
+  .enemy-card .character-head{
+    width:46px!important;
+    height:46px!important;
+    min-width:46px!important;
+    min-height:46px!important;
+    max-width:46px!important;
+    max-height:46px!important;
+    border-radius:10px!important;
+  }
+
+  .self-card .character-status-body{
+    gap:7px!important;
+  }
+
+  .self-card .self-top{
+    flex:0 0 118px!important;
+    width:118px!important;
+    min-width:118px!important;
+  }
+
+  .self-card .self-top>div{
+    gap:4px!important;
+  }
+
+  .self-card .mini-label,
+  .self-card h2,
+  .self-card .stats,
+  .enemy-card.enemy-card-with-head small,
+  .enemy-card.enemy-card-with-head strong,
+  .enemy-card .enemy-stats{
+    font-size:11px!important;
+  }
+
+  .self-card .stats{
+    grid-template-columns:86px 56px 56px minmax(0,1fr)!important;
+    column-gap:4px!important;
+  }
+
+  .enemy-card.enemy-card-with-head>div:not(.mini-hp){
+    grid-template-columns:58px 72px minmax(0,1fr)!important;
+    column-gap:5px!important;
+  }
+
+  .self-card .hp-track,
+  .enemy-card.enemy-card-with-head .mini-hp{
+    left:64px!important;
+    right:9px!important;
+    bottom:6px!important;
+    height:5px!important;
+  }
+}
