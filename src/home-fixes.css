@@ -89,6 +89,12 @@
   display: none !important;
 }
 
+/* Move every return button upward without affecting hover/press scale transforms. */
+.back-button {
+  position: relative !important;
+  top: -20px !important;
+}
+
 @media (max-width: 760px) {
   .hero-card {
     background-size: cover !important;
