@@ -1,0 +1,38 @@
+/* Mobile-only positioning overrides requested for room and lobby screens. */
+@media (max-width: 760px) {
+  /* Return button: 1.5x the current 125px mobile size. */
+  .back-button {
+    width: 188px !important;
+    min-width: 188px !important;
+    max-width: 188px !important;
+    height: 188px !important;
+    min-height: 188px !important;
+    max-height: 188px !important;
+  }
+
+  /* Room selection: move the four rooms upward by 20px and remove all spacing. */
+  .rooms-page .room-grid {
+    position: relative !important;
+    top: -20px !important;
+    gap: 0 !important;
+    row-gap: 0 !important;
+    column-gap: 0 !important;
+  }
+  .rooms-page .room-card {
+    margin: 0 !important;
+  }
+
+  /* Lobby: shift the room image, pool selector, player list and start button down 50px. */
+  .lobby-page .lobby-room-image,
+  .lobby-page .word-pool-selector,
+  .lobby-page .lobby-player-list,
+  .lobby-page .lobby-start-button {
+    transform: translateY(50px) !important;
+  }
+
+  /* 20px vertical spacing between player rows. */
+  .lobby-page .lobby-player-list {
+    gap: 20px !important;
+    row-gap: 20px !important;
+  }
+}
