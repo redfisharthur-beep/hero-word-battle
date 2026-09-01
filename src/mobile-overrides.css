@@ -1,16 +1,21 @@
 /* Mobile-only positioning overrides requested for room and lobby screens. */
 @media (max-width: 760px) {
-  /* Return button: remove capsule/size constraints so the artwork can truly scale. */
+  /* Return button: 50% of the current 282px size, fixed near the top-left at 3% from each edge. */
   .back-button,
   .rooms-card .back-button,
   .lobby-card .back-button,
   .jobs-card .back-button {
-    width: 282px !important;
-    min-width: 282px !important;
+    position: fixed !important;
+    left: 3vw !important;
+    top: 3vh !important;
+    z-index: 50 !important;
+    width: 141px !important;
+    min-width: 141px !important;
     max-width: none !important;
-    height: 282px !important;
-    min-height: 282px !important;
+    height: 141px !important;
+    min-height: 141px !important;
     max-height: none !important;
+    margin: 0 !important;
     padding: 0 !important;
     border: 0 !important;
     border-radius: 0 !important;
@@ -22,7 +27,7 @@
     overflow: visible !important;
   }
 
-  /* Room selection: move the current four-room group down another 10px; keep zero spacing. */
+  /* Room selection: keep the current position and zero spacing. */
   .rooms-page .room-grid {
     position: relative !important;
     top: 5px !important;
