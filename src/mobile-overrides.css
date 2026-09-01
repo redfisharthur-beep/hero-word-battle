@@ -27,10 +27,10 @@
     overflow: visible !important;
   }
 
-  /* Room selection: keep the current position and zero spacing. */
+  /* Room selection: move the current four-room group down another 20px; keep zero spacing. */
   .rooms-page .room-grid {
     position: relative !important;
-    top: 5px !important;
+    top: 25px !important;
     gap: 0 !important;
     row-gap: 0 !important;
     column-gap: 0 !important;
