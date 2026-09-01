@@ -79,6 +79,10 @@
   .lobby-page .word-pool-selector {
     margin-bottom: 20px !important;
   }
+  .lobby-page .word-pool-selector .word-pool-button {
+    font-size: 28px !important;
+    line-height: 1 !important;
+  }
 
   /* Player rows: reduce the vertical spacing between names. */
   .lobby-page .lobby-player-list {
