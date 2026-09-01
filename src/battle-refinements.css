@@ -1,9 +1,8 @@
 /* Final battle UI refinements. Imported after battle-layout.css so these rules win. */
 
-/* HP number with the health bar immediately to its right. */
+/* Health bars removed: keep only the numeric HP value. */
 .battle-stat{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;white-space:nowrap!important}
-.inline-hp{display:inline-block!important;position:relative!important;width:76px!important;height:9px!important;border-radius:999px!important;overflow:hidden!important;background:rgba(255,255,255,.13)!important;border:1px solid rgba(255,255,255,.14)!important;vertical-align:middle!important}
-.inline-hp>b{display:block!important;height:100%!important;border-radius:inherit!important;background:linear-gradient(90deg,#ef4444,#fb7185)!important;transition:width .3s ease!important}
+.inline-hp{display:none!important}
 .self-card .stats>span:nth-child(1),.self-card .stats>span:nth-child(2),.self-card .stats>span:nth-child(3){padding-left:0!important;background-image:none!important}
 .enemy-card .enemy-stats{display:flex!important;align-items:center!important;justify-content:center!important;gap:10px!important;flex-wrap:wrap!important}
 .guard-status{font-size:.9em!important;color:#bfdbfe!important}
@@ -32,12 +31,32 @@
 .result-action-mark>*{display:none!important}
 .result-ultimate .result-action-mark b{display:block!important;position:absolute!important;left:50%!important;bottom:-26px!important;transform:translateX(-50%)!important;width:max-content!important;max-width:190px!important;font-size:20px!important;line-height:1.1!important;color:#fde68a!important;text-align:center!important;white-space:nowrap!important}
 
-/* Result changes: use artwork icons instead of English HP/ATK/DEF labels. */
+/* Result changes: every numeric change uses its matching artwork file. */
 .result-change-chip{gap:12px!important}
-.result-change-chip .change-stat{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:34px!important;padding-left:38px!important;background-repeat:no-repeat!important;background-position:left center!important;background-size:32px 32px!important;color:#e2e8f0!important;font-weight:500!important}
-.result-change-chip .change-hp,.result-change-chip .change-maxhp{background-image:url('/images/actions/treat.png')!important}
-.result-change-chip .change-atk{background-image:url('/images/actions/attack.png')!important}
-.result-change-chip .change-def{background-image:url('/images/actions/reduction.png')!important}
+.result-change-chip .change-stat{
+ display:inline-flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ gap:6px!important;
+ min-height:40px!important;
+ padding:0!important;
+ background:none!important;
+ color:#e2e8f0!important;
+ font-weight:500!important;
+}
+.result-change-chip .change-stat::before{
+ content:'';
+ display:inline-block!important;
+ flex:0 0 auto!important;
+ width:38px!important;
+ height:38px!important;
+ background-repeat:no-repeat!important;
+ background-position:center!important;
+ background-size:contain!important;
+}
+.result-change-chip .change-hp::before,.result-change-chip .change-maxhp::before{background-image:url('/images/actions/treat.png')!important}
+.result-change-chip .change-atk::before{background-image:url('/images/actions/attack.png')!important}
+.result-change-chip .change-def::before{background-image:url('/images/actions/reduction.png')!important}
 .result-change-chip .change-status{color:#dbeafe!important;font-size:15px!important}
 .result-change-chip .ko-text{color:#fecaca!important}
 
@@ -47,7 +66,6 @@
 .final-ranking-card .ranking-list{display:grid!important;visibility:visible!important;opacity:1!important}
 
 @media(max-width:760px){
- .inline-hp{width:62px!important;height:8px!important}
  .self-card .stats{flex-wrap:wrap!important;gap:5px 9px!important;line-height:1.15!important;height:auto!important;min-height:58px!important}
  .enemy-card.enemy-card-with-head>div:not(.mini-hp){height:auto!important;min-height:58px!important;flex-wrap:wrap!important;justify-content:center!important;align-content:center!important;gap:4px 8px!important}
  .enemy-card .enemy-stats{font-size:14px!important;line-height:1.15!important;gap:4px 8px!important}
@@ -57,5 +75,5 @@
  .result-action-mark{width:124px!important;min-width:124px!important;height:102px!important}
  .result-ultimate .result-action-mark b{bottom:-22px!important;font-size:17px!important;max-width:155px!important}
  .result-change-list{margin-top:24px!important}
- .result-change-chip .change-stat{padding-left:34px!important;background-size:29px 29px!important}
+ .result-change-chip .change-stat::before{width:34px!important;height:34px!important}
 }
