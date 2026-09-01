@@ -1,5 +1,5 @@
 export type RemoteAction = 'upgrade' | 'attack' | 'heal' | 'finish' | 'guard' | 'ultimate'
-export type WordPoolSize = 300 | 1200 | 6000
+export type WordPoolSize = 300 | 1200 | 5000
 export type RemoteStatChange = { playerId:string; name:string; hp?:number; maxHp?:number; atk?:number; def?:number; guard?:'on'|'off'; ko?:boolean }
 export type RemoteActionResult = { id:string; playerId:string; playerName:string; action?:RemoteAction; coefficient:number; correct:boolean; critical:boolean; ultimate:boolean; text:string; changes:RemoteStatChange[] }
 export type RemotePlayer = { id:string; name:string; host:boolean; jobId?:string; hp:number; maxHp:number; atk:number; def:number; alive:boolean; guard:boolean; guardCharges?:number; ultimateUsed?:boolean; action?:RemoteAction; answered?:boolean; coefficient?:number; answeredAt?:number; answerCorrect?:boolean }
