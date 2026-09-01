@@ -12,7 +12,7 @@ const rooms=[{id:'sword',name:'聖劍試煉場',subtitle:'勇者們以榮耀決�
 const jobs:Job[]=[{id:'assassin',name:'刺客',feature:'尾刀與升級攻擊特化',badge:'ATK'},{id:'warrior',name:'戰士',feature:'減傷與升級生命特化',badge:'HP'},{id:'fighter',name:'武道家',feature:'減傷與升級防禦特化',badge:'DEF'},{id:'archer',name:'弓箭手',feature:'攻擊與升級攻擊特化',badge:'DMG'},{id:'priest',name:'牧師',feature:'治療與升級防禦特化',badge:'HEAL'},{id:'mage',name:'法師',feature:'範圍攻擊與升級攻擊特化',badge:'AOE'}]
 const actions:{id:RemoteAction;name:string;icon:string;desc:string}[]=[{id:'upgrade',name:'升級',icon:'✦',desc:'增加生命、攻擊、防禦'},{id:'attack',name:'攻擊',icon:'⚔',desc:'攻擊生命最多的玩家'},{id:'heal',name:'治療',icon:'✚',desc:'恢復生命，滿血則增加上限'},{id:'finish',name:'尾刀',icon:'➶',desc:'攻擊生命最少的玩家'},{id:'guard',name:'減傷',icon:'◆',desc:'下一次被攻擊時降低傷害'},{id:'ultimate',name:'絕招',icon:'★',desc:'每場只能成功施放一次'}]
 const ultimateNames:Record<string,string>={assassin:'影殺・終結',warrior:'不屈戰魂',archer:'穿雲狙擊',fighter:'金剛不壞',priest:'神聖奇蹟',mage:'末日魔法'}
-const wordPoolOptions:WordPoolSize[]=[300,1200,6000]
+const wordPoolOptions:WordPoolSize[]=[300,1200,5000]
 const fallbackQuestion={id:0,word:'brave',choices:['安靜的','勇敢的','飢餓的']}
 const jobName=(id?:string)=>jobs.find(j=>j.id===id)?.name??'尚未選擇'
 const jobImage=(id?:string)=>id?`/images/jobs/${id==='mage'?'Mage':id}.png`:''
