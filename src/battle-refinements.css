@@ -1,19 +1,26 @@
 /* Final battle UI refinements. Imported after battle-layout.css so these rules win. */
 
-/* Health bars removed: keep only the numeric HP value. */
+/* Health bars are completely removed from layout; keep only numeric values. */
+.inline-hp,.hp-track,.mini-hp{display:none!important;width:0!important;height:0!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;overflow:hidden!important}
 .battle-stat{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;white-space:nowrap!important}
-.inline-hp{display:none!important}
 .self-card .stats>span:nth-child(1),.self-card .stats>span:nth-child(2),.self-card .stats>span:nth-child(3){padding-left:0!important;background-image:none!important}
-.enemy-card .enemy-stats{display:flex!important;align-items:center!important;justify-content:center!important;gap:10px!important;flex-wrap:wrap!important}
-.guard-status{font-size:.9em!important;color:#bfdbfe!important}
+.guard-status{font-size:.9em!important;color:#bfdbfe!important;white-space:nowrap!important}
 
-/* Selected action: artwork only, no card/background/frame, keep enlarged until action countdown finishes. */
-.action-grid:has(.action-card.selected){display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:min(92vw,390px)!important;overflow:visible!important}
+/* Restore player data on the right side of every battle row. */
+.self-card .character-status-body{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;min-width:0!important;overflow:visible!important}
+.self-card .stats{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;flex-wrap:nowrap!important;min-width:0!important;overflow:visible!important;visibility:visible!important;opacity:1!important}
+.self-card .stats>.battle-stat,.self-card .stats>.guard-status{display:inline-flex!important;visibility:visible!important;opacity:1!important}
+.enemy-card.enemy-card-with-head>div:not(.mini-hp){display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important;min-width:0!important;overflow:visible!important;white-space:nowrap!important}
+.enemy-card .enemy-stats{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;flex-wrap:nowrap!important;min-width:0!important;overflow:visible!important;visibility:visible!important;opacity:1!important;white-space:nowrap!important}
+.enemy-card .enemy-stats>.battle-stat,.enemy-card .enemy-stats>.guard-status{display:inline-flex!important;visibility:visible!important;opacity:1!important}
+
+/* Selected action: artwork only, no card/background/frame. 70% of the previous enlarged size. */
+.action-grid:has(.action-card.selected){display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:min(65vw,273px)!important;overflow:visible!important}
 .action-grid:has(.action-card.selected) .action-card:not(.selected){display:none!important}
 .action-grid:has(.action-card.selected) .action-card.selected{
  display:block!important;
- width:min(88vw,390px)!important;height:min(88vw,390px)!important;
- min-width:min(88vw,390px)!important;min-height:min(88vw,390px)!important;
+ width:min(62vw,273px)!important;height:min(62vw,273px)!important;
+ min-width:min(62vw,273px)!important;min-height:min(62vw,273px)!important;
  max-width:none!important;max-height:none!important;
  border:0!important;border-radius:0!important;outline:0!important;
  background-color:transparent!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important;
@@ -54,9 +61,10 @@
  background-position:center!important;
  background-size:contain!important;
 }
-.result-change-chip .change-hp::before,.result-change-chip .change-maxhp::before{background-image:url('/images/actions/treat.png')!important}
-.result-change-chip .change-atk::before{background-image:url('/images/actions/attack.png')!important}
-.result-change-chip .change-def::before{background-image:url('/images/actions/reduction.png')!important}
+/* Life / max life use life.png; treat.png stays reserved for the Heal action artwork. */
+.result-change-chip .change-hp::before,.result-change-chip .change-maxhp::before{background-image:url('/images/actions/life.png')!important}
+.result-change-chip .change-atk::before{background-image:url('/images/actions/ATK.png')!important}
+.result-change-chip .change-def::before{background-image:url('/images/actions/DEF.png')!important}
 .result-change-chip .change-status{color:#dbeafe!important;font-size:15px!important}
 .result-change-chip .ko-text{color:#fecaca!important}
 
@@ -66,10 +74,16 @@
 .final-ranking-card .ranking-list{display:grid!important;visibility:visible!important;opacity:1!important}
 
 @media(max-width:760px){
- .self-card .stats{flex-wrap:wrap!important;gap:5px 9px!important;line-height:1.15!important;height:auto!important;min-height:58px!important}
- .enemy-card.enemy-card-with-head>div:not(.mini-hp){height:auto!important;min-height:58px!important;flex-wrap:wrap!important;justify-content:center!important;align-content:center!important;gap:4px 8px!important}
- .enemy-card .enemy-stats{font-size:14px!important;line-height:1.15!important;gap:4px 8px!important}
- .guard-status{width:100%!important;text-align:center!important;line-height:1.1!important}
+ .self-card.character-status-card,.enemy-card.enemy-card-with-head{overflow:visible!important}
+ .self-card .character-status-body{height:58px!important;min-height:58px!important;display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;align-items:center!important;gap:8px!important;overflow:visible!important}
+ .self-card .self-top{min-width:max-content!important}
+ .self-card .stats{height:58px!important;min-height:58px!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:7px!important;flex-wrap:nowrap!important;overflow:visible!important;font-size:14px!important;line-height:1!important}
+ .enemy-card.enemy-card-with-head>div:not(.mini-hp){height:58px!important;min-height:58px!important;display:grid!important;grid-template-columns:auto auto minmax(0,1fr)!important;align-items:center!important;gap:7px!important;overflow:visible!important}
+ .enemy-card .enemy-stats{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:7px!important;flex-wrap:nowrap!important;overflow:visible!important;font-size:14px!important;line-height:1!important;white-space:nowrap!important}
+ .battle-stat{font-size:14px!important;line-height:1!important}
+ .guard-status{font-size:12px!important;line-height:1!important}
+ .action-grid:has(.action-card.selected){min-height:min(65vw,273px)!important}
+ .action-grid:has(.action-card.selected) .action-card.selected{width:min(62vw,273px)!important;height:min(62vw,273px)!important;min-width:min(62vw,273px)!important;min-height:min(62vw,273px)!important}
  .timer.danger{font-size:64px!important;transform:translateY(-20px)!important}
  .result-capsule-top{grid-template-columns:68px minmax(0,1fr) 124px!important;gap:8px!important}
  .result-action-mark{width:124px!important;min-width:124px!important;height:102px!important}
