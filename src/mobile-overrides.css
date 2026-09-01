@@ -1,8 +1,7 @@
 /* Mobile-only positioning overrides requested for room and lobby screens. */
 @media (max-width: 760px) {
-  /* Return button: room-selection page moves down 10px; other pages keep their current top position. */
+  /* Return button: lobby and room-selection pages sit 10px from the top; jobs keeps its current position. */
   .back-button,
-  .lobby-card .back-button,
   .jobs-card .back-button {
     position: fixed !important;
     left: 3vw !important;
@@ -25,7 +24,8 @@
     box-shadow: none !important;
     overflow: visible !important;
   }
-  .rooms-card .back-button {
+  .rooms-card .back-button,
+  .lobby-card .back-button {
     position: fixed !important;
     left: 3vw !important;
     top: 10px !important;
@@ -48,7 +48,7 @@
     overflow: visible !important;
   }
 
-  /* Room selection: move the current four-room group down another 10px; keep zero spacing. */
+  /* Room selection keeps its current mobile position and zero spacing. */
   .rooms-page .room-grid {
     position: relative !important;
     top: 45px !important;
@@ -60,14 +60,14 @@
     margin: 0 !important;
   }
 
-  /* Lobby: move room artwork, word pool and player names 15px upward from their current 50px offset. */
+  /* Lobby: move all artwork, text groups and buttons down another 10px. */
   .lobby-page .lobby-room-image,
   .lobby-page .word-pool-selector,
   .lobby-page .lobby-player-list {
-    transform: translateY(35px) !important;
+    transform: translateY(45px) !important;
   }
   .lobby-page .lobby-start-button {
-    transform: translateY(50px) !important;
+    transform: translateY(60px) !important;
   }
 
   /* Keep 20px between room artwork, word-pool selector, and the host/player list. */
@@ -78,25 +78,34 @@
     margin-bottom: 20px !important;
   }
 
-  /* Player rows: 1.5x the current 38px mobile height, with matching larger text. */
+  /* Player rows stay large, but player names are slightly smaller and centered. */
   .lobby-page .lobby-player-list {
     gap: 20px !important;
     row-gap: 20px !important;
   }
   .lobby-page .lobby-player-list .player-row {
+    position: relative !important;
     min-height: 57px !important;
     height: 57px !important;
     padding: 10px 15px !important;
-    font-size: 24px !important;
+    font-size: 20px !important;
     line-height: 1.15 !important;
     border-radius: 15px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
   }
   .lobby-page .lobby-player-list .player-row strong {
-    font-size: 24px !important;
+    width: 100% !important;
+    font-size: 20px !important;
     line-height: 1.15 !important;
+    text-align: center !important;
   }
   .lobby-page .lobby-player-list .player-row em {
-    font-size: 23px !important;
+    position: absolute !important;
+    right: 15px !important;
+    font-size: 18px !important;
     line-height: 1.15 !important;
   }
 
