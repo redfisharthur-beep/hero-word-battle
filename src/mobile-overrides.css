@@ -1,19 +1,31 @@
 /* Mobile-only positioning overrides requested for room and lobby screens. */
 @media (max-width: 760px) {
-  /* Return button: enlarge another 1.5x from the current 188px size. */
-  .back-button {
+  /* Return button: remove capsule/size constraints so the artwork can truly scale. */
+  .back-button,
+  .rooms-card .back-button,
+  .lobby-card .back-button,
+  .jobs-card .back-button {
     width: 282px !important;
     min-width: 282px !important;
-    max-width: 282px !important;
+    max-width: none !important;
     height: 282px !important;
     min-height: 282px !important;
-    max-height: 282px !important;
+    max-height: none !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background-color: transparent !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    box-shadow: none !important;
+    overflow: visible !important;
   }
 
-  /* Room selection: move the current four-room group down another 15px; keep zero spacing. */
+  /* Room selection: move the current four-room group down another 10px; keep zero spacing. */
   .rooms-page .room-grid {
     position: relative !important;
-    top: -5px !important;
+    top: 5px !important;
     gap: 0 !important;
     row-gap: 0 !important;
     column-gap: 0 !important;
@@ -59,7 +71,14 @@
     font-size: 23px !important;
     line-height: 1.15 !important;
   }
+
+  /* Empty player slots stay visually empty: remove both placeholder copies. */
+  .lobby-page .lobby-player-list .player-row.muted strong {
+    font-size: 0 !important;
+    color: transparent !important;
+  }
   .lobby-page .lobby-player-list .player-row.muted strong::after {
-    font-size: 24px !important;
+    content: none !important;
+    display: none !important;
   }
 }
