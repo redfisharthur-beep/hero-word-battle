@@ -1,0 +1,209 @@
+/* Final UI layer. Loaded last to avoid legacy layout conflicts. */
+
+/* Battle roster: portrait on the left, exactly two rows on the right. */
+.self-card.character-status-card,
+.enemy-card.enemy-card-with-head{
+  display:grid!important;
+  grid-template-columns:88px minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:14px!important;
+  min-height:106px!important;
+  padding:10px 14px!important;
+  overflow:visible!important;
+}
+.self-card .character-head.large,
+.enemy-card .character-head{
+  width:82px!important;
+  height:82px!important;
+  min-width:82px!important;
+  min-height:82px!important;
+  max-width:82px!important;
+  max-height:82px!important;
+  object-fit:contain!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.player-status-grid{
+  min-width:0!important;
+  display:grid!important;
+  grid-template-rows:1fr 1fr!important;
+  gap:7px!important;
+}
+.player-status-top,
+.player-status-bottom{
+  min-width:0!important;
+  display:grid!important;
+  grid-template-columns:minmax(92px,1fr) auto auto!important;
+  align-items:center!important;
+  gap:12px!important;
+}
+.player-status-top{padding-bottom:5px!important;border-bottom:1px solid rgba(148,163,184,.16)!important}
+.player-status-name{min-width:0!important;font-size:21px!important;line-height:1.15!important;font-weight:500!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;color:#f8fafc!important}
+.player-job-name{font-size:15px!important;line-height:1.15!important;color:#7dd3fc!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.player-stat{display:inline-flex!important;align-items:center!important;justify-content:flex-start!important;gap:5px!important;white-space:nowrap!important;color:#f8fafc!important}
+.player-stat img{width:29px!important;height:29px!important;min-width:29px!important;min-height:29px!important;object-fit:contain!important;background:transparent!important}
+.player-stat b{font-size:18px!important;line-height:1!important;font-weight:500!important;font-variant-numeric:tabular-nums!important}
+.player-stat-life img{width:27px!important;height:27px!important;min-width:27px!important;min-height:27px!important}
+.player-effect-status{min-width:0!important;font-size:13px!important;line-height:1.15!important;color:#dbeafe!important;text-align:left!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.enemy-card.muted{opacity:.48!important}
+
+/* Profession selection: shrink the button itself and the artwork together. */
+.jobs-card .job-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  justify-items:center!important;
+  align-items:center!important;
+  gap:8px!important;
+}
+.jobs-card .job-art-card{
+  width:80%!important;
+  max-width:80%!important;
+  min-width:0!important;
+  aspect-ratio:1/1!important;
+  min-height:0!important;
+  height:auto!important;
+  padding:0!important;
+  margin:0 auto!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+.jobs-card .job-full-art{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:100%!important;
+  object-fit:contain!important;
+  padding:0!important;
+  margin:0!important;
+}
+
+/* Countdown: plain red number at the left, no frame or fixed box. */
+.battle-heading{position:relative!important}
+.battle-heading .timer,
+.battle-heading .timer.danger{
+  position:absolute!important;
+  left:0!important;
+  right:auto!important;
+  top:0!important;
+  bottom:auto!important;
+  width:auto!important;
+  height:auto!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  outline:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:#ef4444!important;
+  font-weight:700!important;
+  line-height:1!important;
+  transform:translateY(-10px)!important;
+  overflow:visible!important;
+}
+
+/* Remove the extra status/English helper copy. */
+.connection-bar{display:none!important}
+.self-card .mini-label,
+.quiz-card .mini-label,
+.quiz-help,
+.score-guide{display:none!important}
+
+/* Center the English word. Pronunciation stays icon-only. */
+.quiz-card .word-line{
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-height:92px!important;
+  padding:12px 54px!important;
+  text-align:center!important;
+}
+.quiz-card .word-line .word{
+  display:block!important;
+  width:100%!important;
+  margin:0 auto!important;
+  text-align:center!important;
+  font-size:clamp(38px,10vw,66px)!important;
+  line-height:1.05!important;
+}
+.quiz-card .speak-button{
+  position:absolute!important;
+  right:4px!important;
+  top:50%!important;
+  transform:translateY(-50%)!important;
+  width:42px!important;
+  height:42px!important;
+  min-width:42px!important;
+  min-height:42px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  font-size:22px!important;
+  line-height:1!important;
+}
+
+/* Three answer choices use three clearly different frame colors. */
+.answer-grid{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
+.answer-grid .answer-choice{
+  min-height:58px!important;
+  border-width:2px!important;
+  border-style:solid!important;
+  border-radius:16px!important;
+  box-shadow:none!important;
+  font-size:20px!important;
+  background:rgba(15,23,42,.72)!important;
+}
+.answer-grid .answer-choice-1{border-color:#60a5fa!important;background:rgba(37,99,235,.14)!important}
+.answer-grid .answer-choice-2{border-color:#f59e0b!important;background:rgba(217,119,6,.14)!important}
+.answer-grid .answer-choice-3{border-color:#4ade80!important;background:rgba(22,163,74,.14)!important}
+.answer-grid .answer-choice:disabled{opacity:.62!important}
+
+@media(max-width:760px){
+  .self-card.character-status-card,
+  .enemy-card.enemy-card-with-head{
+    grid-template-columns:74px minmax(0,1fr)!important;
+    gap:9px!important;
+    min-height:94px!important;
+    padding:8px 9px!important;
+  }
+  .self-card .character-head.large,
+  .enemy-card .character-head{
+    width:70px!important;
+    height:70px!important;
+    min-width:70px!important;
+    min-height:70px!important;
+    max-width:70px!important;
+    max-height:70px!important;
+  }
+  .player-status-top,.player-status-bottom{grid-template-columns:minmax(72px,1fr) auto auto!important;gap:7px!important}
+  .player-status-name{font-size:18px!important}
+  .player-job-name{font-size:13px!important}
+  .player-stat img{width:24px!important;height:24px!important;min-width:24px!important;min-height:24px!important}
+  .player-stat-life img{width:23px!important;height:23px!important;min-width:23px!important;min-height:23px!important}
+  .player-stat b{font-size:15px!important}
+  .player-effect-status{font-size:11px!important}
+  .jobs-card .job-art-card{width:80%!important;max-width:80%!important}
+  .battle-heading .timer,.battle-heading .timer.danger{left:0!important;transform:translateY(-10px)!important}
+  .quiz-card .word-line{min-height:82px!important;padding:10px 48px!important}
+  .quiz-card .speak-button{width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important;font-size:20px!important}
+  .answer-grid .answer-choice{min-height:54px!important;font-size:19px!important}
+}
+
+@media(max-width:390px){
+  .player-status-top,.player-status-bottom{grid-template-columns:minmax(64px,1fr) auto auto!important;gap:5px!important}
+  .player-status-name{font-size:17px!important}
+  .player-stat img{width:22px!important;height:22px!important;min-width:22px!important;min-height:22px!important}
+  .player-stat b{font-size:14px!important}
+  .player-effect-status{font-size:10px!important}
+}
