@@ -1,0 +1,62 @@
+/* Rendering stability layer. Loaded last. It intentionally does not change the latest visual design. */
+
+/* Isolate each player card so frequent countdown/state updates do not repaint the whole battle screen. */
+.battle-shell > .self-card.character-status-card,
+.battle-shell > .enemy-strip > .enemy-card.enemy-card-with-head{
+  contain:layout paint!important;
+  backface-visibility:hidden!important;
+  -webkit-backface-visibility:hidden!important;
+  transform:translateZ(0)!important;
+  animation:none!important;
+  transition:none!important;
+}
+.battle-shell > .self-card.character-status-card *,
+.battle-shell > .enemy-strip > .enemy-card.enemy-card-with-head *{
+  animation:none!important;
+  transition:none!important;
+}
+
+/* Keep every player's two-row grid strictly inside the card. */
+body .battle-shell > .self-card.character-status-card > .player-status-grid,
+body .battle-shell > .enemy-strip > .enemy-card.enemy-card-with-head > .player-status-grid{
+  min-width:0!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+}
+body .battle-shell > .self-card.character-status-card > .player-status-grid > .player-status-top,
+body .battle-shell > .self-card.character-status-card > .player-status-grid > .player-status-bottom,
+body .battle-shell > .enemy-strip > .enemy-card.enemy-card-with-head > .player-status-grid > .player-status-top,
+body .battle-shell > .enemy-strip > .enemy-card.enemy-card-with-head > .player-status-grid > .player-status-bottom{
+  min-width:0!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+}
+
+/* Explicitly neutralize the old enemy strong/small line-height rules that pushed names outside their row. */
+body .battle-shell > .enemy-strip > .enemy-card.enemy-card-with-head > .player-status-grid > .player-status-top > .player-status-name,
+body .battle-shell > .self-card.character-status-card > .player-status-grid > .player-status-top > .player-status-name{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  height:100%!important;
+  min-height:0!important;
+  line-height:1.1!important;
+  margin:0!important;
+  padding:0 2px!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+}
+body .battle-shell > .enemy-strip > .enemy-card.enemy-card-with-head > .player-status-grid > .player-status-bottom > .player-job-name,
+body .battle-shell > .self-card.character-status-card > .player-status-grid > .player-status-bottom > .player-job-name{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  height:100%!important;
+  min-height:0!important;
+  line-height:1.1!important;
+}
+
+/* Keep icons and text on stable compositor layers without changing size or position. */
+.character-head,.player-stat img{backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important;transform:translateZ(0)!important}
+.battle-meta-row,.battle-panel,.quiz-card,.action-grid{backface-visibility:hidden!important;-webkit-backface-visibility:hidden!important}
