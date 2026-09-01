@@ -30,9 +30,36 @@
     transform: translateY(50px) !important;
   }
 
-  /* 20px vertical spacing between player rows. */
+  /* Keep 20px between room artwork, word-pool selector, and the host/player list. */
+  .lobby-page .lobby-room-image {
+    margin-bottom: 20px !important;
+  }
+  .lobby-page .word-pool-selector {
+    margin-bottom: 20px !important;
+  }
+
+  /* Player rows: 1.5x the current 38px mobile height, with matching larger text. */
   .lobby-page .lobby-player-list {
     gap: 20px !important;
     row-gap: 20px !important;
+  }
+  .lobby-page .lobby-player-list .player-row {
+    min-height: 57px !important;
+    height: 57px !important;
+    padding: 10px 15px !important;
+    font-size: 24px !important;
+    line-height: 1.15 !important;
+    border-radius: 15px !important;
+  }
+  .lobby-page .lobby-player-list .player-row strong {
+    font-size: 24px !important;
+    line-height: 1.15 !important;
+  }
+  .lobby-page .lobby-player-list .player-row em {
+    font-size: 23px !important;
+    line-height: 1.15 !important;
+  }
+  .lobby-page .lobby-player-list .player-row.muted strong::after {
+    font-size: 24px !important;
   }
 }
