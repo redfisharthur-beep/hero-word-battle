@@ -48,7 +48,7 @@
 .rooms-page .room-card{width:250px!important;min-width:250px!important;max-width:250px!important;height:150px!important;min-height:150px!important;max-height:150px!important;background-size:contain!important;background-position:center!important;overflow:visible!important;margin:0!important}
 
 /* All previous-page controls use the provided artwork only. */
-.back-button{width:112px!important;min-width:112px!important;max-width:112px!important;height:112px!important;min-height:112px!important;max-height:112px!important;padding:0!important;border:0!important;border-radius:0!important;background-color:transparent!important;background-image:url('/images/rooms/return.png')!important;background-repeat:no-repeat!important;background-position:center!important;background-size:contain!important;box-shadow:none!important;font-size:0!important;line-height:0!important;color:transparent!important;overflow:hidden!important}
+.back-button{width:146px!important;min-width:146px!important;max-width:146px!important;height:146px!important;min-height:146px!important;max-height:146px!important;padding:0!important;border:0!important;border-radius:0!important;background-color:transparent!important;background-image:url('/images/rooms/return.png')!important;background-repeat:no-repeat!important;background-position:center!important;background-size:contain!important;box-shadow:none!important;font-size:0!important;line-height:0!important;color:transparent!important;overflow:hidden!important}
 .back-button:hover:not(:disabled),.back-button:focus-visible{transform:scale(1.05)!important;filter:brightness(1.08)}
 .back-button:active:not(:disabled){transform:scale(.96)!important}
 
@@ -76,7 +76,7 @@ button,input,textarea,select,p,span,strong,b,small,em,h1,h2,h3,h4,h5,h6,label{fo
 .action-card:nth-child(1){grid-column:1!important;grid-row:1!important}.action-card:nth-child(2){grid-column:2!important;grid-row:1!important}.action-card:nth-child(3){grid-column:3!important;grid-row:1!important}.action-card:nth-child(4){grid-column:1!important;grid-row:2!important}.action-card:nth-child(5){grid-column:2!important;grid-row:2!important}.action-card:nth-child(6),.action-card.ultimate-action:nth-child(6){grid-column:3!important;grid-row:2!important}
 .rooms-page .room-grid{gap:10px!important;row-gap:10px!important}
 .rooms-page .room-card{height:150px!important;min-height:150px!important;max-height:150px!important;background-size:contain!important;overflow:visible!important}
-.back-button{width:96px!important;min-width:96px!important;max-width:96px!important;height:96px!important;min-height:96px!important;max-height:96px!important}
+.back-button{width:125px!important;min-width:125px!important;max-width:125px!important;height:125px!important;min-height:125px!important;max-height:125px!important}
 .lobby-start-button{width:220px!important;height:96px!important;min-height:96px!important}
 .lobby-player-list .player-row.muted strong::after{font-size:17px!important}
 }
