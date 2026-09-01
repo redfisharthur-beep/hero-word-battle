@@ -17,20 +17,12 @@
 /* Selected action: artwork only, no card/background/frame. 70% of the previous enlarged size. */
 .action-grid:has(.action-card.selected){display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:min(65vw,273px)!important;overflow:visible!important}
 .action-grid:has(.action-card.selected) .action-card:not(.selected){display:none!important}
-.action-grid:has(.action-card.selected) .action-card.selected{
- display:block!important;
- width:min(62vw,273px)!important;height:min(62vw,273px)!important;
- min-width:min(62vw,273px)!important;min-height:min(62vw,273px)!important;
- max-width:none!important;max-height:none!important;
- border:0!important;border-radius:0!important;outline:0!important;
- background-color:transparent!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important;
- box-shadow:none!important;filter:none!important;opacity:1!important;overflow:visible!important;transform:none!important;
-}
+.action-grid:has(.action-card.selected) .action-card.selected{display:block!important;width:min(62vw,273px)!important;height:min(62vw,273px)!important;min-width:min(62vw,273px)!important;min-height:min(62vw,273px)!important;max-width:none!important;max-height:none!important;border:0!important;border-radius:0!important;outline:0!important;background-color:transparent!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important;box-shadow:none!important;filter:none!important;opacity:1!important;overflow:visible!important;transform:none!important}
 .action-grid:has(.action-card.selected)+.action-lock-note{display:none!important}
 
-/* Countdown: danger numbers are larger and 10px higher. */
-.timer{transform:translateY(-10px)!important}
-.timer.danger{font-size:clamp(52px,13vw,82px)!important;line-height:.9!important;font-weight:700!important;transform:translateY(-20px)!important}
+/* Countdown is plain red text only. Do not give it a frame or force fixed dimensions/positioning; just move its natural position upward 10px. */
+.battle-heading .timer,.timer,.battle-heading .timer.danger,.timer.danger{position:relative!important;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;filter:none!important;color:#ef4444!important;line-height:1!important;transform:translateY(-10px)!important;overflow:visible!important}
+.timer.danger{font-size:clamp(52px,13vw,82px)!important;font-weight:700!important}
 
 /* Result top action artwork: larger. */
 .result-capsule-top{grid-template-columns:auto minmax(0,1fr) 160px!important}
@@ -40,28 +32,8 @@
 
 /* Result changes: every numeric change uses its matching artwork file. */
 .result-change-chip{gap:12px!important}
-.result-change-chip .change-stat{
- display:inline-flex!important;
- align-items:center!important;
- justify-content:center!important;
- gap:6px!important;
- min-height:40px!important;
- padding:0!important;
- background:none!important;
- color:#e2e8f0!important;
- font-weight:500!important;
-}
-.result-change-chip .change-stat::before{
- content:'';
- display:inline-block!important;
- flex:0 0 auto!important;
- width:38px!important;
- height:38px!important;
- background-repeat:no-repeat!important;
- background-position:center!important;
- background-size:contain!important;
-}
-/* Life / max life use life.png; treat.png stays reserved for the Heal action artwork. */
+.result-change-chip .change-stat{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;min-height:40px!important;padding:0!important;background:none!important;color:#e2e8f0!important;font-weight:500!important}
+.result-change-chip .change-stat::before{content:'';display:inline-block!important;flex:0 0 auto!important;width:38px!important;height:38px!important;background-repeat:no-repeat!important;background-position:center!important;background-size:contain!important}
 .result-change-chip .change-hp::before,.result-change-chip .change-maxhp::before{background-image:url('/images/actions/life.png')!important}
 .result-change-chip .change-atk::before{background-image:url('/images/actions/ATK.png')!important}
 .result-change-chip .change-def::before{background-image:url('/images/actions/DEF.png')!important}
@@ -84,7 +56,7 @@
  .guard-status{font-size:12px!important;line-height:1!important}
  .action-grid:has(.action-card.selected){min-height:min(65vw,273px)!important}
  .action-grid:has(.action-card.selected) .action-card.selected{width:min(62vw,273px)!important;height:min(62vw,273px)!important;min-width:min(62vw,273px)!important;min-height:min(62vw,273px)!important}
- .timer.danger{font-size:64px!important;transform:translateY(-20px)!important}
+ .timer.danger{font-size:64px!important}
  .result-capsule-top{grid-template-columns:68px minmax(0,1fr) 124px!important;gap:8px!important}
  .result-action-mark{width:124px!important;min-width:124px!important;height:102px!important}
  .result-ultimate .result-action-mark b{bottom:-22px!important;font-size:17px!important;max-width:155px!important}
