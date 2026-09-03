@@ -141,6 +141,25 @@ body .battle-shell > .self-card.character-status-card > .player-status-grid > .p
   box-shadow:none!important;
 }
 
+/* Slightly larger player-card typography and stat artwork without changing the two-row layout. */
+.battle-shell .player-status-name{font-size:21px!important}
+.battle-shell .player-job-name{font-size:17px!important}
+.battle-shell .player-effect-status{font-size:14px!important}
+.battle-shell .player-stat b{font-size:18px!important}
+.battle-shell .player-stat img{width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;max-width:30px!important;max-height:30px!important}
+.battle-shell .player-stat-life img{width:29px!important;height:29px!important;min-width:29px!important;min-height:29px!important;max-width:29px!important;max-height:29px!important}
+
+/* Result data artwork: upgrade uses life/ATK/DEF, damage uses Lose HP, healing uses Heal. */
+.result-change-chip .change-stat::before{width:42px!important;height:42px!important;background-repeat:no-repeat!important;background-position:center!important;background-size:contain!important}
+.result-upgrade .change-hp::before,
+.result-upgrade .change-maxhp::before{background-image:url('/images/actions/life.png')!important}
+.result-upgrade .change-atk::before{background-image:url('/images/actions/ATK.png')!important}
+.result-upgrade .change-def::before{background-image:url('/images/actions/DEF.png')!important}
+.result-attack .change-hp::before,
+.result-finish .change-hp::before,
+.result-ultimate .change-hp::before{background-image:url('/images/actions/Lose%20HP.png')!important}
+.result-heal .change-hp::before{background-image:url('/images/actions/Heal.png')!important}
+
 /* Mobile navigation spacing: fixed return artwork must never overlap page content.
    Shorter return button + 10px clear space. */
 @media(max-width:760px){
@@ -178,4 +197,22 @@ body .battle-shell > .self-card.character-status-card > .player-status-grid > .p
     font-size:30px!important;
     line-height:1!important;
   }
+
+  .battle-shell .player-status-name{font-size:20px!important}
+  .battle-shell .player-job-name{font-size:16px!important}
+  .battle-shell .player-effect-status{font-size:13px!important}
+  .battle-shell .player-stat b{font-size:17px!important}
+  .battle-shell .player-stat img{width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important;max-width:28px!important;max-height:28px!important}
+  .battle-shell .player-stat-life img{width:27px!important;height:27px!important;min-width:27px!important;min-height:27px!important;max-width:27px!important;max-height:27px!important}
+
+  /* Result top row on mobile: portrait with player name underneath, enlarged Critical art in the middle, action art on the right. */
+  .result-capsule-top{grid-template-columns:92px minmax(110px,1fr) 124px!important;grid-template-rows:78px 28px!important;column-gap:8px!important;row-gap:2px!important;align-items:center!important;min-height:108px!important}
+  .result-capsule-top>.character-head.large,
+  .result-capsule-top>.character-head-placeholder.large{grid-column:1!important;grid-row:1!important;justify-self:center!important;align-self:center!important;width:76px!important;height:76px!important;min-width:76px!important;min-height:76px!important;max-width:76px!important;max-height:76px!important}
+  .result-actor-copy{grid-column:1!important;grid-row:2!important;width:100%!important;display:flex!important;justify-content:center!important;align-items:center!important;text-align:center!important;min-width:0!important}
+  .result-actor-copy>strong{font-size:17px!important;line-height:1!important;width:100%!important;text-align:center!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .result-action-mark{grid-column:3!important;grid-row:1/3!important;justify-self:center!important;align-self:center!important;width:124px!important;min-width:124px!important;height:102px!important}
+  .critical-burst{top:16px!important;left:50%!important;width:132px!important;height:86px!important;transform:translateX(-50%)!important}
+
+  .result-change-chip .change-stat::before{width:38px!important;height:38px!important}
 }
