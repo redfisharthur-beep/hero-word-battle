@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "hero-word-battle",
-  "main": "worker/index.ts",
+  "main": "worker/entry.ts",
   "compatibility_date": "2026-08-31",
   "assets": {
     "directory": "./dist",
