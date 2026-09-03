@@ -1,5 +1,10 @@
 /* Rendering stability layer. Loaded last. It intentionally preserves the latest visual design. */
 
+/* Use Zen Maru Gothic for every visible UI text/number, including timers and pseudo-elements. */
+:root,html,body,#root,#root *,#root *::before,#root *::after{
+  font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','Hiragino Sans','Yu Gothic','YuGothic','Noto Sans TC','Microsoft JhengHei',sans-serif!important;
+}
+
 /* Isolate each player card so frequent countdown/state updates do not repaint the whole battle screen. */
 .battle-shell > .self-card.character-status-card,
 .battle-shell > .enemy-strip > .enemy-card.enemy-card-with-head{
@@ -64,11 +69,11 @@ body .battle-shell > .self-card.character-status-card > .player-status-grid > .p
 /* Preserve the latest ranking design: no trophy/rank badge. */
 .result-rank-badge{display:none!important}
 
-/* Round and countdown share the same black-gold battle typography. */
+/* Round and countdown keep the same black-gold effect, but use Zen Maru Gothic. */
 .battle-round,
 .battle-meta-timer{
-  font-family:'Noto Serif TC','Songti TC','PMingLiU','Times New Roman',serif!important;
-  font-weight:900!important;
+  font-family:'Zen Maru Gothic','Hiragino Maru Gothic ProN','Hiragino Sans','Yu Gothic','YuGothic','Noto Sans TC','Microsoft JhengHei',sans-serif!important;
+  font-weight:700!important;
   letter-spacing:.04em!important;
   color:#d6a928!important;
   background:linear-gradient(180deg,#fff1a8 0%,#d6a928 42%,#7a4a00 76%,#17110a 100%)!important;
