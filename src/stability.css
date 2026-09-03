@@ -86,6 +86,56 @@ body .battle-shell > .self-card.character-status-card > .player-status-grid > .p
   display:none!important;
 }
 
+/* Artwork rule: every decorative/game image sits directly on the page with no capsule, panel, frame or background behind it. */
+.room-card,
+.job-art-card,
+.action-card,
+.action-card.ultimate-action,
+.back-button,
+.lobby-start-button,
+.result-action-mark,
+.critical-art,
+.character-head,
+.character-head.large,
+.lobby-room-image,
+.job-full-art,
+.player-stat img{
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  background-color:transparent!important;
+  box-shadow:none!important;
+}
+.room-card::before,
+.job-art-card::before,
+.action-card::before,
+.back-button::before,
+.lobby-start-button::before,
+.result-action-mark::before,
+.critical-art::before{
+  display:none!important;
+  content:none!important;
+  background:none!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+/* Do not let generic button/card styles create a dark capsule behind artwork buttons. */
+.rooms-page .room-card,
+.jobs-page .job-art-card,
+.battle-shell .action-card,
+.rooms-page .back-button,
+.lobby-page .back-button,
+.jobs-page .back-button,
+.result-page .back-button,
+.lobby-page .lobby-start-button{
+  background-color:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+}
+
 /* Mobile navigation spacing: fixed return artwork must never overlap page content.
    Shorter return button + 10px clear space. */
 @media(max-width:760px){
