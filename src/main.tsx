@@ -17,10 +17,12 @@ import App from './App'
 import { installRuleViewer } from './rule-viewer'
 import { installComfortUi } from './comfort-ui'
 import { installLineLoginFeedback } from './line-login-feedback'
+import { installGameAudio } from './audio-manager'
 
 installLineLoginFeedback()
 installRuleViewer()
 installComfortUi()
+installGameAudio()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
