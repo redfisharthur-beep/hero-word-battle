@@ -170,11 +170,15 @@
 
 @media(max-width:760px){
   .result-capsule.critical .critical-burst{
-    /* phone: move left 25px, enough to center visually without touching portrait */
+    /* phone: 25px left of center and 10px lower */
     left:calc(50% - 25px)!important;
     width:164px!important;
     height:104px!important;
-    top:8px!important;
+    top:18px!important;
+  }
+  .battle-round{
+    font-size:14px!important;
+    line-height:1!important;
   }
 }
 
