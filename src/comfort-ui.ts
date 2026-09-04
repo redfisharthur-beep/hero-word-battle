@@ -24,7 +24,7 @@ function decorateUltimateResult(capsule:HTMLElement){
  img.alt=''
  overlay.appendChild(img)
  document.body.appendChild(overlay)
- window.setTimeout(()=>overlay.remove(),1150)
+ window.setTimeout(()=>overlay.remove(),2100)
 }
 
 function syncUltimateResults(){
