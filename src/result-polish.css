@@ -83,7 +83,7 @@
   animation:none!important;
 }
 
-/* Animated duplicate artwork: pop + flicker + fade, without hiding the real artwork. */
+/* Animated duplicate artwork: flash -> 2x pop -> flash -> fade. */
 .result-capsule.critical .critical-burst::before{
   content:'';
   position:absolute;
@@ -91,7 +91,7 @@
   background:url('/images/actions/Critical.png') center/contain no-repeat;
   pointer-events:none;
   transform-origin:center;
-  animation:criticalArtFlash 1.15s ease-out both;
+  animation:criticalArtFlash 1.2s ease-out both;
 }
 
 .result-capsule.critical .critical-burst::after{
@@ -102,7 +102,7 @@
   background:radial-gradient(circle,rgba(255,255,225,.9) 0%,rgba(255,213,84,.42) 28%,rgba(255,90,0,.17) 54%,rgba(255,0,0,0) 74%);
   mix-blend-mode:screen;
   pointer-events:none;
-  animation:criticalAuraFlash 1.15s ease-out both;
+  animation:criticalAuraFlash 1.2s ease-out both;
 }
 
 @media (min-width:900px){
@@ -115,6 +115,7 @@
 
 @media (max-width:760px){
   .result-capsule.critical .critical-burst{
+    left:calc(50% - 20px)!important;
     width:118px!important;
     height:76px!important;
     top:14px!important;
@@ -123,18 +124,20 @@
 
 @keyframes criticalArtFlash{
   0%{opacity:0;transform:scale(.72)}
-  16%{opacity:1;transform:scale(1.12)}
-  34%{opacity:.28;transform:scale(.98)}
-  50%{opacity:1;transform:scale(1.05)}
-  72%{opacity:.55;transform:scale(1)}
+  14%{opacity:1;transform:scale(1.15)}
+  28%{opacity:.25;transform:scale(1)}
+  46%{opacity:1;transform:scale(2)}
+  62%{opacity:.55;transform:scale(1.25)}
+  76%{opacity:1;transform:scale(1.08)}
   100%{opacity:0;transform:scale(.96)}
 }
 
 @keyframes criticalAuraFlash{
   0%{opacity:0;transform:scale(.75)}
-  14%{opacity:.95;transform:scale(1.12)}
-  30%{opacity:.15;transform:scale(.98)}
-  48%{opacity:.72;transform:scale(1.06)}
-  70%{opacity:.2;transform:scale(1)}
-  100%{opacity:0;transform:scale(1.08)}
+  14%{opacity:.95;transform:scale(1.15)}
+  28%{opacity:.18;transform:scale(1)}
+  46%{opacity:.82;transform:scale(1.7)}
+  64%{opacity:.22;transform:scale(1.2)}
+  78%{opacity:.55;transform:scale(1.08)}
+  100%{opacity:0;transform:scale(1.12)}
 }
