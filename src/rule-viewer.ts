@@ -39,8 +39,8 @@ function ensureStyles(){
  cursor:pointer!important;
  touch-action:manipulation!important;
 }
-/* Player list page: both buttons sit 20% down from the viewport top. */
-.lobby-page .back-button{top:20%!important}
+/* Player list page: both buttons sit 20px down from the viewport top. */
+.lobby-page .back-button{top:20px!important}
 .rooms-page .back-button:hover,
 .lobby-page .back-button:hover,
 .jobs-page .back-button:hover{filter:brightness(1.08)!important;transform:none!important}
@@ -72,7 +72,7 @@ function ensureStyles(){
  cursor:pointer;
  touch-action:manipulation;
 }
-#${RULE_BUTTON_ID}[data-page='lobby']{top:20%}
+#${RULE_BUTTON_ID}[data-page='lobby']{top:20px}
 #${RULE_BUTTON_ID}:hover{transform:none;filter:brightness(1.08)}
 #${RULE_BUTTON_ID}:active{transform:scale(.96)}
 
@@ -136,9 +136,9 @@ function ensureStyles(){
 }
 @media(max-width:760px){
  .rooms-page .back-button,.jobs-page .back-button{left:3vw!important;top:10px!important;width:112px!important;min-width:112px!important;max-width:112px!important;height:56px!important;min-height:56px!important;max-height:56px!important}
- .lobby-page .back-button{left:3vw!important;top:20%!important;width:112px!important;min-width:112px!important;max-width:112px!important;height:56px!important;min-height:56px!important;max-height:56px!important}
+ .lobby-page .back-button{left:3vw!important;top:20px!important;width:112px!important;min-width:112px!important;max-width:112px!important;height:56px!important;min-height:56px!important;max-height:56px!important}
  #${RULE_BUTTON_ID}{right:3vw;top:10px;width:112px;min-width:112px;max-width:112px;height:56px;min-height:56px;max-height:56px}
- #${RULE_BUTTON_ID}[data-page='lobby']{top:20%}
+ #${RULE_BUTTON_ID}[data-page='lobby']{top:20px}
  #${RULE_MODAL_ID} .rule-close{width:46px;height:46px;min-width:46px;min-height:46px;font-size:30px}
 }
 `
