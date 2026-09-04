@@ -1,13 +1,20 @@
 const HERO_SRC='/music/hero.mp3'
 const TRICK_SRC='/music/trick.mp3'
+const BGM_SRC='/music/BGM.mp3'
 
 let heroAudio:HTMLAudioElement|null=null
 let trickAudio:HTMLAudioElement|null=null
+let battleAudio:HTMLAudioElement|null=null
 let unlocked=false
 let lastUltimateKey=''
+let battleBgmActive=false
 
 function isHeroPage(){
   return Boolean(document.querySelector('.app-shell,.rooms-page,.lobby-page,.jobs-page,.result-page'))&&!document.querySelector('.battle-shell')
+}
+
+function isBattlePage(){
+  return Boolean(document.querySelector('.battle-shell'))
 }
 
 function ensureAudio(){
@@ -21,6 +28,12 @@ function ensureAudio(){
     trickAudio=new Audio(TRICK_SRC)
     trickAudio.preload='auto'
     trickAudio.volume=.9
+  }
+  if(!battleAudio){
+    battleAudio=new Audio(BGM_SRC)
+    battleAudio.loop=true
+    battleAudio.preload='auto'
+    battleAudio.volume=.5
   }
 }
 
@@ -64,20 +77,58 @@ function syncUltimateSound(){
   playTrick()
 }
 
+function startBattleBgm(){
+  ensureAudio()
+  if(!battleAudio||battleBgmActive||!isBattlePage())return
+  battleBgmActive=true
+  battleAudio.currentTime=0
+  void battleAudio.play().catch(()=>undefined)
+}
+
+function stopBattleBgm(){
+  if(!battleAudio)return
+  battleBgmActive=false
+  battleAudio.pause()
+  battleAudio.currentTime=0
+}
+
+function syncBattleBgm(){
+  ensureAudio()
+
+  if(!isBattlePage()){
+    if(battleBgmActive)stopBattleBgm()
+    return
+  }
+
+  /* Start immediately after the player has chosen an answer. */
+  if(!battleBgmActive&&document.querySelector('.answer-choice.chosen')){
+    startBattleBgm()
+    return
+  }
+
+  /* Keep playing through result/resolution and stop only when the player
+     chooses the next round's action. */
+  if(battleBgmActive&&document.querySelector('.action-card.selected')){
+    stopBattleBgm()
+  }
+}
+
 function unlockAudio(){
-  if(unlocked)return
-  unlocked=true
-  void tryPlayHero()
+  if(!unlocked)unlocked=true
+  if(battleBgmActive&&battleAudio?.paused)void battleAudio.play().catch(()=>undefined)
+  else void tryPlayHero()
 }
 
 export function installGameAudio(){
   ensureAudio()
   syncHero()
   syncUltimateSound()
+  syncBattleBgm()
 
   const observer=new MutationObserver(()=>{
     syncHero()
     syncUltimateSound()
+    syncBattleBgm()
   })
   observer.observe(document.getElementById('root')??document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']})
 
@@ -85,14 +136,20 @@ export function installGameAudio(){
   for(const event of events)window.addEventListener(event,unlockAudio,{passive:true,once:false})
 
   document.addEventListener('visibilitychange',()=>{
-    if(document.hidden)heroAudio?.pause()
-    else syncHero()
+    if(document.hidden){
+      heroAudio?.pause()
+      battleAudio?.pause()
+    }else{
+      syncHero()
+      if(battleBgmActive)void battleAudio?.play().catch(()=>undefined)
+    }
   })
 
   return()=>{
     observer.disconnect()
     heroAudio?.pause()
     trickAudio?.pause()
+    battleAudio?.pause()
     for(const event of events)window.removeEventListener(event,unlockAudio)
   }
 }
