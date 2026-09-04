@@ -14,11 +14,13 @@ import './comfort-ui.css'
 import './nav-reset.css'
 import App from './App'
 import { installRuleViewer } from './rule-viewer'
+import { installGlobalNav } from './global-nav'
 import { installComfortUi } from './comfort-ui'
 import { installLineLoginFeedback } from './line-login-feedback'
 
 installLineLoginFeedback()
 installRuleViewer()
+installGlobalNav()
 installComfortUi()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
