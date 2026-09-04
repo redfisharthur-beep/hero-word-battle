@@ -2,6 +2,9 @@ import worker, { GameRoom, type Env } from './index'
 
 export { GameRoom }
 
+const LINE_STATE_COOKIE = 'line_oauth_state'
+const LINE_STATE_PATH = '/auth/line'
+
 const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
@@ -22,6 +25,9 @@ const cookieValue = (request: Request, name: string) => {
   return ''
 }
 
+const stateCookie = (value: string, maxAge = 600) =>
+  `${LINE_STATE_COOKIE}=${encodeURIComponent(value)}; Max-Age=${maxAge}; Path=${LINE_STATE_PATH}; HttpOnly; Secure; SameSite=Lax`
+
 const resultRedirect = (
   url: URL,
   key: 'line_login' | 'line_error',
@@ -33,12 +39,7 @@ const resultRedirect = (
     headers: {
       location: `${url.origin}/#${key}=${encodeURIComponent(value)}`,
       'cache-control': 'no-store',
-      ...(clearState
-        ? {
-            'set-cookie':
-              'line_oauth_state=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Lax',
-          }
-        : {}),
+      ...(clearState ? { 'set-cookie': stateCookie('', 0) } : {}),
     },
   })
 
@@ -57,10 +58,6 @@ async function handleLineLogin(request: Request, env: Env) {
   authorize.searchParams.set('state', state)
   authorize.searchParams.set('scope', 'profile openid')
   authorize.searchParams.set('ui_locales', 'zh-TW')
-
-  // Avoid LINE mobile auto-login/app switching, which can look like a crash or
-  // immediately bounce users out of the game on some mobile/in-app browsers.
-  // LINE officially recommends disable_auto_login when auto login is unstable.
   authorize.searchParams.set('disable_auto_login', 'true')
 
   return new Response(null, {
@@ -68,9 +65,7 @@ async function handleLineLogin(request: Request, env: Env) {
     headers: {
       location: authorize.toString(),
       'cache-control': 'no-store',
-      'set-cookie': `line_oauth_state=${encodeURIComponent(
-        state,
-      )}; Max-Age=600; Path=/; HttpOnly; Secure; SameSite=Lax`,
+      'set-cookie': stateCookie(state),
     },
   })
 }
@@ -79,7 +74,7 @@ async function handleLineCallback(request: Request, env: Env) {
   const url = new URL(request.url)
   const code = url.searchParams.get('code') ?? ''
   const state = url.searchParams.get('state') ?? ''
-  const expected = cookieValue(request, 'line_oauth_state')
+  const expected = cookieValue(request, LINE_STATE_COOKIE)
 
   if (url.searchParams.get('error')) {
     return resultRedirect(
@@ -147,11 +142,13 @@ export default {
     if (url.pathname === '/api/line-status') {
       return json({
         ok: true,
-        version: 'line-login-2',
+        version: 'line-login-3',
+        routeOwner: 'worker/entry.ts',
         channelIdPresent: Boolean(env.LINE_CHANNEL_ID),
         channelSecretPresent: Boolean(env.LINE_CHANNEL_SECRET),
         configured: Boolean(env.LINE_CHANNEL_ID && env.LINE_CHANNEL_SECRET),
         callbackUrl: callbackUrl(url),
+        stateCookiePath: LINE_STATE_PATH,
       })
     }
 
