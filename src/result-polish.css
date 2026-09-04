@@ -54,65 +54,87 @@
   }
 }
 
-/* Critical art: larger, punchier, then fades out. */
-.critical-burst{
+/* Critical artwork: keep it modest, always visible, and add the effect on a separate layer.
+   Important: do NOT force opacity:0 or animate the same transform that legacy CSS marks !important. */
+.result-capsule.critical{overflow:visible!important}
+.result-capsule.critical .critical-burst{
   position:absolute!important;
   left:50%!important;
-  top:8px!important;
-  width:170px!important;
-  height:110px!important;
-  transform:translateX(-50%) scale(.72)!important;
-  transform-origin:center center!important;
-  opacity:0!important;
-  z-index:8!important;
+  right:auto!important;
+  top:14px!important;
+  width:132px!important;
+  height:84px!important;
+  margin:0!important;
+  padding:0!important;
+  opacity:1!important;
+  z-index:40!important;
   pointer-events:none!important;
-  filter:drop-shadow(0 0 10px rgba(255,210,70,.72)) drop-shadow(0 0 24px rgba(255,75,0,.48))!important;
-  animation:criticalFlashFade 1.35s ease-out forwards!important;
+  overflow:visible!important;
+  transform:translateX(-50%)!important;
+  background-color:transparent!important;
+  background-image:url('/images/actions/Critical.png')!important;
+  background-repeat:no-repeat!important;
+  background-position:center!important;
+  background-size:contain!important;
+  color:transparent!important;
+  font-size:0!important;
+  line-height:0!important;
+  filter:drop-shadow(0 0 7px rgba(255,218,82,.9)) drop-shadow(0 0 15px rgba(255,80,0,.48))!important;
+  animation:none!important;
 }
 
-.critical-burst::after{
-  content:''!important;
-  position:absolute!important;
-  inset:-16px!important;
-  border-radius:50%!important;
-  background:radial-gradient(circle,rgba(255,255,220,.95) 0%,rgba(255,210,80,.42) 28%,rgba(255,90,0,.18) 52%,rgba(255,0,0,0) 74%)!important;
-  mix-blend-mode:screen!important;
-  opacity:0!important;
-  pointer-events:none!important;
-  animation:criticalGlowPulse 1.35s ease-out forwards!important;
+/* Animated duplicate artwork: pop + flicker + fade, without hiding the real artwork. */
+.result-capsule.critical .critical-burst::before{
+  content:'';
+  position:absolute;
+  inset:-4px;
+  background:url('/images/actions/Critical.png') center/contain no-repeat;
+  pointer-events:none;
+  transform-origin:center;
+  animation:criticalArtFlash 1.15s ease-out both;
 }
 
-@media (min-width: 900px){
-  .critical-burst{
-    width:200px!important;
-    height:128px!important;
-    top:4px!important;
-  }
+.result-capsule.critical .critical-burst::after{
+  content:'';
+  position:absolute;
+  inset:-14px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,225,.9) 0%,rgba(255,213,84,.42) 28%,rgba(255,90,0,.17) 54%,rgba(255,0,0,0) 74%);
+  mix-blend-mode:screen;
+  pointer-events:none;
+  animation:criticalAuraFlash 1.15s ease-out both;
 }
 
-@media (max-width: 760px){
-  .critical-burst{
-    width:150px!important;
-    height:96px!important;
+@media (min-width:900px){
+  .result-capsule.critical .critical-burst{
+    width:140px!important;
+    height:90px!important;
     top:12px!important;
   }
 }
 
-@keyframes criticalFlashFade{
-  0%{opacity:0;transform:translateX(-50%) scale(.55)}
-  12%{opacity:1;transform:translateX(-50%) scale(1.22)}
-  26%{opacity:1;transform:translateX(-50%) scale(.98)}
-  42%{opacity:1;transform:translateX(-50%) scale(1.09)}
-  68%{opacity:1;transform:translateX(-50%) scale(1)}
-  100%{opacity:0;transform:translateX(-50%) scale(.92)}
+@media (max-width:760px){
+  .result-capsule.critical .critical-burst{
+    width:118px!important;
+    height:76px!important;
+    top:14px!important;
+  }
 }
 
-@keyframes criticalGlowPulse{
-  0%{opacity:0}
-  12%{opacity:1}
-  24%{opacity:.18}
-  38%{opacity:.78}
-  52%{opacity:.14}
-  70%{opacity:.5}
-  100%{opacity:0}
+@keyframes criticalArtFlash{
+  0%{opacity:0;transform:scale(.72)}
+  16%{opacity:1;transform:scale(1.12)}
+  34%{opacity:.28;transform:scale(.98)}
+  50%{opacity:1;transform:scale(1.05)}
+  72%{opacity:.55;transform:scale(1)}
+  100%{opacity:0;transform:scale(.96)}
+}
+
+@keyframes criticalAuraFlash{
+  0%{opacity:0;transform:scale(.75)}
+  14%{opacity:.95;transform:scale(1.12)}
+  30%{opacity:.15;transform:scale(.98)}
+  48%{opacity:.72;transform:scale(1.06)}
+  70%{opacity:.2;transform:scale(1)}
+  100%{opacity:0;transform:scale(1.08)}
 }
