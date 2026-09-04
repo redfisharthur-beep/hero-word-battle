@@ -9,6 +9,7 @@ import './battle-refinements.css'
 import './mobile-overrides.css'
 import './final-ui.css'
 import './stability.css'
+import './unified-mobile-layout.css'
 import App from './App'
 import { installRuleViewer } from './rule-viewer'
 
