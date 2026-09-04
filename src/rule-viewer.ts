@@ -9,74 +9,7 @@ function ensureStyles(){
  const style=document.createElement('style')
  style.id='game-rule-viewer-styles'
  style.textContent=`
-/* Return + rule buttons: same size, same height, perfectly mirrored left/right. */
-.rooms-page .back-button,
-.lobby-page .back-button,
-.jobs-page .back-button{
- position:fixed!important;
- left:3vw!important;
- right:auto!important;
- top:10px!important;
- z-index:90!important;
- width:112px!important;
- min-width:112px!important;
- max-width:112px!important;
- height:56px!important;
- min-height:56px!important;
- max-height:56px!important;
- margin:0!important;
- padding:0!important;
- border:0!important;
- border-radius:0!important;
- outline:0!important;
- background:transparent url('/images/rooms/return.png') center/contain no-repeat!important;
- box-shadow:none!important;
- color:transparent!important;
- font-size:0!important;
- line-height:0!important;
- overflow:visible!important;
- transform:none!important;
- cursor:pointer!important;
- touch-action:manipulation!important;
-}
-/* Player list page: both buttons sit 20px down from the viewport top. */
-.lobby-page .back-button{top:20px!important}
-.rooms-page .back-button:hover,
-.lobby-page .back-button:hover,
-.jobs-page .back-button:hover{filter:brightness(1.08)!important;transform:none!important}
-.rooms-page .back-button:active,
-.lobby-page .back-button:active,
-.jobs-page .back-button:active{transform:scale(.96)!important}
-
-#${RULE_BUTTON_ID}{
- position:fixed;
- right:3vw;
- left:auto;
- top:10px;
- z-index:90;
- width:112px;
- min-width:112px;
- max-width:112px;
- height:56px;
- min-height:56px;
- max-height:56px;
- margin:0;
- padding:0;
- border:0;
- border-radius:0;
- outline:0;
- background:transparent url('/images/rooms/rule.png') center/contain no-repeat;
- box-shadow:none;
- font-size:0;
- color:transparent;
- cursor:pointer;
- touch-action:manipulation;
-}
-#${RULE_BUTTON_ID}[data-page='lobby']{top:20px}
-#${RULE_BUTTON_ID}:hover{transform:none;filter:brightness(1.08)}
-#${RULE_BUTTON_ID}:active{transform:scale(.96)}
-
-/* Rule viewer: only the three images and a close button are visible. */
+/* Rule viewer only. Navigation button layout is owned by comfort-ui.css. */
 #${RULE_MODAL_ID}{position:fixed;inset:0;z-index:9999;display:block;background:#050914;overscroll-behavior:contain}
 #${RULE_MODAL_ID}[hidden]{display:none!important}
 #${RULE_MODAL_ID} .rule-close{
@@ -135,10 +68,6 @@ function ensureStyles(){
  transform-origin:top left;
 }
 @media(max-width:760px){
- .rooms-page .back-button,.jobs-page .back-button{left:3vw!important;top:10px!important;width:112px!important;min-width:112px!important;max-width:112px!important;height:56px!important;min-height:56px!important;max-height:56px!important}
- .lobby-page .back-button{left:3vw!important;top:20px!important;width:112px!important;min-width:112px!important;max-width:112px!important;height:56px!important;min-height:56px!important;max-height:56px!important}
- #${RULE_BUTTON_ID}{right:3vw;top:10px;width:112px;min-width:112px;max-width:112px;height:56px;min-height:56px;max-height:56px}
- #${RULE_BUTTON_ID}[data-page='lobby']{top:20px}
  #${RULE_MODAL_ID} .rule-close{width:46px;height:46px;min-width:46px;min-height:46px;font-size:30px}
 }
 `
