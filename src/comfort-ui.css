@@ -52,16 +52,16 @@ body{display:block!important}
 .jobs-card .job-full-art{display:block!important;width:92%!important;max-width:180px!important;height:auto!important;aspect-ratio:1/1!important;object-fit:contain!important;margin:auto!important;padding:0!important}
 .jobs-card .job-art-card:nth-child(n){grid-column:auto!important}
 
-/* 4. Ultimate result: normal result box keeps the actual ultimate art and removes old ultimate text. */
-.result-capsule.ultimate-result .ultimate-burst{display:none!important}
-.result-capsule.ultimate-result .result-action-mark>b{display:none!important}
-.result-capsule.ultimate-result .result-action-mark{width:150px!important;min-width:150px!important;height:118px!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important}
-.result-capsule.ultimate-result[data-ultimate-job='assassin'] .result-action-mark{background-image:url('/images/actions/Shadow Kill.png')!important}
-.result-capsule.ultimate-result[data-ultimate-job='warrior'] .result-action-mark{background-image:url('/images/actions/Unyielding War Soul.png')!important}
-.result-capsule.ultimate-result[data-ultimate-job='archer'] .result-action-mark{background-image:url('/images/actions/Cloud-Piercing Snipe.png')!important}
-.result-capsule.ultimate-result[data-ultimate-job='fighter'] .result-action-mark{background-image:url('/images/actions/Diamond Body.png')!important}
-.result-capsule.ultimate-result[data-ultimate-job='priest'] .result-action-mark{background-image:url('/images/actions/Holy Miracle.png')!important}
-.result-capsule.ultimate-result[data-ultimate-job='mage'] .result-action-mark{background-image:url('/images/actions/Doomsday Magic.png')!important}
+/* 4. Ultimate result: any selected ultimate keeps its real art in the result box and removes old ultimate text. */
+.result-capsule.result-ultimate .ultimate-burst{display:none!important}
+.result-capsule.result-ultimate .result-action-mark>b{display:none!important}
+.result-capsule.result-ultimate .result-action-mark{width:150px!important;min-width:150px!important;height:118px!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important}
+.result-capsule.result-ultimate[data-ultimate-job='assassin'] .result-action-mark{background-image:url('/images/actions/Shadow Kill.png')!important}
+.result-capsule.result-ultimate[data-ultimate-job='warrior'] .result-action-mark{background-image:url('/images/actions/Unyielding War Soul.png')!important}
+.result-capsule.result-ultimate[data-ultimate-job='archer'] .result-action-mark{background-image:url('/images/actions/Cloud-Piercing Snipe.png')!important}
+.result-capsule.result-ultimate[data-ultimate-job='fighter'] .result-action-mark{background-image:url('/images/actions/Diamond Body.png')!important}
+.result-capsule.result-ultimate[data-ultimate-job='priest'] .result-action-mark{background-image:url('/images/actions/Holy Miracle.png')!important}
+.result-capsule.result-ultimate[data-ultimate-job='mage'] .result-action-mark{background-image:url('/images/actions/Doomsday Magic.png')!important}
 
 /* One-second cinematic overlay: all other content is temporarily obscured. */
 .ultimate-cinematic{position:fixed;inset:0;z-index:99990;display:grid;place-items:center;background:rgba(2,6,18,.97);pointer-events:none;animation:ultimateCinematicOut 1.05s ease forwards}
@@ -76,7 +76,7 @@ body{display:block!important}
  .rooms-page .back-button,.lobby-page .back-button,.jobs-page .back-button{left:3vw!important}
  #game-rule-button{right:3vw!important}
  .jobs-card .job-full-art{width:94%!important}
- .result-capsule.ultimate-result .result-action-mark{width:124px!important;min-width:124px!important;height:100px!important}
+ .result-capsule.result-ultimate .result-action-mark{width:124px!important;min-width:124px!important;height:100px!important}
 }
 
 @media(min-width:481px) and (max-height:760px){
