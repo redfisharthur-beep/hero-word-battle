@@ -22,9 +22,35 @@ body{display:block!important}
 .hero-card .line-button::before,.hero-card .line-button::after{content:none!important;display:none!important}
 .hero-card>.primary-button{position:absolute!important;left:50%!important;bottom:0!important;transform:translateX(-50%)!important;width:100%!important;height:15%!important;min-height:86px!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;color:transparent!important;font-size:0!important;z-index:15!important}
 
-/* Navigation art buttons: identical element boxes, mirrored positions. */
-.rooms-page .back-button,.lobby-page .back-button,.jobs-page .back-button{position:fixed!important;top:var(--nav-top)!important;left:max(var(--side-gap),calc(50% - 226px))!important;right:auto!important;width:var(--nav-w)!important;min-width:var(--nav-w)!important;max-width:var(--nav-w)!important;height:var(--nav-h)!important;min-height:var(--nav-h)!important;max-height:var(--nav-h)!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background-color:transparent!important;background-image:url('/images/rooms/return.png')!important;background-repeat:no-repeat!important;background-size:contain!important;background-position:center center!important;box-shadow:none!important;color:transparent!important;font-size:0!important;line-height:0!important;z-index:120!important;transform:none!important}
-#game-rule-button{position:fixed!important;top:var(--nav-top)!important;right:max(var(--side-gap),calc(50% - 226px))!important;left:auto!important;width:var(--nav-w)!important;min-width:var(--nav-w)!important;max-width:var(--nav-w)!important;height:var(--nav-h)!important;min-height:var(--nav-h)!important;max-height:var(--nav-h)!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background-color:transparent!important;background-image:url('/images/rooms/rule.png')!important;background-repeat:no-repeat!important;background-size:contain!important;background-position:center calc(50% - 6px)!important;box-shadow:none!important;color:transparent!important;font-size:0!important;line-height:0!important;z-index:120!important;transform:none!important}
+/* Navigation art buttons: one owner, one coordinate system, identical boxes. */
+.rooms-page .back-button,.lobby-page .back-button,.jobs-page .back-button,
+#game-rule-button{
+ position:fixed!important;
+ top:var(--nav-top)!important;
+ width:var(--nav-w)!important;
+ min-width:var(--nav-w)!important;
+ max-width:var(--nav-w)!important;
+ height:var(--nav-h)!important;
+ min-height:var(--nav-h)!important;
+ max-height:var(--nav-h)!important;
+ margin:0!important;
+ padding:0!important;
+ border:0!important;
+ border-radius:0!important;
+ background-color:transparent!important;
+ background-repeat:no-repeat!important;
+ background-size:112px 56px!important;
+ background-position:center center!important;
+ box-shadow:none!important;
+ color:transparent!important;
+ font-size:0!important;
+ line-height:0!important;
+ z-index:120!important;
+ transform:none!important;
+ box-sizing:border-box!important;
+}
+.rooms-page .back-button,.lobby-page .back-button,.jobs-page .back-button{left:max(var(--side-gap),calc(50% - 226px))!important;right:auto!important;background-image:url('/images/rooms/return.png')!important}
+#game-rule-button{right:max(var(--side-gap),calc(50% - 226px))!important;left:auto!important;background-image:url('/images/rooms/rule.png')!important}
 .rooms-page .back-button:active,.lobby-page .back-button:active,.jobs-page .back-button:active,#game-rule-button:active{transform:scale(.96)!important}
 
 /* Room selection/player list */
@@ -63,10 +89,11 @@ body{display:block!important}
 .result-capsule.result-ultimate[data-ultimate-job='priest'] .result-action-mark{background-image:url('/images/actions/Holy Miracle.png')!important}
 .result-capsule.result-ultimate[data-ultimate-job='mage'] .result-action-mark{background-image:url('/images/actions/Doomsday Magic.png')!important}
 
-.ultimate-cinematic{position:fixed;inset:0;z-index:99990;display:grid;place-items:center;background:rgba(2,6,18,.97);pointer-events:none;animation:ultimateCinematicOut 1.05s ease forwards}
-.ultimate-cinematic img{display:block;width:min(78vw,430px);max-height:78vh;object-fit:contain;filter:drop-shadow(0 0 34px rgba(250,204,21,.36));animation:ultimateCinematicArt 1.05s cubic-bezier(.18,.85,.25,1) forwards}
-@keyframes ultimateCinematicArt{0%{opacity:0;transform:scale(.45)}20%{opacity:1;transform:scale(1.08)}72%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.96)}}
-@keyframes ultimateCinematicOut{0%,78%{opacity:1}100%{opacity:0;visibility:hidden}}
+/* Full-screen ultimate art remains visible for about two seconds. */
+.ultimate-cinematic{position:fixed;inset:0;z-index:99990;display:grid;place-items:center;background:rgba(2,6,18,.97);pointer-events:none;animation:ultimateCinematicOut 2.05s ease forwards}
+.ultimate-cinematic img{display:block;width:min(78vw,430px);max-height:78vh;object-fit:contain;filter:drop-shadow(0 0 34px rgba(250,204,21,.36));animation:ultimateCinematicArt 2.05s cubic-bezier(.18,.85,.25,1) forwards}
+@keyframes ultimateCinematicArt{0%{opacity:0;transform:scale(.45)}10%{opacity:1;transform:scale(1.08)}82%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.96)}}
+@keyframes ultimateCinematicOut{0%,88%{opacity:1}100%{opacity:0;visibility:hidden}}
 
 @media(max-width:480px){
  :root{--game-width:100%;--side-gap:3vw}
