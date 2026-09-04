@@ -170,8 +170,8 @@
 
 @media(max-width:760px){
   .result-capsule.critical .critical-burst{
-    /* visibly left of center on phone; overflow-visible prevents clipping at the card edge */
-    left:calc(50% - 38px)!important;
+    /* phone: move left 25px, enough to center visually without touching portrait */
+    left:calc(50% - 25px)!important;
     width:164px!important;
     height:104px!important;
     top:8px!important;
