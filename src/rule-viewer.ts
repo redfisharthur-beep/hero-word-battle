@@ -123,7 +123,13 @@ function syncRuleButton(){
  const existing=document.getElementById(RULE_BUTTON_ID) as HTMLButtonElement|null
  if(!supportedPage){existing?.remove();return}
  const pageType=supportedPage.classList.contains('lobby-page')?'lobby':supportedPage.classList.contains('jobs-page')?'jobs':'rooms'
- if(existing){existing.dataset.page=pageType;return}
+ const targetCard=supportedPage.querySelector('.rooms-card,.lobby-card,.jobs-card') as HTMLElement|null
+ if(!targetCard)return
+ if(existing){
+  existing.dataset.page=pageType
+  if(existing.parentElement!==targetCard)targetCard.appendChild(existing)
+  return
+ }
  const viewer=createViewer() as HTMLDivElement & {openRuleViewer?:()=>void}
  const button=document.createElement('button')
  button.id=RULE_BUTTON_ID
@@ -132,7 +138,7 @@ function syncRuleButton(){
  button.setAttribute('aria-label','遊戲說明')
  button.title='遊戲說明'
  button.addEventListener('click',()=>viewer.openRuleViewer?.())
- document.body.appendChild(button)
+ targetCard.appendChild(button)
 }
 
 export function installRuleViewer(){
