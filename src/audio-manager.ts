@@ -1,16 +1,13 @@
 const HERO_SRC='/music/hero.mp3'
 const TRICK_SRC='/music/trick.mp3'
 const BGM_SRC='/music/BGM.mp3'
-const WRONG_SRC='/music/wrong.mp3'
 
 let heroAudio:HTMLAudioElement|null=null
 let trickAudio:HTMLAudioElement|null=null
 let battleAudio:HTMLAudioElement|null=null
-let wrongAudio:HTMLAudioElement|null=null
 let unlocked=false
 let lastUltimateKey=''
 let battleBgmActive=false
-let feedbackTimer:number|undefined
 
 function isHeroPage(){
   return Boolean(document.querySelector('.app-shell,.rooms-page,.lobby-page,.jobs-page,.result-page'))&&!document.querySelector('.battle-shell')
@@ -37,11 +34,6 @@ function ensureAudio(){
     battleAudio.loop=true
     battleAudio.preload='auto'
     battleAudio.volume=.5
-  }
-  if(!wrongAudio){
-    wrongAudio=new Audio(WRONG_SRC)
-    wrongAudio.preload='auto'
-    wrongAudio.volume=.95
   }
 }
 
@@ -73,36 +65,6 @@ function playTrick(){
   trickAudio.pause()
   trickAudio.currentTime=0
   void trickAudio.play().catch(()=>undefined)
-}
-
-function playWrong(){
-  ensureAudio()
-  if(!wrongAudio)return
-  wrongAudio.pause()
-  wrongAudio.currentTime=0
-  void wrongAudio.play().catch(()=>undefined)
-}
-
-function showCorrectAnswer(answer:string){
-  document.getElementById('quiz-correct-feedback')?.remove()
-  const box=document.createElement('div')
-  box.id='quiz-correct-feedback'
-  box.textContent=`正解為 ${answer}`
-  Object.assign(box.style,{
-    position:'fixed',left:'50%',top:'54%',transform:'translate(-50%,-50%) scale(.92)',
-    zIndex:'99999',padding:'14px 24px',borderRadius:'18px',border:'2px solid rgba(255,210,70,.92)',
-    background:'rgba(7,15,32,.96)',color:'#fff2a8',fontSize:'clamp(20px,5vw,30px)',fontWeight:'800',
-    letterSpacing:'.04em',boxShadow:'0 0 28px rgba(255,80,40,.55)',pointerEvents:'none',opacity:'0',
-    transition:'opacity .12s ease, transform .12s ease'
-  } as Partial<CSSStyleDeclaration>)
-  document.body.appendChild(box)
-  requestAnimationFrame(()=>{box.style.opacity='1';box.style.transform='translate(-50%,-50%) scale(1)'})
-  if(feedbackTimer)window.clearTimeout(feedbackTimer)
-  feedbackTimer=window.setTimeout(()=>{
-    box.style.opacity='0'
-    box.style.transform='translate(-50%,-50%) scale(.96)'
-    window.setTimeout(()=>box.remove(),180)
-  },900)
 }
 
 function syncUltimateSound(){
@@ -138,11 +100,15 @@ function syncBattleBgm(){
     return
   }
 
-  if(!battleBgmActive&&document.querySelector('.answer-choice.chosen')){
+  /* Start only after this player has completed all 3 quiz questions.
+     If everyone finishes together and the UI has already entered resolve,
+     start there as the same end-of-quiz moment. */
+  if(!battleBgmActive&&(document.querySelector('.quiz-card.quiz-complete')||document.querySelector('.resolve-panel'))){
     startBattleBgm()
     return
   }
 
+  /* Keep playing through resolution; stop after choosing the next round action. */
   if(battleBgmActive&&document.querySelector('.action-card.selected')){
     stopBattleBgm()
   }
@@ -159,22 +125,6 @@ export function installGameAudio(){
   syncHero()
   syncUltimateSound()
   syncBattleBgm()
-
-  const originalFetch=window.fetch.bind(window)
-  window.fetch=async(...args)=>{
-    const response=await originalFetch(...args)
-    const url=typeof args[0]==='string'?args[0]:args[0] instanceof Request?args[0].url:String(args[0])
-    if(url.includes('/answer')&&response.ok){
-      void response.clone().json().then((data:{answerFeedback?:{correct?:boolean;correctAnswer?:string}})=>{
-        const feedback=data?.answerFeedback
-        if(feedback&&feedback.correct===false&&feedback.correctAnswer){
-          playWrong()
-          showCorrectAnswer(feedback.correctAnswer)
-        }
-      }).catch(()=>undefined)
-    }
-    return response
-  }
 
   const observer=new MutationObserver(()=>{
     syncHero()
@@ -198,13 +148,9 @@ export function installGameAudio(){
 
   return()=>{
     observer.disconnect()
-    window.fetch=originalFetch
     heroAudio?.pause()
     trickAudio?.pause()
     battleAudio?.pause()
-    wrongAudio?.pause()
-    if(feedbackTimer)window.clearTimeout(feedbackTimer)
-    document.getElementById('quiz-correct-feedback')?.remove()
     for(const event of events)window.removeEventListener(event,unlockAudio)
   }
 }
