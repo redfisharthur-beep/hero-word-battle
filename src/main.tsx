@@ -10,10 +10,13 @@ import './mobile-overrides.css'
 import './final-ui.css'
 import './stability.css'
 import './unified-mobile-layout.css'
+import './comfort-ui.css'
 import App from './App'
 import { installRuleViewer } from './rule-viewer'
+import { installComfortUi } from './comfort-ui'
 
 installRuleViewer()
+installComfortUi()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
