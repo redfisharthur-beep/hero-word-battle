@@ -1,0 +1,33 @@
+/* Unified top navigation reset: same geometry on every device. */
+:root{--nav-edge:5%;--nav-top-unified:20px}
+
+.rooms-page .back-button,
+.lobby-page .back-button,
+.jobs-page .back-button,
+#game-rule-button{
+  position:fixed!important;
+  top:var(--nav-top-unified)!important;
+  bottom:auto!important;
+  margin:0!important;
+  translate:none!important;
+  transform:none!important;
+}
+
+.rooms-page .back-button,
+.lobby-page .back-button,
+.jobs-page .back-button{
+  left:var(--nav-edge)!important;
+  right:auto!important;
+}
+
+#game-rule-button{
+  left:auto!important;
+  right:var(--nav-edge)!important;
+}
+
+.rooms-page .back-button:active,
+.lobby-page .back-button:active,
+.jobs-page .back-button:active,
+#game-rule-button:active{
+  transform:scale(.96)!important;
+}
