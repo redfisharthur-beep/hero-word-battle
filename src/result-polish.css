@@ -86,6 +86,25 @@
   min-height:54px!important;
 }
 
+/* Desktop/tablet result screen: return button first, then ranking immediately below it. */
+@media(min-width:761px){
+  .result-page{padding-top:18px!important}
+  .result-page .final-ranking-card{
+    padding:18px 18px 20px!important;
+    border-radius:28px!important;
+  }
+  .result-page .final-ranking-card>.back-button{
+    position:relative!important;
+    top:auto!important;
+    left:auto!important;
+    right:auto!important;
+    margin:0 0 18px 0!important;
+  }
+  .result-page .result-content{
+    margin-top:0!important;
+  }
+}
+
 @media(max-width:760px){
   .result-page{padding-top:8px!important;padding-bottom:24px!important}
   .result-page .final-ranking-card{
