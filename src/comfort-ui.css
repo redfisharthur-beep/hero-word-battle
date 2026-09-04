@@ -78,6 +78,30 @@ body{display:block!important}
 .jobs-card .job-full-art{display:block!important;width:92%!important;max-width:180px!important;height:auto!important;aspect-ratio:1/1!important;object-fit:contain!important;margin:auto!important;padding:0!important}
 .jobs-card .job-art-card:nth-child(n){grid-column:auto!important}
 
+/* Transparent character portraits must stay truly transparent: no capsule, no clipping, no background layer. */
+.character-head,
+.character-head.large,
+.result-capsule .character-head,
+.result-capsule .character-head.large,
+.result-player-card>.character-head.large,
+.battle-shell>.self-card.character-status-card>.character-head.large,
+.battle-shell>.enemy-strip>.enemy-card.enemy-card-with-head>.character-head{
+ background:none!important;
+ background-color:transparent!important;
+ border:0!important;
+ outline:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ padding:0!important;
+ filter:none!important;
+ clip-path:none!important;
+ mask:none!important;
+ -webkit-mask:none!important;
+ overflow:visible!important;
+ object-fit:contain!important;
+}
+.character-head::before,.character-head::after{content:none!important;display:none!important}
+
 /* Ultimate result */
 .result-capsule.result-ultimate .ultimate-burst{display:none!important}
 .result-capsule.result-ultimate .result-action-mark>b{display:none!important}
