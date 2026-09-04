@@ -50,7 +50,6 @@ body{display:block!important}
  box-sizing:border-box!important;
 }
 .rooms-page .back-button,.lobby-page .back-button,.jobs-page .back-button{left:max(var(--side-gap),calc(50% - 226px))!important;right:auto!important;background-image:url('/images/rooms/return.png')!important}
-/* rule.png has substantially less transparent padding at the top than return.png. Move the whole button down 18px so the visible artworks align, while keeping the same 112x56 hit area. */
 #game-rule-button{top:calc(var(--nav-top) + 18px)!important;right:max(var(--side-gap),calc(50% - 226px))!important;left:auto!important;background-image:url('/images/rooms/rule.png')!important}
 .rooms-page .back-button:active,.lobby-page .back-button:active,.jobs-page .back-button:active,#game-rule-button:active{transform:scale(.96)!important}
 
@@ -133,6 +132,31 @@ body{display:block!important}
  #game-rule-button{right:3vw!important}
  .jobs-card .job-full-art{width:94%!important}
  .result-capsule.result-ultimate .result-action-mark{width:124px!important;min-width:124px!important;height:100px!important}
+}
+
+/* Desktop only: keep the same visual language, but give the content proper breathing room. */
+@media(min-width:900px){
+ :root{--game-width:620px;--side-gap:24px}
+ .app-shell,.page-shell,.battle-shell{width:min(100%,620px)!important;max-width:620px!important}
+ .page-card,.battle-panel{max-width:600px!important;margin-left:auto!important;margin-right:auto!important}
+ .rooms-card,.lobby-card,.jobs-card{max-width:580px!important}
+
+ .rooms-card{padding-top:118px!important}
+ .lobby-card{padding-top:118px!important}
+ .jobs-card{padding-top:118px!important}
+
+ .rooms-page .back-button,.lobby-page .back-button,.jobs-page .back-button{left:calc(50% - 286px)!important}
+ #game-rule-button{right:calc(50% - 286px)!important}
+
+ .lobby-page .lobby-room-image{max-width:300px!important;margin-bottom:24px!important}
+ .lobby-page .word-pool-selector{gap:12px!important;margin-bottom:20px!important}
+ .lobby-page .word-pool-selector .word-pool-button{min-height:50px!important;font-size:19px!important}
+ .lobby-page .lobby-player-list{gap:12px!important}
+ .lobby-page .lobby-player-list .player-row{height:60px!important;min-height:60px!important;font-size:20px!important}
+ .lobby-page .lobby-start-button{margin-top:24px!important}
+
+ .jobs-card .job-grid{column-gap:26px!important;row-gap:22px!important}
+ .jobs-card .job-full-art{max-width:205px!important;width:90%!important}
 }
 
 @media(min-width:481px) and (max-height:760px){
