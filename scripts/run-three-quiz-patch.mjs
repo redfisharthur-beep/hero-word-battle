@@ -9,3 +9,4 @@ if(source.includes(old)){
   await writeFile(path,source,'utf8')
 }
 await import('./patch-three-quiz.mjs')
+await import('./patch-quiz-ux.mjs')
