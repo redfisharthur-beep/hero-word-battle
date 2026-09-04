@@ -4,11 +4,11 @@
   "version": "0.2.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "node scripts/build-vocab.mjs && tsc -b && vite build",
+    "dev": "node scripts/patch-three-quiz.mjs && vite",
+    "build": "node scripts/patch-three-quiz.mjs && node scripts/build-vocab.mjs && tsc -b && vite build",
     "preview": "vite preview",
-    "worker:dev": "node scripts/build-vocab.mjs && wrangler dev",
-    "worker:deploy": "node scripts/build-vocab.mjs && wrangler deploy"
+    "worker:dev": "node scripts/patch-three-quiz.mjs && node scripts/build-vocab.mjs && wrangler dev",
+    "worker:deploy": "node scripts/patch-three-quiz.mjs && node scripts/build-vocab.mjs && wrangler deploy"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
