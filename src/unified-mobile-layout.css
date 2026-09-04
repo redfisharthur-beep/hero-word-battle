@@ -1,14 +1,24 @@
-/* Unify desktop/tablet layout with the established mobile presentation. */
-html,body,#root{width:100%;min-height:100%;margin:0!important;padding:0!important}
-body{display:flex!important;justify-content:center!important;align-items:flex-start!important;overflow-x:hidden!important}
-#root{width:min(100vw,760px)!important;max-width:760px!important;min-width:0!important;margin:0 auto!important;overflow-x:hidden!important}
+/* Render desktop/tablet with the same narrow mobile composition, centered in the viewport. */
+html,body,#root{width:100%!important;min-height:100%!important;margin:0!important;padding:0!important}
+html,body{overflow-x:hidden!important}
+body{display:block!important}
+#root{max-width:none!important;min-width:0!important;margin:0!important}
 
-.app-shell,.page-shell,.battle-shell{width:100%!important;max-width:760px!important;min-width:0!important;margin:0 auto!important;padding-left:clamp(10px,3vw,18px)!important;padding-right:clamp(10px,3vw,18px)!important;box-sizing:border-box!important}
+/* Mobile visual canvas used on every device. */
+.app-shell,.page-shell,.battle-shell{
+ width:min(100%,430px)!important;
+ max-width:430px!important;
+ min-width:0!important;
+ margin:0 auto!important;
+ padding-left:10px!important;
+ padding-right:10px!important;
+ box-sizing:border-box!important;
+}
 .page-card,.battle-panel{width:100%!important;max-width:none!important;min-width:0!important;box-sizing:border-box!important}
 
-/* Home: use the exact mobile composition on every screen size. */
+/* Home uses the same full-height phone composition, but stays centered on wide screens. */
 .app-shell{padding:0!important;min-height:100vh!important}
-.hero-card{width:100%!important;max-width:none!important;min-height:100vh!important;height:100vh!important;aspect-ratio:auto!important;border-radius:0!important;padding:14px!important;background-size:cover!important;background-position:center!important}
+.hero-card{width:100%!important;max-width:430px!important;min-height:100vh!important;height:100vh!important;aspect-ratio:auto!important;border-radius:0!important;padding:14px!important;background-size:cover!important;background-position:center!important}
 .hero-card .login-panel{top:50%!important;width:180px!important;gap:0!important}
 .hero-card .name-input{box-sizing:border-box!important;width:150px!important;min-width:150px!important;max-width:150px!important;padding:8px!important;font-size:19px!important;line-height:1.15!important;text-align:center!important}
 .hero-card .name-input::placeholder{color:transparent!important;opacity:0!important}
@@ -16,15 +26,15 @@ body{display:flex!important;justify-content:center!important;align-items:flex-st
 .hero-card .line-button .line-mark{font-size:13px!important}
 .hero-card .primary-button{width:100%!important;height:16%!important;min-height:90px!important;bottom:0!important}
 
-/* Room selection: keep the mobile single-column room art layout. */
+/* Room selection: exact mobile single-column composition. */
 .rooms-page{padding:0 10px 24px!important;min-height:100vh!important;align-items:flex-start!important}
-.rooms-card{width:100%!important;max-width:520px!important;padding:14px 0 24px!important;background:transparent!important;border:0!important;box-shadow:none!important}
+.rooms-card{width:100%!important;max-width:410px!important;padding:14px 0 24px!important;background:transparent!important;border:0!important;box-shadow:none!important}
 .rooms-page .room-grid{position:relative!important;top:45px!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:0!important;width:100%!important;margin:0 auto!important}
 .rooms-page .room-card{width:250px!important;min-width:250px!important;max-width:250px!important;height:150px!important;min-height:150px!important;margin:0!important;border-radius:0!important;box-shadow:none!important;background-color:transparent!important}
 
-/* Lobby/player list: force mobile spacing and sizing on tablet/desktop too. */
-.lobby-page{width:100%!important;max-width:760px!important;min-height:100vh!important;align-items:flex-start!important}
-.lobby-card{width:100%!important;max-width:560px!important;margin:0 auto!important}
+/* Lobby/player list: mobile spacing and dimensions on every device. */
+.lobby-page{min-height:100vh!important;align-items:flex-start!important}
+.lobby-card{width:100%!important;max-width:410px!important;margin:0 auto!important}
 .lobby-page .lobby-room-image{transform:translateY(65px)!important;margin-bottom:20px!important}
 .lobby-page .word-pool-selector,.lobby-page .lobby-player-list{transform:translateY(55px)!important}
 .lobby-page .lobby-start-button{transform:translateY(70px)!important}
@@ -37,14 +47,14 @@ body{display:flex!important;justify-content:center!important;align-items:flex-st
 .lobby-page .lobby-player-list .player-row.muted strong{font-size:0!important;color:transparent!important}
 .lobby-page .lobby-player-list .player-row.muted strong::after{content:none!important;display:none!important}
 
-/* Job selection: retain the mobile two-column grid and mobile artwork scale. */
+/* Job selection: same 2-column phone grid. */
 .jobs-page{min-height:100vh!important;align-items:flex-start!important}
-.jobs-card{width:100%!important;max-width:560px!important;padding-top:16px!important;background:transparent!important;border:0!important;box-shadow:none!important}
+.jobs-card{width:100%!important;max-width:410px!important;padding-top:16px!important;background:transparent!important;border:0!important;box-shadow:none!important}
 .jobs-card .job-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;transform:translateY(-50px)!important}
 .jobs-card .job-art-card{min-height:0!important;padding:0!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;overflow:visible!important;display:flex!important;align-items:center!important;justify-content:center!important}
 .jobs-card .job-full-art{width:80%!important;height:auto!important;aspect-ratio:1/1!important;object-fit:contain!important;padding:0!important;margin:auto!important}
 
-/* Battle: force mobile component sizes and stacking behavior everywhere. */
+/* Battle and result pages keep phone widths/sizes. */
 .battle-shell{font-size:18px!important}
 .battle-heading h1{font-size:34px!important}
 .answer-grid{grid-template-columns:1fr!important}
@@ -62,8 +72,6 @@ body{display:flex!important;justify-content:center!important;align-items:flex-st
 .battle-stat{font-size:14px!important;line-height:1!important}
 .guard-status{font-size:12px!important;line-height:1!important}
 .timer.danger{font-size:64px!important}
-
-/* Selected action/result artwork use the existing mobile dimensions. */
 .action-grid:has(.action-card.selected){min-height:min(65vw,273px)!important}
 .action-grid:has(.action-card.selected) .action-card.selected{width:min(62vw,273px)!important;height:min(62vw,273px)!important;min-width:min(62vw,273px)!important;min-height:min(62vw,273px)!important}
 .result-capsule-top{grid-template-columns:68px minmax(0,1fr) 124px!important;gap:8px!important}
@@ -72,6 +80,25 @@ body{display:flex!important;justify-content:center!important;align-items:flex-st
 .result-change-list{margin-top:24px!important}
 .result-change-chip .change-stat::before{width:34px!important;height:34px!important}
 
-/* Navigation art buttons stay at the same mobile size/offset on all devices. */
-.rooms-page .back-button,.lobby-page .back-button,.jobs-page .back-button{left:3vw!important;top:20px!important;width:112px!important;min-width:112px!important;max-width:112px!important;height:56px!important;min-height:56px!important;max-height:56px!important}
-#game-rule-button{right:3vw!important;top:20px!important;width:112px!important;min-width:112px!important;max-width:112px!important;height:56px!important;min-height:56px!important;max-height:56px!important}
+/* Navigation art buttons are anchored to the centered phone canvas, not viewport edges. */
+.rooms-page .back-button,.lobby-page .back-button,.jobs-page .back-button{
+ left:max(12px,calc(50% - 203px))!important;
+ right:auto!important;
+ top:20px!important;
+ width:112px!important;min-width:112px!important;max-width:112px!important;
+ height:56px!important;min-height:56px!important;max-height:56px!important;
+}
+#game-rule-button{
+ right:max(12px,calc(50% - 203px))!important;
+ left:auto!important;
+ top:20px!important;
+ width:112px!important;min-width:112px!important;max-width:112px!important;
+ height:56px!important;min-height:56px!important;max-height:56px!important;
+}
+
+@media(max-width:430px){
+ .app-shell,.page-shell,.battle-shell{width:100%!important;max-width:none!important}
+ .hero-card{max-width:none!important}
+ .rooms-page .back-button,.lobby-page .back-button,.jobs-page .back-button{left:3vw!important}
+ #game-rule-button{right:3vw!important}
+}
