@@ -1,0 +1,96 @@
+/* Hard final layout lock: loaded after every legacy/UI stylesheet. */
+
+/* Keep the phone-style game canvas centered on tablet/desktop. */
+.app-shell,.page-shell,.battle-shell{
+  position:relative!important;
+  left:auto!important;
+  right:auto!important;
+  transform:none!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+
+/* The two navigation artworks now share the SAME parent and coordinate system. */
+.rooms-card,.lobby-card,.jobs-card{
+  position:relative!important;
+}
+
+.rooms-page .back-button,
+.lobby-page .back-button,
+.jobs-page .back-button,
+#game-rule-button{
+  position:absolute!important;
+  top:20px!important;
+  width:112px!important;
+  min-width:112px!important;
+  max-width:112px!important;
+  height:56px!important;
+  min-height:56px!important;
+  max-height:56px!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+  background-color:transparent!important;
+  background-repeat:no-repeat!important;
+  background-position:center center!important;
+  background-size:112px 56px!important;
+  color:transparent!important;
+  font-size:0!important;
+  line-height:0!important;
+  transform:none!important;
+  box-sizing:border-box!important;
+  z-index:500!important;
+}
+
+.rooms-page .back-button,
+.lobby-page .back-button,
+.jobs-page .back-button{
+  left:0!important;
+  right:auto!important;
+  background-image:url('/images/rooms/return.png')!important;
+}
+
+#game-rule-button{
+  left:auto!important;
+  right:0!important;
+  background-image:url('/images/rooms/rule.png')!important;
+}
+
+.rooms-page .back-button:hover,
+.lobby-page .back-button:hover,
+.jobs-page .back-button:hover,
+#game-rule-button:hover{
+  transform:none!important;
+  filter:brightness(1.06)!important;
+}
+
+.rooms-page .back-button:active,
+.lobby-page .back-button:active,
+.jobs-page .back-button:active,
+#game-rule-button:active{
+  transform:scale(.96)!important;
+}
+
+/* Reserve exactly one navigation row before page content. */
+.rooms-card,.lobby-card,.jobs-card{
+  padding-top:92px!important;
+}
+
+/* Mobile keeps identical button geometry, only the card side inset changes naturally. */
+@media(max-width:480px){
+  .rooms-card,.lobby-card,.jobs-card{
+    width:100%!important;
+    max-width:none!important;
+  }
+  .rooms-page .back-button,
+  .lobby-page .back-button,
+  .jobs-page .back-button{
+    left:0!important;
+  }
+  #game-rule-button{
+    right:0!important;
+  }
+}
