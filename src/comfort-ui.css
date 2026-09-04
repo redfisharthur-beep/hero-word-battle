@@ -50,7 +50,8 @@ body{display:block!important}
  box-sizing:border-box!important;
 }
 .rooms-page .back-button,.lobby-page .back-button,.jobs-page .back-button{left:max(var(--side-gap),calc(50% - 226px))!important;right:auto!important;background-image:url('/images/rooms/return.png')!important}
-#game-rule-button{right:max(var(--side-gap),calc(50% - 226px))!important;left:auto!important;background-image:url('/images/rooms/rule.png')!important}
+/* rule.png has substantially less transparent padding at the top than return.png. Move the whole button down 18px so the visible artworks align, while keeping the same 112x56 hit area. */
+#game-rule-button{top:calc(var(--nav-top) + 18px)!important;right:max(var(--side-gap),calc(50% - 226px))!important;left:auto!important;background-image:url('/images/rooms/rule.png')!important}
 .rooms-page .back-button:active,.lobby-page .back-button:active,.jobs-page .back-button:active,#game-rule-button:active{transform:scale(.96)!important}
 
 /* Room selection/player list */
