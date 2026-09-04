@@ -11,16 +11,14 @@ import './final-ui.css'
 import './stability.css'
 import './unified-mobile-layout.css'
 import './comfort-ui.css'
-import './nav-reset.css'
+import './hard-layout-fix.css'
 import App from './App'
 import { installRuleViewer } from './rule-viewer'
-import { installGlobalNav } from './global-nav'
 import { installComfortUi } from './comfort-ui'
 import { installLineLoginFeedback } from './line-login-feedback'
 
 installLineLoginFeedback()
 installRuleViewer()
-installGlobalNav()
 installComfortUi()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
