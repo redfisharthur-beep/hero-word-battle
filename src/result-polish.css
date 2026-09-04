@@ -1,5 +1,7 @@
-/* Desktop result polish: keep mobile unchanged. */
-@media (min-width: 900px){
+/* Final result polish: loaded last so this file owns result spacing and critical FX. */
+
+/* Desktop result action row. */
+@media (min-width:900px){
   .result-capsule-top{
     grid-template-columns:96px minmax(120px,1fr) 154px!important;
     grid-template-rows:78px 28px!important;
@@ -8,7 +10,6 @@
     align-items:center!important;
     min-height:108px!important;
   }
-
   .result-capsule-top>.character-head.large,
   .result-capsule-top>.character-head-placeholder.large{
     grid-column:1!important;
@@ -22,7 +23,6 @@
     max-width:74px!important;
     max-height:74px!important;
   }
-
   .result-actor-copy{
     grid-column:1!important;
     grid-row:2!important;
@@ -33,7 +33,6 @@
     justify-content:center!important;
     text-align:center!important;
   }
-
   .result-actor-copy>strong{
     width:100%!important;
     font-size:15px!important;
@@ -43,9 +42,7 @@
     overflow:hidden!important;
     text-overflow:ellipsis!important;
   }
-
   .result-actor-copy>small{display:none!important}
-
   .result-action-mark{
     grid-column:3!important;
     grid-row:1/3!important;
@@ -54,20 +51,74 @@
   }
 }
 
-/* Critical artwork: keep it modest, always visible, and add the effect on a separate layer.
-   Important: do NOT force opacity:0 or animate the same transform that legacy CSS marks !important. */
-.result-capsule.critical{overflow:visible!important}
+/* Final ranking: remove the giant dead area and let the page read naturally top-to-bottom. */
+.result-page{
+  align-items:flex-start!important;
+  justify-content:flex-start!important;
+  min-height:100dvh!important;
+  padding-top:12px!important;
+  padding-bottom:28px!important;
+}
+.result-page .final-ranking-card{
+  position:relative!important;
+  width:calc(100% - 20px)!important;
+  max-width:580px!important;
+  min-height:0!important;
+  height:auto!important;
+  margin:0 auto!important;
+  padding:94px 18px 20px!important;
+  overflow:visible!important;
+  box-sizing:border-box!important;
+}
+.result-page .result-content{
+  position:relative!important;
+  transform:none!important;
+  margin:0!important;
+  padding:0!important;
+}
+.result-page .result-ranking-list{
+  gap:12px!important;
+  margin:0!important;
+}
+.result-page .result-replay-button{
+  width:100%!important;
+  margin:16px 0 0!important;
+  min-height:54px!important;
+}
+
+@media(max-width:760px){
+  .result-page{padding-top:8px!important;padding-bottom:24px!important}
+  .result-page .final-ranking-card{
+    width:calc(100% - 20px)!important;
+    min-height:0!important;
+    height:auto!important;
+    padding:92px 14px 18px!important;
+    border-radius:28px!important;
+  }
+  .result-page .result-content{transform:none!important}
+  .result-page .result-ranking-list{gap:12px!important}
+  .result-page .result-player-card{padding:10px 10px!important}
+  .result-page .result-replay-button{margin-top:16px!important;min-height:56px!important}
+}
+
+/* Critical artwork: large base image + independent animated copy.
+   The capsule and battle panel are explicitly overflow-visible so the 2x peak cannot be clipped. */
+.resolve-panel,
+.result-capsule.critical,
+.result-capsule.critical .result-capsule-top{
+  overflow:visible!important;
+}
 .result-capsule.critical .critical-burst{
   position:absolute!important;
   left:50%!important;
   right:auto!important;
-  top:14px!important;
-  width:132px!important;
-  height:84px!important;
+  top:8px!important;
+  width:170px!important;
+  height:110px!important;
   margin:0!important;
   padding:0!important;
   opacity:1!important;
-  z-index:40!important;
+  z-index:80!important;
   pointer-events:none!important;
   overflow:visible!important;
   transform:translateX(-50%)!important;
@@ -79,65 +130,69 @@
   color:transparent!important;
   font-size:0!important;
   line-height:0!important;
-  filter:drop-shadow(0 0 7px rgba(255,218,82,.9)) drop-shadow(0 0 15px rgba(255,80,0,.48))!important;
+  filter:drop-shadow(0 0 8px rgba(255,218,82,.95)) drop-shadow(0 0 18px rgba(255,70,0,.55))!important;
   animation:none!important;
 }
 
-/* Animated duplicate artwork: flash -> 2x pop -> flash -> fade. */
+/* Flash -> 2x pop -> flash -> fade. */
 .result-capsule.critical .critical-burst::before{
   content:'';
   position:absolute;
-  inset:-4px;
+  inset:0;
+  z-index:2;
   background:url('/images/actions/Critical.png') center/contain no-repeat;
   pointer-events:none;
-  transform-origin:center;
-  animation:criticalArtFlash 1.2s ease-out both;
+  transform-origin:center center;
+  will-change:transform,opacity;
+  animation:criticalArtFlash 1.35s cubic-bezier(.2,.8,.2,1) both;
 }
-
 .result-capsule.critical .critical-burst::after{
   content:'';
   position:absolute;
-  inset:-14px;
+  inset:-20px;
+  z-index:1;
   border-radius:50%;
-  background:radial-gradient(circle,rgba(255,255,225,.9) 0%,rgba(255,213,84,.42) 28%,rgba(255,90,0,.17) 54%,rgba(255,0,0,0) 74%);
+  background:radial-gradient(circle,rgba(255,255,225,.96) 0%,rgba(255,213,84,.5) 26%,rgba(255,90,0,.2) 52%,rgba(255,0,0,0) 76%);
   mix-blend-mode:screen;
   pointer-events:none;
-  animation:criticalAuraFlash 1.2s ease-out both;
+  transform-origin:center center;
+  will-change:transform,opacity;
+  animation:criticalAuraFlash 1.35s ease-out both;
 }
 
-@media (min-width:900px){
+@media(min-width:900px){
   .result-capsule.critical .critical-burst{
-    width:140px!important;
-    height:90px!important;
-    top:12px!important;
+    width:184px!important;
+    height:118px!important;
+    top:6px!important;
   }
 }
 
-@media (max-width:760px){
+@media(max-width:760px){
   .result-capsule.critical .critical-burst{
-    left:calc(50% - 20px)!important;
-    width:118px!important;
-    height:76px!important;
-    top:14px!important;
+    /* visibly left of center on phone; overflow-visible prevents clipping at the card edge */
+    left:calc(50% - 38px)!important;
+    width:164px!important;
+    height:104px!important;
+    top:8px!important;
   }
 }
 
 @keyframes criticalArtFlash{
   0%{opacity:0;transform:scale(.72)}
-  14%{opacity:1;transform:scale(1.15)}
-  28%{opacity:.25;transform:scale(1)}
-  46%{opacity:1;transform:scale(2)}
-  62%{opacity:.55;transform:scale(1.25)}
-  76%{opacity:1;transform:scale(1.08)}
+  12%{opacity:1;transform:scale(1.08)}
+  25%{opacity:.22;transform:scale(1)}
+  45%{opacity:1;transform:scale(2)}
+  58%{opacity:.32;transform:scale(1.42)}
+  72%{opacity:1;transform:scale(1.12)}
   100%{opacity:0;transform:scale(.96)}
 }
-
 @keyframes criticalAuraFlash{
   0%{opacity:0;transform:scale(.75)}
-  14%{opacity:.95;transform:scale(1.15)}
-  28%{opacity:.18;transform:scale(1)}
-  46%{opacity:.82;transform:scale(1.7)}
-  64%{opacity:.22;transform:scale(1.2)}
-  78%{opacity:.55;transform:scale(1.08)}
-  100%{opacity:0;transform:scale(1.12)}
+  12%{opacity:1;transform:scale(1.08)}
+  26%{opacity:.12;transform:scale(1)}
+  45%{opacity:.9;transform:scale(2)}
+  60%{opacity:.18;transform:scale(1.38)}
+  74%{opacity:.6;transform:scale(1.12)}
+  100%{opacity:0;transform:scale(1.05)}
 }
