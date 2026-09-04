@@ -1,5 +1,5 @@
 /* Unified top navigation reset: same geometry on every device. */
-:root{--nav-edge:5%;--nav-top-unified:20px}
+:root{--nav-edge:5%;--nav-top-unified:20px;--rule-art-offset:18px}
 
 .rooms-page .back-button,
 .lobby-page .back-button,
@@ -23,6 +23,13 @@
 #game-rule-button{
   left:auto!important;
   right:var(--nav-edge)!important;
+}
+
+/* return.png and rule.png have different transparent top padding.
+   Keep both controls on the same logical baseline, then compensate only the
+   visible rule artwork so the two gold buttons look horizontally aligned. */
+.lobby-page #game-rule-button{
+  top:calc(var(--nav-top-unified) + var(--rule-art-offset))!important;
 }
 
 .rooms-page .back-button:active,
