@@ -14,7 +14,9 @@ import './comfort-ui.css'
 import App from './App'
 import { installRuleViewer } from './rule-viewer'
 import { installComfortUi } from './comfort-ui'
+import { installLineLoginFeedback } from './line-login-feedback'
 
+installLineLoginFeedback()
 installRuleViewer()
 installComfortUi()
 
