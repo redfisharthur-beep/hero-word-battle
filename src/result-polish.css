@@ -219,3 +219,13 @@
   74%{opacity:.6;transform:scale(1.12)}
   100%{opacity:0;transform:scale(1.05)}
 }
+
+/* Three-question quiz: keep the original clean layout and only light the correct choice after a miss. */
+.answer-choice.correct-answer,
+.answer-choice.correct-answer:disabled{
+  opacity:1!important;
+  border-color:#63ff9f!important;
+  box-shadow:0 0 0 2px rgba(99,255,159,.24),0 0 22px rgba(99,255,159,.58)!important;
+  filter:brightness(1.28)!important;
+  transform:scale(1.025)!important;
+}
