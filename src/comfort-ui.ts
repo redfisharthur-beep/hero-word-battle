@@ -28,7 +28,7 @@ function decorateUltimateResult(capsule:HTMLElement){
 }
 
 function syncUltimateResults(){
- document.querySelectorAll<HTMLElement>('.result-capsule.ultimate-result').forEach(decorateUltimateResult)
+ document.querySelectorAll<HTMLElement>('.result-capsule.result-ultimate').forEach(decorateUltimateResult)
 }
 
 export function installComfortUi(){
