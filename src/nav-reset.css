@@ -1,40 +1,78 @@
-/* Unified top navigation reset: same geometry on every device. */
-:root{--nav-edge:5%;--nav-top-unified:20px;--rule-art-offset:18px}
+/* Unified top navigation: return and rule now share one global wrapper. */
+:root{--nav-edge:5%;--nav-top-unified:20px;--nav-w:112px;--nav-h:56px}
 
-.rooms-page .back-button,
-.lobby-page .back-button,
-.jobs-page .back-button,
-#game-rule-button{
-  position:fixed!important;
-  top:var(--nav-top-unified)!important;
-  bottom:auto!important;
-  margin:0!important;
-  translate:none!important;
-  transform:none!important;
-}
-
+/* Keep the original React back buttons only as behavior sources. */
 .rooms-page .back-button,
 .lobby-page .back-button,
 .jobs-page .back-button{
+  position:absolute!important;
+  width:1px!important;
+  min-width:1px!important;
+  max-width:1px!important;
+  height:1px!important;
+  min-height:1px!important;
+  max-height:1px!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  overflow:hidden!important;
+}
+
+#game-global-nav{
+  position:fixed!important;
+  top:var(--nav-top-unified)!important;
   left:var(--nav-edge)!important;
-  right:auto!important;
-}
-
-#game-rule-button{
-  left:auto!important;
   right:var(--nav-edge)!important;
+  width:auto!important;
+  height:var(--nav-h)!important;
+  margin:0!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-between!important;
+  pointer-events:none!important;
+  z-index:120!important;
+  box-sizing:border-box!important;
 }
 
-/* return.png and rule.png have different transparent top padding.
-   Keep both controls on the same logical baseline, then compensate only the
-   visible rule artwork so the two gold buttons look horizontally aligned. */
-.lobby-page #game-rule-button{
-  top:calc(var(--nav-top-unified) + var(--rule-art-offset))!important;
+#game-global-nav>#game-return-button,
+#game-global-nav>#game-rule-button{
+  position:static!important;
+  inset:auto!important;
+  top:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  left:auto!important;
+  width:var(--nav-w)!important;
+  min-width:var(--nav-w)!important;
+  max-width:var(--nav-w)!important;
+  height:var(--nav-h)!important;
+  min-height:var(--nav-h)!important;
+  max-height:var(--nav-h)!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background-color:transparent!important;
+  background-repeat:no-repeat!important;
+  background-size:112px 56px!important;
+  background-position:center center!important;
+  box-shadow:none!important;
+  color:transparent!important;
+  font-size:0!important;
+  line-height:0!important;
+  transform:none!important;
+  translate:none!important;
+  box-sizing:border-box!important;
+  pointer-events:auto!important;
 }
 
-.rooms-page .back-button:active,
-.lobby-page .back-button:active,
-.jobs-page .back-button:active,
-#game-rule-button:active{
+#game-return-button{background-image:url('/images/rooms/return.png')!important}
+#game-rule-button{background-image:url('/images/rooms/rule.png')!important}
+
+#game-global-nav>#game-return-button:active,
+#game-global-nav>#game-rule-button:active{
   transform:scale(.96)!important;
 }
