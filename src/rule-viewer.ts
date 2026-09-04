@@ -39,6 +39,8 @@ function ensureStyles(){
  cursor:pointer!important;
  touch-action:manipulation!important;
 }
+/* Player list page: both buttons sit 20% down from the viewport top. */
+.lobby-page .back-button{top:20%!important}
 .rooms-page .back-button:hover,
 .lobby-page .back-button:hover,
 .jobs-page .back-button:hover{filter:brightness(1.08)!important;transform:none!important}
@@ -70,6 +72,7 @@ function ensureStyles(){
  cursor:pointer;
  touch-action:manipulation;
 }
+#${RULE_BUTTON_ID}[data-page='lobby']{top:20%}
 #${RULE_BUTTON_ID}:hover{transform:none;filter:brightness(1.08)}
 #${RULE_BUTTON_ID}:active{transform:scale(.96)}
 
@@ -132,8 +135,10 @@ function ensureStyles(){
  transform-origin:top left;
 }
 @media(max-width:760px){
- .rooms-page .back-button,.lobby-page .back-button,.jobs-page .back-button{left:3vw!important;top:10px!important;width:112px!important;min-width:112px!important;max-width:112px!important;height:56px!important;min-height:56px!important;max-height:56px!important}
+ .rooms-page .back-button,.jobs-page .back-button{left:3vw!important;top:10px!important;width:112px!important;min-width:112px!important;max-width:112px!important;height:56px!important;min-height:56px!important;max-height:56px!important}
+ .lobby-page .back-button{left:3vw!important;top:20%!important;width:112px!important;min-width:112px!important;max-width:112px!important;height:56px!important;min-height:56px!important;max-height:56px!important}
  #${RULE_BUTTON_ID}{right:3vw;top:10px;width:112px;min-width:112px;max-width:112px;height:56px;min-height:56px;max-height:56px}
+ #${RULE_BUTTON_ID}[data-page='lobby']{top:20%}
  #${RULE_MODAL_ID} .rule-close{width:46px;height:46px;min-width:46px;min-height:46px;font-size:30px}
 }
 `
@@ -185,14 +190,16 @@ function createViewer(){
 }
 
 function syncRuleButton(){
- const supportedPage=document.querySelector('.rooms-page,.lobby-page,.jobs-page')
- const existing=document.getElementById(RULE_BUTTON_ID)
+ const supportedPage=document.querySelector('.rooms-page,.lobby-page,.jobs-page') as HTMLElement|null
+ const existing=document.getElementById(RULE_BUTTON_ID) as HTMLButtonElement|null
  if(!supportedPage){existing?.remove();return}
- if(existing)return
+ const pageType=supportedPage.classList.contains('lobby-page')?'lobby':supportedPage.classList.contains('jobs-page')?'jobs':'rooms'
+ if(existing){existing.dataset.page=pageType;return}
  const viewer=createViewer() as HTMLDivElement & {openRuleViewer?:()=>void}
  const button=document.createElement('button')
  button.id=RULE_BUTTON_ID
  button.type='button'
+ button.dataset.page=pageType
  button.setAttribute('aria-label','遊戲說明')
  button.title='遊戲說明'
  button.addEventListener('click',()=>viewer.openRuleViewer?.())
