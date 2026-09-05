@@ -70,6 +70,123 @@
   .battle-shell>.battle-panel{padding-left:18px!important;padding-right:18px!important}
 }
 
+/* Xiaomi Pad / Android tablet safe layout.
+   Uses both viewport dimensions instead of a single 760px breakpoint, so portrait and landscape tablets
+   never fall into the compact phone layout. */
+@media (min-width:600px) and (min-height:600px) and (max-width:1366px){
+  .battle-shell{
+    width:100%!important;
+    padding-left:clamp(28px,5vw,64px)!important;
+    padding-right:clamp(28px,5vw,64px)!important;
+    box-sizing:border-box!important;
+    overflow-x:hidden!important;
+  }
+  .battle-shell>.self-card,
+  .battle-shell>.enemy-strip,
+  .battle-shell>.battle-meta-row,
+  .battle-shell>.battle-panel{
+    width:100%!important;
+    max-width:900px!important;
+    min-width:0!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    box-sizing:border-box!important;
+  }
+  .battle-shell>.battle-panel{
+    padding-left:0!important;
+    padding-right:0!important;
+    overflow:visible!important;
+  }
+  .battle-shell>.self-card.character-status-card,
+  .battle-shell>.enemy-strip>.enemy-card.enemy-card-with-head{
+    grid-template-columns:84px minmax(0,1fr)!important;
+    gap:14px!important;
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+  body .battle-shell .player-status-top,
+  body .battle-shell .player-status-bottom{
+    grid-template-columns:repeat(3,minmax(92px,1fr))!important;
+    gap:10px!important;
+    overflow:visible!important;
+  }
+  .player-status-name,.player-job-name,.player-effect-status{
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+  }
+  .action-grid{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-template-rows:repeat(2,auto)!important;
+    gap:12px!important;
+    width:100%!important;
+    max-width:660px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    overflow:visible!important;
+  }
+  .action-card,.action-card.ultimate-action{
+    width:100%!important;
+    height:auto!important;
+    min-width:0!important;
+    min-height:0!important;
+    max-width:none!important;
+    max-height:none!important;
+    aspect-ratio:1/1!important;
+  }
+  .action-grid:has(.action-card.selected){
+    width:100%!important;
+    min-height:300px!important;
+  }
+  .action-grid:has(.action-card.selected) .action-card.selected{
+    width:min(54vw,360px)!important;
+    height:min(54vw,360px)!important;
+    min-width:min(54vw,360px)!important;
+    min-height:min(54vw,360px)!important;
+  }
+  .result-capsule{
+    width:100%!important;
+    max-width:760px!important;
+    margin-left:auto!important;
+    margin-right:auto!important;
+    box-sizing:border-box!important;
+  }
+  .result-capsule-top{
+    grid-template-columns:104px minmax(0,1fr) 160px!important;
+    grid-template-rows:80px 28px!important;
+    column-gap:16px!important;
+    min-width:0!important;
+  }
+  .result-capsule-top>.character-head.large,
+  .result-capsule-top>.character-head-placeholder.large{
+    grid-column:1!important;
+    grid-row:1!important;
+  }
+  .result-actor-copy{
+    grid-column:1!important;
+    grid-row:2!important;
+  }
+  .result-actor-copy>strong{
+    display:block!important;
+    font-size:15px!important;
+    text-align:center!important;
+  }
+  .result-actor-copy>.mini-label,
+  .result-actor-copy>small{display:none!important}
+  .result-action-mark{
+    grid-column:3!important;
+    grid-row:1/3!important;
+    min-width:0!important;
+  }
+  .result-main-text,
+  .result-change-list{
+    max-width:100%!important;
+    min-width:0!important;
+    overflow-wrap:anywhere!important;
+  }
+}
+
 /* Final ranking: remove the giant dead area and let the page read naturally top-to-bottom. */
 .result-page{
   align-items:flex-start!important;
