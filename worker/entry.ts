@@ -58,7 +58,6 @@ async function handleLineLogin(request: Request, env: Env) {
   authorize.searchParams.set('state', state)
   authorize.searchParams.set('scope', 'profile openid')
   authorize.searchParams.set('ui_locales', 'zh-TW')
-  authorize.searchParams.set('disable_auto_login', 'true')
 
   return new Response(null, {
     status: 302,
@@ -142,7 +141,7 @@ export default {
     if (url.pathname === '/api/line-status') {
       return json({
         ok: true,
-        version: 'line-login-3',
+        version: 'line-login-4-auto-login',
         routeOwner: 'worker/entry.ts',
         channelIdPresent: Boolean(env.LINE_CHANNEL_ID),
         channelSecretPresent: Boolean(env.LINE_CHANNEL_SECRET),
