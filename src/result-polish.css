@@ -70,9 +70,7 @@
   .battle-shell>.battle-panel{padding-left:0!important;padding-right:0!important}
 }
 
-/* Xiaomi Pad / Android tablet layout.
-   The previous tablet rules made the content too narrow. This version gives portrait and landscape
-   tablets nearly the full usable width, without touching the already-correct phone/desktop layouts. */
+/* Xiaomi Pad / Android tablet layout. */
 @media (min-width:600px) and (min-height:600px) and (max-width:1366px){
   .battle-shell{
     width:100%!important;
@@ -198,7 +196,7 @@
   }
 }
 
-/* Final ranking: remove the giant dead area and let the page read naturally top-to-bottom. */
+/* Final ranking */
 .result-page{
   align-items:flex-start!important;
   justify-content:flex-start!important;
@@ -217,63 +215,30 @@
   overflow:visible!important;
   box-sizing:border-box!important;
 }
-.result-page .result-content{
-  position:relative!important;
-  transform:none!important;
-  margin:0!important;
-  padding:0!important;
-}
-.result-page .result-ranking-list{
-  gap:12px!important;
-  margin:0!important;
-}
-.result-page .result-replay-button{
-  width:100%!important;
-  margin:16px 0 0!important;
-  min-height:54px!important;
-}
+.result-page .result-content{position:relative!important;transform:none!important;margin:0!important;padding:0!important}
+.result-page .result-ranking-list{gap:12px!important;margin:0!important}
+.result-page .result-replay-button{width:100%!important;margin:16px 0 0!important;min-height:54px!important}
 
-/* Desktop/tablet result screen: return button first, then ranking immediately below it. */
 @media(min-width:761px){
   .result-page{padding-top:18px!important}
-  .result-page .final-ranking-card{
-    padding:18px 18px 20px!important;
-    border-radius:28px!important;
-  }
-  .result-page .final-ranking-card>.back-button{
-    position:relative!important;
-    top:auto!important;
-    left:auto!important;
-    right:auto!important;
-    margin:0 0 18px 0!important;
-  }
-  .result-page .result-content{
-    margin-top:0!important;
-  }
+  .result-page .final-ranking-card{padding:18px 18px 20px!important;border-radius:28px!important}
+  .result-page .final-ranking-card>.back-button{position:relative!important;top:auto!important;left:auto!important;right:auto!important;margin:0 0 18px 0!important}
+  .result-page .result-content{margin-top:0!important}
 }
 
 @media(max-width:760px){
   .result-page{padding-top:8px!important;padding-bottom:24px!important}
-  .result-page .final-ranking-card{
-    width:calc(100% - 20px)!important;
-    min-height:0!important;
-    height:auto!important;
-    padding:92px 14px 18px!important;
-    border-radius:28px!important;
-  }
+  .result-page .final-ranking-card{width:calc(100% - 20px)!important;min-height:0!important;height:auto!important;padding:92px 14px 18px!important;border-radius:28px!important}
   .result-page .result-content{transform:none!important}
   .result-page .result-ranking-list{gap:12px!important}
   .result-page .result-player-card{padding:10px 10px!important}
   .result-page .result-replay-button{margin-top:16px!important;min-height:56px!important}
 }
 
-/* Critical artwork: large base image + independent animated copy.
-   The capsule and battle panel are explicitly overflow-visible so the effect cannot be clipped. */
+/* Critical artwork */
 .resolve-panel,
 .result-capsule.critical,
-.result-capsule.critical .result-capsule-top{
-  overflow:visible!important;
-}
+.result-capsule.critical .result-capsule-top{overflow:visible!important}
 .result-capsule.critical .critical-burst{
   position:absolute!important;
   left:50%!important;
@@ -299,63 +264,24 @@
   filter:drop-shadow(0 0 8px rgba(255,218,82,.95)) drop-shadow(0 0 18px rgba(255,70,0,.55))!important;
   animation:none!important;
 }
-
-/* Flash -> pop -> flash -> fade. */
 .result-capsule.critical .critical-burst::before{
-  content:'';
-  position:absolute;
-  inset:0;
-  z-index:2;
-  background:url('/images/actions/Critical.png') center/contain no-repeat;
-  pointer-events:none;
-  transform-origin:center center;
-  will-change:transform,opacity;
-  animation:criticalArtFlash 1.35s cubic-bezier(.2,.8,.2,1) both;
+  content:'';position:absolute;inset:0;z-index:2;background:url('/images/actions/Critical.png') center/contain no-repeat;pointer-events:none;transform-origin:center center;will-change:transform,opacity;animation:criticalArtFlash 1.35s cubic-bezier(.2,.8,.2,1) both
 }
 .result-capsule.critical .critical-burst::after{
-  content:'';
-  position:absolute;
-  inset:-20px;
-  z-index:1;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(255,255,225,.96) 0%,rgba(255,213,84,.5) 26%,rgba(255,90,0,.2) 52%,rgba(255,0,0,0) 76%);
-  mix-blend-mode:screen;
-  pointer-events:none;
-  transform-origin:center center;
-  will-change:transform,opacity;
-  animation:criticalAuraFlash 1.35s ease-out both;
+  content:'';position:absolute;inset:-20px;z-index:1;border-radius:50%;background:radial-gradient(circle,rgba(255,255,225,.96) 0%,rgba(255,213,84,.5) 26%,rgba(255,90,0,.2) 52%,rgba(255,0,0,0) 76%);mix-blend-mode:screen;pointer-events:none;transform-origin:center center;will-change:transform,opacity;animation:criticalAuraFlash 1.35s ease-out both
 }
 
-@media(min-width:900px){
-  .result-capsule.critical .critical-burst{
-    width:184px!important;
-    height:118px!important;
-    top:6px!important;
-  }
-}
-
+@media(min-width:900px){.result-capsule.critical .critical-burst{width:184px!important;height:118px!important;top:6px!important}}
 @media(max-width:760px){
-  .result-capsule.critical .critical-burst{
-    /* phone: 25px left of center and 10px lower */
-    left:calc(50% - 25px)!important;
-    width:164px!important;
-    height:104px!important;
-    top:18px!important;
-  }
-  .battle-round{
-    font-size:14px!important;
-    line-height:1!important;
-  }
+  .result-capsule.critical .critical-burst{left:calc(50% - 25px)!important;width:164px!important;height:104px!important;top:18px!important}
+  .battle-round{font-size:14px!important;line-height:1!important}
 }
 
-/* Tablet-only critical FX: keep the badge inside the wide empty center column.
-   No extra top margin, no overlap with portrait/name or action artwork, and no 2x expansion. */
+/* Tablet-only critical FX: visually centered in the free middle area, not the whole asymmetric row. */
 @media (min-width:600px) and (min-height:600px) and (max-width:1366px){
-  .result-capsule.critical{
-    margin-top:0!important;
-  }
+  .result-capsule.critical{margin-top:0!important}
   .result-capsule.critical .critical-burst{
-    left:50%!important;
+    left:calc(50% - 48px)!important;
     top:20px!important;
     width:112px!important;
     height:68px!important;
@@ -363,50 +289,15 @@
     transform:translateX(-50%)!important;
     filter:drop-shadow(0 0 5px rgba(255,218,82,.86)) drop-shadow(0 0 10px rgba(255,70,0,.4))!important;
   }
-  .result-capsule.critical .critical-burst::before{
-    animation:criticalArtFlashTablet 1.05s cubic-bezier(.2,.8,.2,1) both!important;
-  }
-  .result-capsule.critical .critical-burst::after{
-    inset:-8px!important;
-    animation:criticalAuraFlashTablet 1.05s ease-out both!important;
-  }
+  .result-capsule.critical .critical-burst::before{animation:criticalArtFlashTablet 1.05s cubic-bezier(.2,.8,.2,1) both!important}
+  .result-capsule.critical .critical-burst::after{inset:-8px!important;animation:criticalAuraFlashTablet 1.05s ease-out both!important}
 }
 
-@keyframes criticalArtFlash{
-  0%{opacity:0;transform:scale(.72)}
-  12%{opacity:1;transform:scale(1.08)}
-  25%{opacity:.22;transform:scale(1)}
-  45%{opacity:1;transform:scale(2)}
-  58%{opacity:.32;transform:scale(1.42)}
-  72%{opacity:1;transform:scale(1.12)}
-  100%{opacity:0;transform:scale(.96)}
-}
-@keyframes criticalAuraFlash{
-  0%{opacity:0;transform:scale(.75)}
-  12%{opacity:1;transform:scale(1.08)}
-  26%{opacity:.12;transform:scale(1)}
-  45%{opacity:.9;transform:scale(2)}
-  60%{opacity:.18;transform:scale(1.38)}
-  74%{opacity:.6;transform:scale(1.12)}
-  100%{opacity:0;transform:scale(1.05)}
-}
-@keyframes criticalArtFlashTablet{
-  0%{opacity:0;transform:scale(.84)}
-  18%{opacity:1;transform:scale(1)}
-  38%{opacity:.35;transform:scale(.96)}
-  58%{opacity:1;transform:scale(1.15)}
-  78%{opacity:.55;transform:scale(1.04)}
-  100%{opacity:0;transform:scale(.98)}
-}
-@keyframes criticalAuraFlashTablet{
-  0%{opacity:0;transform:scale(.88)}
-  20%{opacity:.75;transform:scale(1)}
-  56%{opacity:.5;transform:scale(1.18)}
-  78%{opacity:.2;transform:scale(1.08)}
-  100%{opacity:0;transform:scale(1)}
-}
+@keyframes criticalArtFlash{0%{opacity:0;transform:scale(.72)}12%{opacity:1;transform:scale(1.08)}25%{opacity:.22;transform:scale(1)}45%{opacity:1;transform:scale(2)}58%{opacity:.32;transform:scale(1.42)}72%{opacity:1;transform:scale(1.12)}100%{opacity:0;transform:scale(.96)}}
+@keyframes criticalAuraFlash{0%{opacity:0;transform:scale(.75)}12%{opacity:1;transform:scale(1.08)}26%{opacity:.12;transform:scale(1)}45%{opacity:.9;transform:scale(2)}60%{opacity:.18;transform:scale(1.38)}74%{opacity:.6;transform:scale(1.12)}100%{opacity:0;transform:scale(1.05)}}
+@keyframes criticalArtFlashTablet{0%{opacity:0;transform:scale(.84)}18%{opacity:1;transform:scale(1)}38%{opacity:.35;transform:scale(.96)}58%{opacity:1;transform:scale(1.15)}78%{opacity:.55;transform:scale(1.04)}100%{opacity:0;transform:scale(.98)}}
+@keyframes criticalAuraFlashTablet{0%{opacity:0;transform:scale(.88)}20%{opacity:.75;transform:scale(1)}56%{opacity:.5;transform:scale(1.18)}78%{opacity:.2;transform:scale(1.08)}100%{opacity:0;transform:scale(1)}}
 
-/* Three-question quiz: keep the original clean layout and only light the correct choice after a miss. */
 .answer-choice.correct-answer,
 .answer-choice.correct-answer:disabled{
   opacity:1!important;
