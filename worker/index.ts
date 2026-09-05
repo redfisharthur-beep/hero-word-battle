@@ -18,7 +18,7 @@ const wordPoolSizes=new Set<WordPoolSize>([300,1200,5000])
 const jobIds=['assassin','warrior','fighter','archer','priest','mage'],jobs=new Set(jobIds)
 const regularActionIds:ActionName[]=['upgrade','attack','heal','finish','guard'],actionIds:ActionName[]=[...regularActionIds,'ultimate'],actions=new Set<ActionName>(actionIds)
 const criticalChance:Record<string,number>={assassin:.5,warrior:.3,archer:.45,fighter:.35,priest:.3,mage:.4}
-const botNames=['電腦・蒼羽','電腦・赤炎','電腦・星祈','電腦・玄甲']
+const botNames=['蒼羽','赤炎','星祈','玄甲']
 const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json; charset=utf-8','access-control-allow-origin':'*','access-control-allow-headers':'content-type','access-control-allow-methods':'GET,POST,OPTIONS'}})
 const publicQuestion=(q:Question):PublicQuestion=>({id:q.id,word:q.word,choices:q.choices})
 const clampCoefficient=(v:number)=>Math.max(0,Math.min(6,Math.round(v*100)/100))
