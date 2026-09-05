@@ -53,3 +53,19 @@ button,input,textarea,select,p,span,strong,b,small,em,h1,h2,h3,h4,h5,h6,label{fo
  .lobby-start-button{width:220px!important;height:96px!important;min-height:96px!important}
  .lobby-player-list .player-row.muted strong::after{font-size:17px!important}
 }
+
+/* Tablet lobby: reserve the navigation row instead of pulling the room artwork back into it.
+   This runs after the phone rule so Xiaomi Pad / Android tablets at 600-760 CSS px do not inherit top:-90px. */
+@media (min-width:600px) and (min-height:600px) and (max-width:1366px){
+ .lobby-page .lobby-room-image,
+ .lobby-page .word-pool-selector,
+ .lobby-page .lobby-player-list,
+ .lobby-page .lobby-start-button{
+   top:0!important;
+ }
+ .lobby-page .lobby-room-image{
+   display:block!important;
+   margin-left:auto!important;
+   margin-right:auto!important;
+ }
+}
