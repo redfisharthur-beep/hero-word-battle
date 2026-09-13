@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 export type WrongAnswerItem={id:string;word:string;selectedAnswer:string;correctAnswer:string}
-type DictionaryInfo={definition?:string;example?:string}
+type DictionaryInfo={example?:string}
 
 const fallbackExample=(word:string)=>`I learned the word “${word}” today.`
 
@@ -9,11 +9,10 @@ async function loadDictionary(word:string):Promise<DictionaryInfo>{
  try{
   const response=await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`)
   if(!response.ok)return{}
-  const data=await response.json() as Array<{meanings?:Array<{definitions?:Array<{definition?:string;example?:string}>}>}>
+  const data=await response.json() as Array<{meanings?:Array<{definitions?:Array<{example?:string}>}>}>
   const definitions=data.flatMap(entry=>entry.meanings??[]).flatMap(meaning=>meaning.definitions??[])
   const withExample=definitions.find(item=>item.example)
-  const first=definitions.find(item=>item.definition)
-  return{definition:first?.definition,example:withExample?.example}
+  return{example:withExample?.example}
  }catch{return{}}
 }
 
@@ -28,7 +27,6 @@ export default function WrongAnswerReview({items,onClose}:{items:WrongAnswerItem
     <div className="wrong-review-word">{item.word}</div>
     <div className="wrong-review-row wrong-choice"><span>你的答案</span><b>{item.selectedAnswer}</b></div>
     <div className="wrong-review-row correct-choice"><span>正確解釋</span><b>{item.correctAnswer}</b></div>
-    <div className="wrong-review-explain"><span>英文解釋</span><p>{info?.definition??'正在查詢單字解釋…'}</p></div>
     <div className="wrong-review-example"><span>例句</span><p>{info?.example??fallbackExample(item.word)}</p></div>
    </article>})}</div>}
    <button className="primary-button wrong-review-done" type="button" onClick={onClose}>看完了</button>
